@@ -6,15 +6,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/JermineHu/themis/common"
 	"github.com/JermineHu/themis/svc/gen/admin"
 	"github.com/JermineHu/themis/svc/gen/config"
+	"github.com/JermineHu/themis/utils"
 	jwtgo "github.com/dgrijalva/jwt-go"
 	"github.com/gofrs/uuid"
 	"github.com/urfave/cli"
 	"goa.design/goa/v3/security"
-	"github.com/JermineHu/themis/common"
-	"github.com/JermineHu/themis/models"
-	"github.com/JermineHu/themis/utils"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -45,7 +44,7 @@ var (
 
 	// ErrInvalidTokenScopes is the error returned when the scopes provided in
 	// the JWT token claims are invalid.
-	ErrInvalidTokenScopes error = config.InvalidScopes("令牌授权范围错误！")
+	ErrInvalidTokenScopes error = admin.InvalidScopes("令牌授权范围错误！")
 )
 
 // 根据JWT获取用户
@@ -145,7 +144,7 @@ func makeJWTWithAdmin(respon admin.Admin) (tokenStr *string, err error) {
 		"sub":      "zeus_login",      // the subject/principal is whom the token is about
 		"scopes":   "api:access",      // token scope - not a standard claim
 		"usr_id":   respon.ID,         // token scope - not a standard claim
-		"usr_name": respon.LoginName,       // token scope - not a standard claim
+		"usr_name": respon.LoginName,  // token scope - not a standard claim
 	}
 
 	prik, err := GetPrivateKey()
@@ -160,22 +159,22 @@ func makeJWTWithAdmin(respon admin.Admin) (tokenStr *string, err error) {
 	return &token_str, nil
 }
 
-func makeJWT(respon  admin.Admin) (tokenStr *string, err error) {
+func makeJWT(respon admin.Admin) (tokenStr *string, err error) {
 	// Generate JWT
 	token := jwtgo.New(jwtgo.SigningMethodRS512)
 	in60d := time.Now().Add(time.Duration(GetTokenTimeoutTime()) * time.Second).Unix()
 	uid, _ := uuid.NewV4()
 	token.Claims = jwtgo.MapClaims{
 		"iss":      "hersjade.cn",     // who creates the token and signs it
-		"aud":      respon.ID,             // to whom the token is intended to be sent
+		"aud":      respon.ID,         // to whom the token is intended to be sent
 		"exp":      in60d,             // time when the token will expire (60 day from now)
 		"jti":      uid.String(),      // a unique identifier for the token
 		"iat":      time.Now().Unix(), // when the token was issued/created (now)
 		"nbf":      2,                 // time before which the token is not yet valid (2 minutes ago)
 		"sub":      "zeus_login",      // the subject/principal is whom the token is about
 		"scopes":   "api:access",      // token scope - not a standard claim
-		"usr_id":   respon.ID,             // token scope - not a standard claim
-		"usr_name": respon.LoginName,   // token scope - not a standard claim
+		"usr_id":   respon.ID,         // token scope - not a standard claim
+		"usr_name": respon.LoginName,  // token scope - not a standard claim
 	}
 
 	prik, err := GetPrivateKey()
@@ -243,13 +242,13 @@ func JWTCheck(ctx context.Context, token string, scheme *security.JWTScheme) (co
 
 }
 
-func GetUserIDByToken(t string) (usrID int64, err error) {
+func GetUserIDByToken(t string) (usrID uint64, err error) {
 	u_id, err := GetUserIDByJWT(t)
 	if err != nil {
-		err = mallitem.MakeUnauthorized(err)
+		err = admin.MakeUnauthorized(err)
 		return
 	}
-	usrID, err = strconv.ParseInt(*u_id, 10, 64)
+	usrID, err = strconv.ParseUint(*u_id, 10, 64)
 	if err != nil {
 		return
 	}

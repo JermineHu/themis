@@ -121,7 +121,7 @@ var AdminResult = ResultType("application/vnd.admin_result+json", func() {
 		Field(2, "id")
 		Field(3, "password")
 		Field(4, "salt")
-		Field(5, "name")
+		Field(5, "login_name")
 		Field(6, "created_at")
 		Field(7, "created_by")
 		//Field(8, "user_type")
@@ -132,7 +132,7 @@ var AdminResult = ResultType("application/vnd.admin_result+json", func() {
 
 	View("default", func() {
 		Field(1, "id")
-		Field(2, "name")
+		Field(2, "login_name")
 		Field(3, "created_at")
 		Field(4, "created_by")
 		//Field(6, "user_type")
@@ -142,7 +142,7 @@ var AdminResult = ResultType("application/vnd.admin_result+json", func() {
 
 	View("tiny", func() {
 		Field(1, "id")
-		Field(2, "name")
+		Field(2, "login_name")
 		Field(3, "created_at")
 		Field(4, "created_by")
 		//Field(5, "user_type")
@@ -155,7 +155,7 @@ var AdminResult = ResultType("application/vnd.admin_result+json", func() {
 		Field(1, "id")
 		Field(2, "password")
 		Field(3, "salt")
-		Field(4, "name")
+		Field(4, "login_name")
 		Field(5, "created_at")
 		Field(6, "created_by")
 		//Field(8, "user_type")
@@ -185,6 +185,8 @@ var res_admin = Service("admin", func() {
 	Error("InvalidAccountNotFound", String, "用户不存在，请重试！")
 	Error("InvalidAccountOrPassword", String, "用户名或密码错误！")
 	Error("AuthorizedFailure", String, "授权失败！")
+	Error("invalid-scopes", String, "令牌授权范围错误！")
+	Error("NotFound", String, "未查询到数据！")
 
 	GRPC(func() {
 		Response("Unauthorized", CodeUnauthenticated)
@@ -267,7 +269,7 @@ var res_admin = Service("admin", func() {
 			})
 			Field(4, "order_by", String, "排序字段", func() {
 				Example("id")
-				Default("order_num")
+				Default("id")
 				//Meta("rpc:tag", "4")
 			})
 			Field(5, "is_desc", Boolean, "是否为降序", func() {
@@ -281,7 +283,7 @@ var res_admin = Service("admin", func() {
 		Error("Unauthorized")
 		Error("BadRequest")
 		Error("NotFound")
-		Result(AdminResult)
+		Result(PageModelAdmin)
 		HTTP(func() {
 			POST("/list")
 			Response(StatusOK)

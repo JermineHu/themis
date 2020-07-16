@@ -6,7 +6,7 @@ import (
 
 var Config = Type("config", func() {
 	Description("业务配置数据 config")
-	Field(1, "id", Int, "ID")
+	Field(1, "id", UInt64, "ID")
 	Field(2, "key", String, "配置名称")
 	Field(3, "value", String, "值")
 	Field(4, "created_at", String, "创建时间")
@@ -15,7 +15,7 @@ var Config = Type("config", func() {
 	})
 })
 
-var ConfigResult = ResultType("application/vnd.config", func() {
+var ConfigResult = ResultType("application/vnd.config_result", func() {
 	Description("业务配置数据返回对象 config")
 	Attributes(func() {
 		Field(1, "key", String, "配置名称")

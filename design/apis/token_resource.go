@@ -50,7 +50,7 @@ var TokenResult = ResultType("application/vnd.token_result+json", func() {
 // BasicAuth defines a security scheme using basic authentication. The scheme protects the "signin"
 // action used to create JWTs.
 //var BasicAuth = BasicAuthSecurity("BasicAuth")
-var res_token = Service("token", func() {
+var res_token = Service("token_mgr", func() {
 	Description("Token模块")
 	Security(JWTAuth, func() { // Use JWTAuth to auth requests to this endpoint
 		Scope("api:access") // Enforce presence of "api" scope in JWTAuth claims.
@@ -68,6 +68,7 @@ var res_token = Service("token", func() {
 	Error("InvalidAccountNotFound", String, "用户不存在，请重试！")
 	Error("InvalidAccountOrPassword", String, "用户名或密码错误！")
 	Error("AuthorizedFailure", String, "授权失败！")
+	Error("NotFound", String, "未查询到数据！")
 
 	GRPC(func() {
 		Response("Unauthorized", CodeUnauthenticated)
@@ -88,7 +89,7 @@ var res_token = Service("token", func() {
 			})
 			Field(4, "order_by", String, "排序字段", func() {
 				Example("id")
-				Default("order_num")
+				Default("id")
 				//Meta("rpc:tag", "4")
 			})
 			Field(5, "is_desc", Boolean, "是否为降序", func() {
@@ -101,7 +102,7 @@ var res_token = Service("token", func() {
 		Error("Unauthorized")
 		Error("BadRequest")
 		Error("NotFound")
-		Result(TokenResult)
+		Result(PageModelToken)
 		HTTP(func() {
 			POST("/list")
 			Response(StatusOK, func() {

@@ -8,9 +8,11 @@ require (
 	github.com/getkin/kin-openapi v0.15.0 // indirect
 	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/golang/protobuf v1.4.2
+	github.com/google/uuid v1.1.1
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.0
 	github.com/guregu/null v4.0.0+incompatible
+	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/jinzhu/gorm v1.9.14
 	github.com/urfave/cli v1.22.4
 	goa.design/goa/v3 v3.2.0

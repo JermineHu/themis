@@ -27,7 +27,7 @@ var _ = API("themis", func() {
 	Server("themissvr", func() {
 		Description("calcsvr hosts the Calculator Service.")
 		// List the services hosted by this server.
-		Services("health", "admin", "config", "keyboard", "host", "notice", "rtsp", "token")
+		Services("health", "admin", "config", "keyboard", "host", "notice", "rtsp", "token_mgr")
 		Host("development", func() {
 			Description("Development hosts.")
 			// Transport specific URLs, supported schemes are:

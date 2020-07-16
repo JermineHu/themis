@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"github.com/JermineHu/themis/common"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 var (
@@ -70,25 +70,25 @@ func RollbackRDB(txn *gorm.DB) {
 }
 
 func SetUpRDBThemis(DB *gorm.DB) {
-	if err := DB.Set("gorm:table_options", "comment '订单表'").AutoMigrate(&Admin{}).Error; err != nil {
+	if err := DB.AutoMigrate(&Admin{}).Error; err != nil {
 		panic(err)
 	}
-	if err := DB.Set("gorm:table_options", "comment '礼品领取表'").AutoMigrate(&Config{}).Error; err != nil {
+	if err := DB.AutoMigrate(&Config{}).Error; err != nil {
 		panic(err)
 	}
-	if err := DB.Set("gorm:table_options", "comment '交易明细表'").AutoMigrate(&Host{}).Error; err != nil {
+	if err := DB.AutoMigrate(&Host{}).Error; err != nil {
 		panic(err)
 	}
-	if err := DB.Set("gorm:table_options", "comment '广告位'").AutoMigrate(&Keyboard{}).Error; err != nil {
+	if err := DB.AutoMigrate(&Keyboard{}).Error; err != nil {
 		panic(err)
 	}
-	if err := DB.Set("gorm:table_options", "comment '广告位'").AutoMigrate(&Notice{}).Error; err != nil {
-
-	}
-	if err := DB.Set("gorm:table_options", "comment '广告位'").AutoMigrate(&Rtsp{}).Error; err != nil {
+	if err := DB.AutoMigrate(&Notice{}).Error; err != nil {
 		panic(err)
 	}
-	if err := DB.Set("gorm:table_options", "comment '广告位'").AutoMigrate(&Token{}).Error; err != nil {
+	if err := DB.AutoMigrate(&Rtsp{}).Error; err != nil {
+		panic(err)
+	}
+	if err := DB.AutoMigrate(&Token{}).Error; err != nil {
 		panic(err)
 	}
 }

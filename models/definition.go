@@ -13,6 +13,7 @@ var (
 	_ = null.Bool{}
 )
 
+//go:generate goqueryset -in definition.go
 type Model struct {
 	ID        *string    `gorm:"primary_key;unique;not null;type:varchar(100);comment:'数据编号'" json:"id"`
 	CreatedAt time.Time  `json:"created_at" gorm:"comment:'数据创建时间'"`
@@ -21,12 +22,13 @@ type Model struct {
 }
 
 type CommonDBModel struct {
-	ID        uint64     `gorm:"primary_key;not null;AUTO_INCREMENT;comment:'数据编号'" json:"id"`
-	CreatedAt time.Time  `json:"created_at" gorm:"comment:'数据创建时间';index"`
-	UpdatedAt time.Time  `json:"updated_at" gorm:"comment:'数据更新时间'"`
-	DeletedAt *time.Time `sql:"index" json:"deleted_at" gorm:"comment:'数据删除时间'"`
+	ID        uint64     `gorm:"primary_key;not null;AUTO_INCREMENT" json:"id"`
+	CreatedAt time.Time  `json:"created_at" gorm:"index"`
+	UpdatedAt time.Time  `json:"updated_at"`
+	DeletedAt *time.Time `sql:"index" json:"deleted_at"`
 }
 
+// 字典配置
 //gen:qs
 type Config struct {
 	CommonDBModel
@@ -36,18 +38,20 @@ type Config struct {
 }
 
 // 管理员
+//gen:qs
 type Admin struct {
 	CommonDBModel
 	// 账户登陆名称
-	LoginName *string `gorm:"comment:'账户登陆名称'" json:"login_name"`
-	Password  *string `gorm:"comment:'用户密码'" json:"password"`
+	LoginName *string `json:"login_name" gorm:"unique"`
+	Password  *string ` json:"password"`
 	// 生成密码是使用的盐
-	Salt *string `gorm:"comment:'生成密码是使用的盐'" json:"salt"`
+	Salt *string `json:"salt"`
 	// 创建该账户的账户
-	CreatedBy *uint64 `gorm:"comment:'创建该账户的账户'" json:"created_by"`
+	CreatedBy *uint64 `json:"created_by"`
 }
 
 // 主机信息
+//gen:qs
 type Host struct {
 	CommonDBModel
 	// 地址
@@ -64,6 +68,7 @@ type Host struct {
 }
 
 // 键盘的事件
+//gen:qs
 type Keyboard struct {
 	CommonDBModel
 	// 主机ID
@@ -75,6 +80,7 @@ type Keyboard struct {
 }
 
 // 通知信息
+//gen:qs
 type Notice struct {
 	CommonDBModel
 	// 消息消息提醒内容
@@ -85,6 +91,7 @@ type Notice struct {
 }
 
 // RTSP的数据
+//gen:qs
 type Rtsp struct {
 	CommonDBModel
 	// 发布者
@@ -100,10 +107,11 @@ type Rtsp struct {
 }
 
 // 后台生成token
+//gen:qs
 type Token struct {
 	CommonDBModel
 	// Token数据
-	Token *string
+	Token *string `gorm:"unique;not null;type:varchar(100)"`
 	// 发布者
 	CreatorID *uint64
 	Creator   *Admin

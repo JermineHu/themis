@@ -74,6 +74,7 @@ var res_notice = Service("notice", func() {
 	Error("InvalidAccountNotFound", String, "用户不存在，请重试！")
 	Error("InvalidAccountOrPassword", String, "用户名或密码错误！")
 	Error("AuthorizedFailure", String, "授权失败！")
+	Error("NotFound", String, "未查询到数据！")
 
 	GRPC(func() {
 		Response("Unauthorized", CodeUnauthenticated)
@@ -94,7 +95,7 @@ var res_notice = Service("notice", func() {
 			})
 			Field(4, "order_by", String, "排序字段", func() {
 				Example("id")
-				Default("order_num")
+				Default("id")
 				//Meta("rpc:tag", "4")
 			})
 			Field(5, "is_desc", Boolean, "是否为降序", func() {
@@ -108,7 +109,7 @@ var res_notice = Service("notice", func() {
 		Error("Unauthorized")
 		Error("BadRequest")
 		Error("NotFound")
-		Result(NoticeResult)
+		Result(PageModelNotice)
 		HTTP(func() {
 			POST("/list")
 			Response(StatusOK, func() {
