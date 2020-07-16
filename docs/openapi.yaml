@@ -44,47 +44,6 @@ paths:
       schemes:
       - http
   /themis/v1/admin:
-    get:
-      tags:
-      - admin
-      summary: list admin
-      description: |-
-        列表数据；
-
-        **Required security scopes for jwt**:
-          * `api:access`
-      operationId: admin#list
-      parameters:
-      - name: Authorization
-        in: header
-        description: JWTAuth token used to perform authorization
-        required: false
-        type: string
-      - name: ListRequestBody
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/AdminListRequestBody'
-          required:
-          - offset_head
-          - offset_tail
-      responses:
-        "200":
-          description: OK response.
-          schema:
-            $ref: '#/definitions/AdminListResponseBody'
-        "204":
-          description: No Content response.
-          schema:
-            $ref: '#/definitions/AdminListNotFoundResponseBody'
-        "401":
-          description: Unauthorized response.
-          schema:
-            $ref: '#/definitions/AdminListUnauthorizedResponseBody'
-      schemes:
-      - http
-      security:
-      - jwt_header_Authorization: []
     post:
       tags:
       - admin
@@ -309,47 +268,6 @@ paths:
       security:
       - jwt_header_Authorization: []
   /themis/v1/config:
-    get:
-      tags:
-      - config
-      summary: list config
-      description: |-
-        配置列表；
-
-        **Required security scopes for jwt**:
-          * `api:access`
-      operationId: config#list
-      parameters:
-      - name: Authorization
-        in: header
-        description: JWTAuth token used to perform authorization
-        required: false
-        type: string
-      - name: ListRequestBody
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/ConfigListRequestBody'
-          required:
-          - offset_head
-          - offset_tail
-      responses:
-        "200":
-          description: OK response.
-          schema:
-            $ref: '#/definitions/ConfigListResponseBody'
-        "204":
-          description: No Content response.
-          schema:
-            $ref: '#/definitions/ConfigListNotFoundResponseBody'
-        "401":
-          description: Unauthorized response.
-          schema:
-            $ref: '#/definitions/ConfigListUnauthorizedResponseBody'
-      schemes:
-      - http
-      security:
-      - jwt_header_Authorization: []
     post:
       tags:
       - config
@@ -510,47 +428,6 @@ paths:
       security:
       - jwt_header_Authorization: []
   /themis/v1/host:
-    get:
-      tags:
-      - host
-      summary: list host
-      description: |-
-        主机列表
-
-        **Required security scopes for jwt**:
-          * `api:access`
-      operationId: host#list
-      parameters:
-      - name: Authorization
-        in: header
-        description: JWTAuth token used to perform authorization
-        required: false
-        type: string
-      - name: ListRequestBody
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/HostListRequestBody'
-          required:
-          - offset_head
-          - offset_tail
-      responses:
-        "200":
-          description: OK response.
-          schema:
-            $ref: '#/definitions/HostListResponseBody'
-        "204":
-          description: No Content response.
-          schema:
-            $ref: '#/definitions/HostListNotFoundResponseBody'
-        "401":
-          description: Unauthorized response.
-          schema:
-            $ref: '#/definitions/HostListUnauthorizedResponseBody'
-      schemes:
-      - http
-      security:
-      - jwt_header_Authorization: []
     post:
       tags:
       - host
@@ -793,7 +670,7 @@ paths:
       security:
       - jwt_header_Authorization: []
   /themis/v1/keyboard/logs:
-    get:
+    post:
       tags:
       - keyboard
       summary: list keyboard
@@ -835,47 +712,6 @@ paths:
       security:
       - jwt_header_Authorization: []
   /themis/v1/notice:
-    get:
-      tags:
-      - notice
-      summary: list notice
-      description: |-
-        消息通知的列表
-
-        **Required security scopes for jwt**:
-          * `api:access`
-      operationId: notice#list
-      parameters:
-      - name: Authorization
-        in: header
-        description: JWTAuth token used to perform authorization
-        required: false
-        type: string
-      - name: ListRequestBody
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/NoticeListRequestBody'
-          required:
-          - offset_head
-          - offset_tail
-      responses:
-        "200":
-          description: OK response.
-          schema:
-            $ref: '#/definitions/NoticeListResponseBody'
-        "204":
-          description: No Content response.
-          schema:
-            $ref: '#/definitions/NoticeListNotFoundResponseBody'
-        "401":
-          description: Unauthorized response.
-          schema:
-            $ref: '#/definitions/NoticeListUnauthorizedResponseBody'
-      schemes:
-      - http
-      security:
-      - jwt_header_Authorization: []
     post:
       tags:
       - notice
@@ -1035,47 +871,6 @@ paths:
       security:
       - jwt_header_Authorization: []
   /themis/v1/rtsp:
-    get:
-      tags:
-      - rtsp
-      summary: list rtsp
-      description: |-
-        流的数据列表；
-
-        **Required security scopes for jwt**:
-          * `api:access`
-      operationId: rtsp#list
-      parameters:
-      - name: Authorization
-        in: header
-        description: JWTAuth token used to perform authorization
-        required: false
-        type: string
-      - name: ListRequestBody
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/RtspListRequestBody'
-          required:
-          - offset_head
-          - offset_tail
-      responses:
-        "200":
-          description: OK response.
-          schema:
-            $ref: '#/definitions/RtspListResponseBody'
-        "204":
-          description: No Content response.
-          schema:
-            $ref: '#/definitions/RtspListNotFoundResponseBody'
-        "401":
-          description: Unauthorized response.
-          schema:
-            $ref: '#/definitions/RtspListUnauthorizedResponseBody'
-      schemes:
-      - http
-      security:
-      - jwt_header_Authorization: []
     post:
       tags:
       - rtsp
@@ -1235,47 +1030,6 @@ paths:
       security:
       - jwt_header_Authorization: []
   /themis/v1/token:
-    get:
-      tags:
-      - token
-      summary: list token
-      description: |-
-        token列表
-
-        **Required security scopes for jwt**:
-          * `api:access`
-      operationId: token#list
-      parameters:
-      - name: Authorization
-        in: header
-        description: JWTAuth token used to perform authorization
-        required: false
-        type: string
-      - name: ListRequestBody
-        in: body
-        required: true
-        schema:
-          $ref: '#/definitions/TokenListRequestBody'
-          required:
-          - offset_head
-          - offset_tail
-      responses:
-        "200":
-          description: OK response.
-          schema:
-            $ref: '#/definitions/TokenListResponseBody'
-        "204":
-          description: No Content response.
-          schema:
-            $ref: '#/definitions/TokenListNotFoundResponseBody'
-        "401":
-          description: Unauthorized response.
-          schema:
-            $ref: '#/definitions/TokenListUnauthorizedResponseBody'
-      schemes:
-      - http
-      security:
-      - jwt_header_Authorization: []
     post:
       tags:
       - token
@@ -1365,7 +1119,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+        example: 300c169a-0c89-4346-a940-b04f3fff4a5a
         format: uuid
       id:
         type: integer
@@ -1382,7 +1136,7 @@ definitions:
     description: CreateNot FoundResponseBody result type (default view)
     example:
       created_at: Reiciendis consequatur.
-      created_by: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+      created_by: 300c169a-0c89-4346-a940-b04f3fff4a5a
       id: 14783646722456861766
       name: Sed nemo voluptatem.
       token: Dignissimos in.
@@ -1397,7 +1151,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+        example: 300c169a-0c89-4346-a940-b04f3fff4a5a
         format: uuid
       id:
         type: integer
@@ -1414,7 +1168,7 @@ definitions:
     description: CreateOKResponseBody result type (default view)
     example:
       created_at: Tempora vel veniam consectetur iste.
-      created_by: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+      created_by: 300c169a-0c89-4346-a940-b04f3fff4a5a
       id: 7796111484910678409
       name: Laudantium autem ut ex excepturi esse et.
       token: Sint temporibus animi iusto error.
@@ -1429,7 +1183,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+        example: 300c169a-0c89-4346-a940-b04f3fff4a5a
         format: uuid
       id:
         type: integer
@@ -1447,18 +1201,18 @@ definitions:
       salt:
         type: string
         description: 生成密码是使用的盐
-        example: OpGG3hlHc3OJQ
+        example: 93S1zOWwEws7v
       updated_at:
         type: string
         description: 更新时间
         example: Voluptatem deleniti totam repellendus quod ea.
     example:
       created_at: Est aut quisquam quidem at sint.
-      created_by: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+      created_by: 300c169a-0c89-4346-a940-b04f3fff4a5a
       id: 2207106924050973282
       login_name: ZhangSan
       password: "123456"
-      salt: OpGG3hlHc3OJQ
+      salt: 93S1zOWwEws7v
       updated_at: Numquam tenetur soluta distinctio natus quis pariatur.
   AdminCreateUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
@@ -1622,11 +1376,11 @@ definitions:
       order_by: id
       where:
         created_at: Voluptatibus enim.
-        created_by: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+        created_by: 300c169a-0c89-4346-a940-b04f3fff4a5a
         id: 15169794783515571394
         login_name: ZhangSan
         password: "123456"
-        salt: OpGG3hlHc3OJQ
+        salt: 93S1zOWwEws7v
         token: Ut autem aut vel ad totam magnam.
         updated_at: Rem aliquam natus distinctio magnam.
     required:
@@ -1643,7 +1397,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+        example: 300c169a-0c89-4346-a940-b04f3fff4a5a
         format: uuid
       id:
         type: integer
@@ -1660,7 +1414,7 @@ definitions:
     description: ListResponseBody result type (default view)
     example:
       created_at: Ipsum rem ut.
-      created_by: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+      created_by: 300c169a-0c89-4346-a940-b04f3fff4a5a
       id: 3523389835423400613
       name: Eum vero veritatis delectus dolor.
       token: Totam quibusdam sint dolorem at rerum tempora.
@@ -1809,7 +1563,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+        example: 300c169a-0c89-4346-a940-b04f3fff4a5a
         format: uuid
       id:
         type: integer
@@ -1826,7 +1580,7 @@ definitions:
     description: LoginNot FoundResponseBody result type (tiny view) (default view)
     example:
       created_at: Dolor enim quibusdam nostrum vero aperiam.
-      created_by: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+      created_by: 300c169a-0c89-4346-a940-b04f3fff4a5a
       id: 2559730728002774484
       name: Qui eius aut dolorem.
       token: Nulla voluptas praesentium nobis.
@@ -1841,7 +1595,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+        example: 300c169a-0c89-4346-a940-b04f3fff4a5a
         format: uuid
       id:
         type: integer
@@ -1854,7 +1608,7 @@ definitions:
     description: LoginOKResponseBody result type (tiny view) (default view)
     example:
       created_at: Qui quos rerum laboriosam deleniti perferendis quis.
-      created_by: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+      created_by: 300c169a-0c89-4346-a940-b04f3fff4a5a
       id: 1273412431366395822
       name: Animi natus consequatur rerum est recusandae minus.
   AdminLoginRequestBody:
@@ -1886,7 +1640,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+        example: 300c169a-0c89-4346-a940-b04f3fff4a5a
         format: uuid
       id:
         type: integer
@@ -1904,7 +1658,7 @@ definitions:
       salt:
         type: string
         description: 生成密码是使用的盐
-        example: OpGG3hlHc3OJQ
+        example: 93S1zOWwEws7v
       token:
         type: string
         description: JWTAuth token used to perform authorization
@@ -1915,11 +1669,11 @@ definitions:
         example: Iste ullam tempore repellendus dolorem esse ut.
     example:
       created_at: Quasi a ut temporibus in.
-      created_by: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+      created_by: 300c169a-0c89-4346-a940-b04f3fff4a5a
       id: 7027277504675766013
       login_name: ZhangSan
       password: "123456"
-      salt: OpGG3hlHc3OJQ
+      salt: 93S1zOWwEws7v
       token: Quos est.
       updated_at: Aspernatur distinctio aliquid velit laudantium.
   AdminShowNotFoundResponseBody:
@@ -1933,7 +1687,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+        example: 300c169a-0c89-4346-a940-b04f3fff4a5a
         format: uuid
       id:
         type: integer
@@ -1950,7 +1704,7 @@ definitions:
     description: ShowNot FoundResponseBody result type (default view)
     example:
       created_at: Debitis culpa ea qui.
-      created_by: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+      created_by: 300c169a-0c89-4346-a940-b04f3fff4a5a
       id: 484928038759459851
       name: Id inventore voluptatem assumenda dicta.
       token: Aut dicta et ut ea optio.
@@ -1965,7 +1719,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+        example: 300c169a-0c89-4346-a940-b04f3fff4a5a
         format: uuid
       id:
         type: integer
@@ -1982,7 +1736,7 @@ definitions:
     description: ShowOKResponseBody result type (default view)
     example:
       created_at: Ipsa sed.
-      created_by: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+      created_by: 300c169a-0c89-4346-a940-b04f3fff4a5a
       id: 17181891300144391030
       name: Deleniti nostrum molestias deleniti aperiam sint.
       token: Tenetur amet corporis.
@@ -2040,7 +1794,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+        example: 300c169a-0c89-4346-a940-b04f3fff4a5a
         format: uuid
       id:
         type: integer
@@ -2057,7 +1811,7 @@ definitions:
     description: UpdateNot FoundResponseBody result type (default view)
     example:
       created_at: Eligendi fugiat iste voluptates quo.
-      created_by: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+      created_by: 300c169a-0c89-4346-a940-b04f3fff4a5a
       id: 4859101194338104214
       name: Sed alias quisquam possimus repellendus recusandae enim.
       token: Nemo velit dolorum totam quia pariatur earum.
@@ -2072,7 +1826,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+        example: 300c169a-0c89-4346-a940-b04f3fff4a5a
         format: uuid
       id:
         type: integer
@@ -2089,7 +1843,7 @@ definitions:
     description: UpdateOKResponseBody result type (default view)
     example:
       created_at: Voluptatem natus eveniet.
-      created_by: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+      created_by: 300c169a-0c89-4346-a940-b04f3fff4a5a
       id: 4186579453353851351
       name: Quisquam est et.
       token: Nesciunt dolore.
@@ -2104,7 +1858,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+        example: 300c169a-0c89-4346-a940-b04f3fff4a5a
         format: uuid
       login_name:
         type: string
@@ -2117,17 +1871,17 @@ definitions:
       salt:
         type: string
         description: 生成密码是使用的盐
-        example: OpGG3hlHc3OJQ
+        example: 93S1zOWwEws7v
       updated_at:
         type: string
         description: 更新时间
         example: Dolore expedita accusamus quasi et dolores nemo.
     example:
       created_at: Culpa voluptates debitis ipsam sunt soluta.
-      created_by: 2d465b30-13ca-4c63-9190-bd7560a37fc9
+      created_by: 300c169a-0c89-4346-a940-b04f3fff4a5a
       login_name: ZhangSan
       password: "123456"
-      salt: OpGG3hlHc3OJQ
+      salt: 93S1zOWwEws7v
       updated_at: Excepturi ad amet magnam.
   AdminUpdateUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'

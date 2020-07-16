@@ -108,7 +108,7 @@ var res_keyboard = Service("keyboard", func() {
 		Error("NotFound")
 		Result(KeyboardResult)
 		HTTP(func() {
-			GET("/logs")
+			POST("/logs")
 			Response(StatusOK, func() {
 
 			})

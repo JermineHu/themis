@@ -116,7 +116,7 @@ var res_host = Service("host", func() {
 		Error("NotFound")
 		Result(HostResult)
 		HTTP(func() {
-			GET("")
+			POST("")
 			Response(StatusOK, func() {
 
 			})

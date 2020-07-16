@@ -20,9 +20,9 @@ func initDB() {
 		models.SetUpRDBActivity(rdb_activity) // 升级数据库
 	}
 
-	rdb_zeus := models.GetRDBCrius(os.Getenv(common.DB_TYPE), os.Getenv(common.DB_CON_STR)) // 根据数据库类类型和字符串初始化链接操作
-	if strings.EqualFold(os.Getenv(common.DB_IS_UPGRADE), "true") {                         //数据库升级的开关
-		models.SetUpRDBZeus(rdb_zeus) // 升级数据库
+	rdb_zeus := models.GetRDBThemis(os.Getenv(common.DB_TYPE), os.Getenv(common.DB_CON_STR)) // 根据数据库类类型和字符串初始化链接操作
+	if strings.EqualFold(os.Getenv(common.DB_IS_UPGRADE), "true") {                          //数据库升级的开关
+		models.SetUpRDBThemis(rdb_zeus) // 升级数据库
 	}
 
 	rdb_auctionbid := models.GetRDBAuctionbid(os.Getenv(common.DB_TYPE), os.Getenv(common.DB_CON_STR)) // 根据数据库类类型和字符串初始化链接操作

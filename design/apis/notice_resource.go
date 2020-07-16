@@ -110,7 +110,7 @@ var res_notice = Service("notice", func() {
 		Error("NotFound")
 		Result(NoticeResult)
 		HTTP(func() {
-			GET("")
+			POST("")
 			Response(StatusOK, func() {
 
 			})

@@ -103,7 +103,7 @@ var res_token = Service("token", func() {
 		Error("NotFound")
 		Result(TokenResult)
 		HTTP(func() {
-			GET("")
+			POST("")
 			Response(StatusOK, func() {
 
 			})

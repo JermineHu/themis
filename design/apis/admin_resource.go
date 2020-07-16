@@ -283,7 +283,7 @@ var res_admin = Service("admin", func() {
 		Error("NotFound")
 		Result(AdminResult)
 		HTTP(func() {
-			GET("")
+			POST("")
 			Response(StatusOK)
 			Response("Unauthorized", StatusUnauthorized)
 			Response("NotFound", StatusNoContent)

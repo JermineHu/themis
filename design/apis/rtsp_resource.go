@@ -144,7 +144,7 @@ var res_rtsp = Service("rtsp", func() {
 		Error("NotFound")
 		Result(RtspResult)
 		HTTP(func() {
-			GET("")
+			POST("")
 			Response(StatusOK, func() {
 			})
 			Response("Unauthorized", StatusUnauthorized)

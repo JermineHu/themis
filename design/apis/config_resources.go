@@ -88,7 +88,7 @@ var res_config = Service("config", func() {
 			})
 		})
 		HTTP(func() {
-			GET("")
+			POST("")
 			Response(StatusOK, func() {
 			})
 			Response("Unauthorized", StatusUnauthorized)
