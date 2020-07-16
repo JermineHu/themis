@@ -88,7 +88,7 @@ var res_config = Service("config", func() {
 			})
 		})
 		HTTP(func() {
-			POST("")
+			POST("/list")
 			Response(StatusOK, func() {
 			})
 			Response("Unauthorized", StatusUnauthorized)
