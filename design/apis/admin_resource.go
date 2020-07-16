@@ -9,7 +9,6 @@ package apis
 
 import (
 	. "goa.design/goa/v3/dsl"
-	"goa.design/goa/v3/expr"
 )
 
 var Admin = Type("Admin", func() {
@@ -21,23 +20,23 @@ var Admin = Type("Admin", func() {
 		Example("ZhangSan")
 		//Meta("rpc:tag", "2")
 	})
-	Field(3, "first_name", String, "用户名", func() {
-		Example("ZhangSan")
-		//Meta("rpc:tag", "2")
-	})
-	Field(4, "second_name", String, "用户性", func() {
-		Example("ZhangSan")
-		//Meta("rpc:tag", "2")
-	})
-	Field(5, "description", String, "用户描述", func() {
-		Example("ZhangSan")
-		//Meta("rpc:tag", "2")
-	})
-
-	Field(6, "mobile", String, "手机号码", func() {
-		Example("13811123456")
-		//Meta("rpc:tag", "3")
-	})
+	//Field(3, "first_name", String, "用户名", func() {
+	//	Example("ZhangSan")
+	//	//Meta("rpc:tag", "2")
+	//})
+	//Field(4, "second_name", String, "用户姓", func() {
+	//	Example("ZhangSan")
+	//	//Meta("rpc:tag", "2")
+	//})
+	//Field(5, "description", String, "用户描述", func() {
+	//	Example("ZhangSan")
+	//	//Meta("rpc:tag", "2")
+	//})
+	//
+	//Field(6, "mobile", String, "手机号码", func() {
+	//	Example("13811123456")
+	//	//Meta("rpc:tag", "3")
+	//})
 	Field(7, "password", String, "用户密码", func() {
 		Example("123456")
 		//Meta("rpc:tag", "4")
@@ -47,23 +46,19 @@ var Admin = Type("Admin", func() {
 		Example(RandomString(13))
 		//Meta("rpc:tag", "5")
 	})
+	//
+	//Field(9, "user_type", func() {
+	//	Enum("USER_TYPE_NULL", "USER_TYPE_NORMAL", "USER_TYPE_ADMINISTRATOR")
+	//	Example("USER_TYPE_NORMAL")
+	//	//Meta("rpc:tag", "6")
+	//})
+	//
+	//Field(10, "user_status", func() {
+	//	Enum("USER_STATUS_NULL", "USER_STATUS_ACTIVATED", "USER_STATUS_DEACTIVATED", "USER_STATUS_CLOSED")
+	//	Example("USER_STATUS_ACTIVATED")
+	//	//Meta("rpc:tag", "7")
+	//})
 
-	Field(9, "user_type", func() {
-		Enum("USER_TYPE_NULL", "USER_TYPE_NORMAL", "USER_TYPE_ADMINISTRATOR")
-		Example("USER_TYPE_NORMAL")
-		//Meta("rpc:tag", "6")
-	})
-
-	Field(10, "user_status", func() {
-		Enum("USER_STATUS_NULL", "USER_STATUS_ACTIVATED", "USER_STATUS_DEACTIVATED", "USER_STATUS_CLOSED")
-		Example("USER_STATUS_ACTIVATED")
-		//Meta("rpc:tag", "7")
-	})
-
-	Field(11, "created_at", String, "创建时间", func() {
-		Format(FormatDateTime)
-		//Meta("rpc:tag", "8")
-	})
 	Field(12, "created_by", String, "创建该账户的账户", func() {
 		Format(FormatUUID)
 		Example(NewUUIDStr())
@@ -72,9 +67,9 @@ var Admin = Type("Admin", func() {
 	TokenField(13, "token", String, "JWTAuth token used to perform authorization", func() {
 		//Meta("rpc:tag", "10")
 	})
-	Field(14, "sex", String, "用户性别")
-	Field(15, "nickname", String, "用户昵称")
-	Field(16, "avatar_url", String, "头像")
+	//Field(14, "sex", String, "用户性别")
+	//Field(15, "nickname", String, "用户昵称")
+	//Field(16, "avatar_url", String, "头像")
 	Field(17, "created_at", String, "创建时间")
 	Field(18, "updated_at", String, "更新时间")
 	//Required("id", "password", "salt", "name", "created_at", "created_by", "user_type", "user_status", "token")
@@ -91,9 +86,9 @@ var AdminLogin = ResultType("application/vnd.admin.login+json", func() {
 	})
 
 	View("default", func() {
-		Attribute("login_name")
-		Attribute("password")
-		Attribute("token")
+		Field(1, "password")
+		Field(2, "login_name")
+		Field(3, "token")
 	})
 	//Required("password", "mobile")
 })
@@ -123,21 +118,14 @@ var AdminResult = ResultType("application/vnd.admin_result+json", func() {
 	Description("管理员模型")
 	Reference(Admin)
 	Attributes(func() {
-		Attribute("created_by_user", Admin, "创建该账户的账户", func() {
-			Example("AccountType", func() {
-				Description("The AdminResult Base")
-				Value(Admin.Example(expr.NewRandom("gdfg")))
-			})
-			Meta("rpc:tag", "12")
-		})
 		Field(2, "id")
 		Field(3, "password")
 		Field(4, "salt")
 		Field(5, "name")
 		Field(6, "created_at")
 		Field(7, "created_by")
-		Field(8, "user_type")
-		Field(9, "user_status")
+		//Field(8, "user_type")
+		//Field(9, "user_status")
 		Field(10, "token")
 		//Required("id", "password", "salt", "name", "created_at", "created_by", "user_type", "user_status")
 	})
@@ -147,9 +135,8 @@ var AdminResult = ResultType("application/vnd.admin_result+json", func() {
 		Field(2, "name")
 		Field(3, "created_at")
 		Field(4, "created_by")
-		Field(6, "user_type")
-		Field(7, "user_status")
-		Field(8, "created_by_user")
+		//Field(6, "user_type")
+		//Field(7, "user_status")
 		Field(9, "token")
 	})
 
@@ -158,8 +145,8 @@ var AdminResult = ResultType("application/vnd.admin_result+json", func() {
 		Field(2, "name")
 		Field(3, "created_at")
 		Field(4, "created_by")
-		Field(5, "user_type")
-		Field(6, "user_status")
+		//Field(5, "user_type")
+		//Field(6, "user_status")
 		Field(7, "token")
 
 	})
@@ -171,9 +158,8 @@ var AdminResult = ResultType("application/vnd.admin_result+json", func() {
 		Field(4, "name")
 		Field(5, "created_at")
 		Field(6, "created_by")
-		Field(8, "user_type")
-		Field(9, "user_status")
-		Field(10, "created_by_user")
+		//Field(8, "user_type")
+		//Field(9, "user_status")
 		Field(11, "token")
 	})
 
@@ -188,7 +174,6 @@ var res_admin = Service("admin", func() {
 	})
 	HTTP(func() {
 		Path("/themis/v1/admin")
-		Response("Unauthorized", StatusUnauthorized)
 		Headers(func() {
 			//Header("Authorization", String, "JWTAuth token", func() {
 			//})

@@ -69,7 +69,6 @@ var res_host = Service("host", func() {
 	})
 	HTTP(func() {
 		Path("/themis/v1/host")
-		Response("Unauthorized", StatusUnauthorized)
 		Headers(func() {
 			//Header("Authorization", String, "JWTAuth token", func() {
 			//})

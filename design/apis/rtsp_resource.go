@@ -97,7 +97,6 @@ var res_rtsp = Service("rtsp", func() {
 	})
 	HTTP(func() {
 		Path("/themis/v1/rtsp")
-		Response("Unauthorized", StatusUnauthorized)
 		Headers(func() {
 			//Header("Authorization", String, "JWTAuth token", func() {
 			//})

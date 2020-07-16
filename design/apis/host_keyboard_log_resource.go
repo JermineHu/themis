@@ -61,7 +61,6 @@ var res_keyboard = Service("keyboard", func() {
 	})
 	HTTP(func() {
 		Path("/themis/v1/keyboard")
-		Response("Unauthorized", StatusUnauthorized)
 		Headers(func() {
 			//Header("Authorization", String, "JWTAuth token", func() {
 			//})

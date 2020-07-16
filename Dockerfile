@@ -2,7 +2,7 @@ FROM  golang:alpine as go
 MAINTAINER Jermine.hu@qq.com
 ARG SHOW_SWAGGER=false
 ENV TIME_ZONE Asia/Shanghai
-ENV APP_PACKAGE hersjade.cn/zeus
+ENV APP_PACKAGE github.com/JermineHu/themis
 ENV APP_SVC ${APP_PACKAGE}/svc
 ENV APP_HOME /go/src/${APP_PACKAGE}
 ENV APP_NAME zeus
@@ -19,7 +19,7 @@ RUN  flags="-X '${APP_SVC}.GoVersion=$(go version)' -X '${APP_SVC}.BuildTime=$(d
      go env -w GOPROXY=https://goproxy.cn,direct && go version \
      && go get -u goa.design/goa/v3/...@v3.1.3  && go get -u github.com/golang/protobuf/protoc-gen-go \
      && go get -u github.com/golang/protobuf/protoc-gen-go && make generate && \
-     CGO_ENABLED=0 GOOS=linux go build -ldflags "$flags"  -a -installsuffix cgo -o $APP_NAME hersjade.cn/zeus/svc/cmd/zeussvr
+     CGO_ENABLED=0 GOOS=linux go build -ldflags "$flags"  -a -installsuffix cgo -o $APP_NAME github.com/JermineHu/themis/svc/cmd/zeussvr
 # strip and compress the binary
 RUN strip --strip-unneeded $APP_NAME
 RUN upx -9 $APP_NAME
@@ -28,7 +28,7 @@ RUN if [ "$SHOW_SWAGGER" != "true" ] ; then rm -rf $APP_HOME/svc/gen/http/* ; ec
 FROM scratch
 MAINTAINER Jermine.hu@qq.com
 ENV TIME_ZONE Asia/Shanghai
-ENV APP_HOME /go/src/hersjade.cn/zeus
+ENV APP_HOME /go/src/github.com/JermineHu/themis
 WORKDIR /bin
 COPY --from=go $APP_HOME/zeus /bin/
 #COPY --from=go $APP_HOME/.gitignore $APP_HOME/svc/gen/http/* /bin/

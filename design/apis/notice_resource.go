@@ -11,7 +11,7 @@ import (
 	. "goa.design/goa/v3/dsl"
 )
 
-var Notice = Type("NoticeType", func() {
+var Notice = Type("Notice", func() {
 	TokenField(1, "token", String, "JWTAuth token used to perform authorization", func() {
 		//Meta("rpc:tag", "10")
 	})
@@ -63,7 +63,6 @@ var res_notice = Service("notice", func() {
 	})
 	HTTP(func() {
 		Path("/themis/v1/notice")
-		Response("Unauthorized", StatusUnauthorized)
 		Headers(func() {
 			//Header("Authorization", String, "JWTAuth token", func() {
 			//})

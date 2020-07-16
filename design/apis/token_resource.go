@@ -57,7 +57,6 @@ var res_token = Service("token", func() {
 	})
 	HTTP(func() {
 		Path("/themis/v1/token")
-		Response("Unauthorized", StatusUnauthorized)
 		Headers(func() {
 			//Header("Authorization", String, "JWTAuth token", func() {
 			//})
@@ -123,6 +122,8 @@ var res_token = Service("token", func() {
 		Payload(func() {
 			TokenField(1, "token", String, "JWTAuth token used to perform authorization", func() { //Meta("rpc:tag", "10")})
 			})
+			Field(2, "name", String, "名称")
+			Field(3, "description", String, "描述")
 		})
 		Error("Unauthorized")
 		Result(TokenResult)
