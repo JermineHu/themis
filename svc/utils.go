@@ -48,14 +48,14 @@ var (
 )
 
 // 根据JWT获取用户
-func GetUserIDByJWT(tokenStr string) (uID *string, er error) {
+func GetUserIDByJWT(tokenStr string) (uID *uint64, er error) {
 
 	claims, er := GetClaimsByTokenStr(tokenStr)
 	if er != nil {
 		return nil, er
 	}
 	// Use the claims to authorize
-	usrID := (*claims)["usr_id"].(string)
+	usrID := uint64((*claims)["usr_id"].(float64))
 	uID = &usrID
 	return
 }
@@ -141,7 +141,7 @@ func makeJWTWithAdmin(respon admin.Admin) (tokenStr *string, err error) {
 		"jti":      uid.String(),      // a unique identifier for the token
 		"iat":      time.Now().Unix(), // when the token was issued/created (now)
 		"nbf":      2,                 // time before which the token is not yet valid (2 minutes ago)
-		"sub":      "zeus_login",      // the subject/principal is whom the token is about
+		"sub":      "themis_login",    // the subject/principal is whom the token is about
 		"scopes":   "api:access",      // token scope - not a standard claim
 		"usr_id":   respon.ID,         // token scope - not a standard claim
 		"usr_name": respon.LoginName,  // token scope - not a standard claim
@@ -171,7 +171,7 @@ func makeJWT(respon admin.Admin) (tokenStr *string, err error) {
 		"jti":      uid.String(),      // a unique identifier for the token
 		"iat":      time.Now().Unix(), // when the token was issued/created (now)
 		"nbf":      2,                 // time before which the token is not yet valid (2 minutes ago)
-		"sub":      "zeus_login",      // the subject/principal is whom the token is about
+		"sub":      "themis_login",    // the subject/principal is whom the token is about
 		"scopes":   "api:access",      // token scope - not a standard claim
 		"usr_id":   respon.ID,         // token scope - not a standard claim
 		"usr_name": respon.LoginName,  // token scope - not a standard claim
@@ -239,19 +239,5 @@ func JWTCheck(ctx context.Context, token string, scheme *security.JWTScheme) (co
 	//}
 	//return ctx, nil
 	return ctx, nil
-
-}
-
-func GetUserIDByToken(t string) (usrID uint64, err error) {
-	u_id, err := GetUserIDByJWT(t)
-	if err != nil {
-		err = admin.MakeUnauthorized(err)
-		return
-	}
-	usrID, err = strconv.ParseUint(*u_id, 10, 64)
-	if err != nil {
-		return
-	}
-	return
 
 }

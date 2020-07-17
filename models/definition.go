@@ -33,7 +33,7 @@ type CommonDBModel struct {
 type Config struct {
 	CommonDBModel
 	// 配置名称
-	Key   null.String     `json:"key" gorm:"type:varchar(50);unique_index;not null;"`
+	Key   *string         `json:"key" gorm:"type:varchar(50);unique_index;not null;"`
 	Value json.RawMessage `json:"value" gorm:"type:json"`
 }
 

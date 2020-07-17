@@ -33,7 +33,7 @@ depend:
 clean:
 	@rm -rf gen
 	@rm -f themis
-	@docker rm -f $(shell docker ps -a --filter status=exited -q);docker rmi -f $(shell docker images --filter dangling=true -q);docker rmi -f $(shell docker images --filter='reference=*/cft-guma/*' -q)
+	@docker rm -f $(shell docker ps -a --filter status=exited -q);docker rmi -f $(shell docker images --filter dangling=true -q);docker rmi -f $(shell docker images --filter='reference=*/vdo/*' -q)
 
 generate:
 	@rm -rf svc/{gen,tmp}
@@ -43,21 +43,21 @@ generate:
 	@goa example github.com/JermineHu/themis/design/apis -o svc/tmp
 	@mv svc/gen/http/openapi.* docs/
 docker:
-	@docker build --build-arg SHOW_SWAGGER=true -t  registry.cn-hangzhou.aliyuncs.com/cft-guma/themis:${Version} .
+	@docker build --build-arg SHOW_SWAGGER=true -t  registry.cn-hangzhou.aliyuncs.com/vdo/themis:${Version} .
 push:
-	@docker push registry.cn-hangzhou.aliyuncs.com/cft-guma/themis:${Version}
+	@docker push registry.cn-hangzhou.aliyuncs.com/vdo/themis:${Version}
 
 docker-release:
-	@docker build --build-arg SHOW_SWAGGER=fasle -t registry.cn-hangzhou.aliyuncs.com/cft-guma/themis:release-${Version} .
+	@docker build --build-arg SHOW_SWAGGER=fasle -t registry.cn-hangzhou.aliyuncs.com/vdo/themis:release-${Version} .
 
 img-release:
-	@img build --build-arg SHOW_SWAGGER=fasle -t registry.cn-hangzhou.aliyuncs.com/cft-guma/themis:release-${Version} .
+	@img build --build-arg SHOW_SWAGGER=fasle -t registry.cn-hangzhou.aliyuncs.com/vdo/themis:release-${Version} .
 
 push-release:
-	@docker push registry.cn-hangzhou.aliyuncs.com/cft-guma/themis:release-${Version}
+	@docker push registry.cn-hangzhou.aliyuncs.com/vdo/themis:release-${Version}
 
 push-img-release:
-	@img push registry.cn-hangzhou.aliyuncs.com/cft-guma/themis:release-${Version}
+	@img push registry.cn-hangzhou.aliyuncs.com/vdo/themis:release-${Version}
 
 docker-push-release:docker-release push-release
 img-push-release:img-release push-img-release

@@ -4,11 +4,20 @@ import (
 	. "goa.design/goa/v3/dsl"
 )
 
+var MapType = MapOf(String, String, func() {
+	//Key(func() {
+	//	Minimum(1)           // Validates keys of the map
+	//})
+	//Elem(func() {
+	//	Pattern("[a-zA-Z]+") // Validates values of the map
+	//})
+})
+
 var Config = Type("config", func() {
 	Description("业务配置数据 config")
 	Field(1, "id", UInt64, "ID")
 	Field(2, "key", String, "配置名称")
-	Field(3, "value", String, "值")
+	Field(3, "value", MapType, "值")
 	Field(4, "created_at", String, "创建时间")
 	Field(6, "updated_at", String, "修改时间")
 	TokenField(7, "token", String, "JWTAuth token used to perform authorization", func() {
@@ -19,7 +28,7 @@ var ConfigResult = ResultType("application/vnd.config_result", func() {
 	Description("业务配置数据返回对象 config")
 	Attributes(func() {
 		Field(1, "key", String, "配置名称")
-		Field(2, "value", String, "值")
+		Field(2, "value", MapType, "值")
 	})
 
 	View("default", func() {
@@ -118,12 +127,12 @@ var res_config = Service("config", func() {
 		})
 	})
 	Method("update", func() {
-		Description("根据id修改配置数据")
+		Description("根据key修改配置数据")
 		Payload(Config)
 		Error("Unauthorized")
 		Result(ConfigResult)
 		HTTP(func() {
-			PUT("/{id}")
+			PUT("/{key}")
 			Response(StatusOK, func() {
 			})
 			Response(StatusNotFound)
@@ -134,19 +143,20 @@ var res_config = Service("config", func() {
 			Response(CodeNotFound)
 		})
 	})
+
 	Method("delete", func() {
 		Description("根据id删除")
 		Error("Unauthorized")
 		Payload(func() {
 			TokenField(1, "token", String, "JWTAuth token used to perform authorization", func() {
 			})
-			Field(2, "id", Int, "要删除的id", func() {
+			Field(2, "key", String, "要删除的key", func() {
 			})
-			Required("id")
+			Required("key")
 		})
 		Result(Boolean)
 		HTTP(func() {
-			DELETE("/{id}")
+			DELETE("/{key}")
 			Response(StatusOK, func() {
 			})
 			Response(StatusNotFound)

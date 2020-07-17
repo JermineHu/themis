@@ -34,7 +34,7 @@ func (s *tokenMgrsrvc) JWTAuth(ctx context.Context, token string, scheme *securi
 
 // token列表
 func (s *tokenMgrsrvc) List(ctx context.Context, p *tokenmgr.ListPayload) (res *tokenmgr.TokenList, err error) {
-	usr_id, err := GetUserIDByToken(*p.Token)
+	usr_id, err := GetUserIDByJWT(*p.Token)
 	if err != nil {
 		return
 	}
@@ -51,12 +51,13 @@ func (s *tokenMgrsrvc) List(ctx context.Context, p *tokenmgr.ListPayload) (res *
 		temp := tokenmgr.TokenResult{}
 		temp.ID = &list[i].ID
 		temp.Name = list[i].Name
+		temp.Token = list[i].Token
 		temp.Description = list[i].Description
 		ct := list[i].CreatedAt.Format(time.RFC3339)
 		ut := list[i].UpdatedAt.Format(time.RFC3339)
 		temp.CreatedAt = &ct
 		temp.UpdatedAt = &ut
-		temp.Creator = &usr_id
+		temp.Creator = usr_id
 		ls = append(ls, &temp)
 	}
 	res.PageData = ls
@@ -65,7 +66,7 @@ func (s *tokenMgrsrvc) List(ctx context.Context, p *tokenmgr.ListPayload) (res *
 
 // 创建数据
 func (s *tokenMgrsrvc) Create(ctx context.Context, p *tokenmgr.CreatePayload) (res *tokenmgr.TokenResult, err error) {
-	usr_id, err := GetUserIDByToken(*p.Token)
+	usr_id, err := GetUserIDByJWT(*p.Token)
 	if err != nil {
 		return
 	}
@@ -73,7 +74,7 @@ func (s *tokenMgrsrvc) Create(ctx context.Context, p *tokenmgr.CreatePayload) (r
 	uuid := uuid.New().String()
 	cp := models.Token{
 		Token:       &uuid,
-		CreatorID:   &usr_id,
+		CreatorID:   usr_id,
 		Name:        p.Name,
 		Description: p.Description,
 	}

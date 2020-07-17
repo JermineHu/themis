@@ -2,6 +2,7 @@ package svc
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/JermineHu/themis/models"
 	config "github.com/JermineHu/themis/svc/gen/config"
 	"github.com/jinzhu/copier"
@@ -47,10 +48,14 @@ func (s *configsrvc) List(ctx context.Context, p *config.ListPayload) (res *conf
 
 	for i := range list {
 		item := config.ConfigResult{}
-		err = copier.Copy(&item, &list[i])
+		mp := make(map[string]string)
+		err = json.Unmarshal(list[i].Value, &mp)
 		if err != nil {
+			err = config.MakeBadRequest(err)
 			return
 		}
+		item.Key = list[i].Key
+		item.Value = mp
 		ls = append(ls, &item)
 
 	}
@@ -63,10 +68,13 @@ func (s *configsrvc) Create(ctx context.Context, p *config.Config) (res *config.
 	res = &config.ConfigResult{}
 	view = "default"
 	cp := models.Config{}
-	err = copier.Copy(&cp, p)
+	v, err := json.Marshal(p.Value)
 	if err != nil {
+		err = config.MakeBadRequest(err)
 		return
 	}
+	cp.Value = v
+	cp.Key = p.Key
 	err = models.CreateConfig(&cp)
 	if err != nil {
 		err = config.MakeBadRequest(err)
@@ -79,16 +87,24 @@ func (s *configsrvc) Create(ctx context.Context, p *config.Config) (res *config.
 	return
 }
 
-// 根据id修改配置数据
-func (s *configsrvc) Update(ctx context.Context, p *config.Config) (res *config.ConfigResult, view string, err error) {
+// 根据key修改配置数据
+func (s *configsrvc) Update(ctx context.Context, p *config.Config) (res *config.ConfigResult, view string,
+	err error) {
 	res = &config.ConfigResult{}
 	view = "default"
-	cp := models.Config{}
-	err = copier.Copy(&cp, p)
+	cp, err := models.GetConfigByKey(*p.Key)
 	if err != nil {
+		err = config.MakeBadRequest(err)
 		return
 	}
-	err = models.UpdateConfigByID(*p.ID, &cp)
+	v, err := json.Marshal(p.Value)
+	if err != nil {
+		err = config.MakeBadRequest(err)
+		return
+	}
+	cp.Value = v
+	cp.Key = p.Key
+	err = models.UpdateConfigByKey(*p.Key, &cp)
 	if err != nil {
 		err = config.MakeBadRequest(err)
 		return
@@ -102,7 +118,7 @@ func (s *configsrvc) Update(ctx context.Context, p *config.Config) (res *config.
 
 // 根据id删除
 func (s *configsrvc) Delete(ctx context.Context, p *config.DeletePayload) (res bool, err error) {
-	count, err := models.DeleteConfigByID(p.ID)
+	count, err := models.DeleteConfigByKey(p.Key)
 	res = count > 0
 	return
 }
@@ -115,9 +131,13 @@ func (s *configsrvc) Show(ctx context.Context, p *config.ShowPayload) (res *conf
 		err = config.MakeBadRequest(err)
 		return
 	}
-	err = copier.Copy(&cp, &res)
+	mp := make(map[string]string)
+	err = json.Unmarshal(cp.Value, &mp)
 	if err != nil {
+		err = config.MakeBadRequest(err)
 		return
 	}
+	res.Key = cp.Key
+	res.Value = mp
 	return
 }

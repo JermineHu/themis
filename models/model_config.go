@@ -78,10 +78,30 @@ func UpdateConfigByID(id uint64, mi *Config) error {
 	return nil
 }
 
+// 根据Key修改
+func UpdateConfigByKey(key string, mi *Config) error {
+	qs := NewConfigQuerySet(rdb_themis)
+	result := qs.db.Where("key=?", key).Save(&mi)
+	if result.Error != nil {
+		return config.MakeBadRequest(result.Error)
+	}
+	if result.RowsAffected == 0 {
+		return config.MakeNotFound(new(config.NotFound))
+	}
+	return nil
+}
+
 // 根据ID删除
 func DeleteConfigByID(id int) (count int64, err error) {
 	qs := NewConfigQuerySet(rdb_themis)
 	db := qs.db.Unscoped().Delete(Config{}, "id =?", id)
+	return db.RowsAffected, db.Error
+}
+
+// 根据Key删除
+func DeleteConfigByKey(key string) (count int64, err error) {
+	qs := NewConfigQuerySet(rdb_themis)
+	db := qs.db.Unscoped().Delete(Config{}, "key =?", key)
 	return db.RowsAffected, db.Error
 }
 

@@ -140,6 +140,10 @@ func (s *adminsrvc) Update(ctx context.Context, p *admin.Admin) (res *admin.Admi
 	if err != nil {
 		return
 	}
+	str := utils.GetRandomString(8)
+	cp.Salt = &str
+	pwd := utils.Md5(*p.Password + str)
+	cp.Password = &pwd
 	err = models.UpdateAdminByID(*p.ID, &cp)
 	if err != nil {
 		err = admin.MakeBadRequest(err)
