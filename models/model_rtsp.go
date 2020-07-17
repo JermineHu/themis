@@ -33,7 +33,7 @@ func GetRtspList(payload *rtsp.ListPayload) (result []Rtsp, count int64, err err
 	offsetHead := payload.OffsetHead
 	OffsetTail := payload.OffsetTail
 
-	if OffsetTail-offsetHead < 0 || OffsetTail-offsetHead > 200 {
+	if OffsetTail-offsetHead < 0 || OffsetTail-offsetHead > 500 {
 		return result, 0, errors.New("OffsetTail must be uper than offsetHead and  OffsetTail-offsetHead must lower 200!")
 	}
 	qs := NewRtspQuerySet(rdb_themis)
@@ -51,7 +51,7 @@ func GetRtspList(payload *rtsp.ListPayload) (result []Rtsp, count int64, err err
 	totalNum, err := qs.Count() //查询count
 	count = int64(totalNum)
 	list := []Rtsp{}
-	err = qs.db.Offset(int(offsetHead)).Limit(int(OffsetTail - offsetHead)).Find(&list).Error
+	err = qs.db.Offset(int(offsetHead)).Limit(int(OffsetTail - offsetHead)).Preload("Host").Find(&list).Error
 	return list, count, err
 }
 
@@ -84,7 +84,7 @@ func UpdateRtspByID(id uint64, mi *Rtsp) error {
 }
 
 // 根据ID删除
-func DeleteRtspByID(id int) (count int64, err error) {
+func DeleteRtspByID(id uint64) (count int64, err error) {
 	qs := NewRtspQuerySet(rdb_themis)
 	db := qs.db.Unscoped().Delete(Rtsp{}, "id =?", id)
 	return db.RowsAffected, db.Error
@@ -94,6 +94,6 @@ func DeleteRtspByID(id int) (count int64, err error) {
 func GetRtspById(id *uint64) (result Rtsp, err error) {
 	qs := NewRtspQuerySet(rdb_themis)
 	pc := Rtsp{}
-	err = qs.w(qs.db.Where("id =?", id)).One(&pc)
+	err = qs.w(qs.db.Where("id =?", id).Preload("Host")).One(&pc)
 	return pc, err
 }

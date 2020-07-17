@@ -17,5 +17,11 @@ func initDB() {
 
 // 初始化
 func init() {
-	initDB() // 初始化数据库
+	initDB()     // 初始化数据库
+	initStream() // 初始化流
+}
+
+// 初始化流
+func initStream() {
+	RTSPConfig = loadConfig()
 }

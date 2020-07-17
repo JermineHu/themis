@@ -131,13 +131,7 @@ func (s *configsrvc) Show(ctx context.Context, p *config.ShowPayload) (res *conf
 		err = config.MakeBadRequest(err)
 		return
 	}
-	mp := make(map[string]string)
-	err = json.Unmarshal(cp.Value, &mp)
-	if err != nil {
-		err = config.MakeBadRequest(err)
-		return
-	}
 	res.Key = cp.Key
-	res.Value = mp
+	res.Value = cp.Value
 	return
 }

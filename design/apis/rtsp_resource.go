@@ -197,7 +197,7 @@ var res_rtsp = Service("rtsp", func() {
 		Payload(func() {
 			TokenField(1, "token", String, "JWTAuth token used to perform authorization", func() {
 			})
-			Field(2, "id", Int, "要删除的id", func() {
+			Field(2, "id", UInt64, "要删除的id", func() {
 			})
 			Required("id")
 		})
@@ -238,4 +238,50 @@ var res_rtsp = Service("rtsp", func() {
 			Response(CodeNotFound)
 		})
 	})
+
+	Method("receive", func() {
+		Description("获取接收数据流的数据")
+		Payload(func() {
+			TokenField(1, "token", String, "JWTAuth token used to perform authorization", func() {
+				//Meta("rpc:tag", "10")
+			})
+			Field(2, "data", String, "接收远程SDP的base64")
+			Field(3, "rtsp_id", String, "根基rtsp_id获取解码信息")
+			Required("rtsp_id", "data")
+		})
+		Error("Unauthorized")
+		Result(String)
+		HTTP(func() {
+			POST("/receive")
+			Response(StatusOK, func() {
+			})
+			Response(StatusNotFound)
+			Response("Unauthorized", StatusUnauthorized)
+		})
+		GRPC(func() {
+			Response(CodeOK)
+			Response(CodeNotFound)
+		})
+	})
+
+	Method("codec", func() {
+		Description("获取对应rtsp的解码基本信息")
+		Payload(func() {
+			TokenField(1, "token", String, "JWTAuth token used to perform authorization", func() {
+				//Meta("rpc:tag", "10")
+			})
+			Field(2, "rtsp_id", String, "rtsp的数据ID")
+			Required("rtsp_id")
+		})
+		Error("Unauthorized")
+		Result(Any)
+		HTTP(func() {
+			GET("/codec/{rtsp_id}")
+			Response(StatusOK, func() {
+			})
+			Response(StatusNotFound)
+			Response("Unauthorized", StatusUnauthorized)
+		})
+	})
+
 })

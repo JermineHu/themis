@@ -2,13 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
-	"net/http"
-	"net/url"
-	"os"
-	"sync"
-	"time"
-
 	admin "github.com/JermineHu/themis/svc/gen/admin"
 	config "github.com/JermineHu/themis/svc/gen/config"
 	health "github.com/JermineHu/themis/svc/gen/health"
@@ -28,6 +21,12 @@ import (
 	goahttp "goa.design/goa/v3/http"
 	httpmdlwr "goa.design/goa/v3/http/middleware"
 	"goa.design/goa/v3/middleware"
+	"log"
+	"net/http"
+	"net/url"
+	"os"
+	"sync"
+	"time"
 )
 
 // handleHTTPServer starts configures and starts a HTTP server on the given
