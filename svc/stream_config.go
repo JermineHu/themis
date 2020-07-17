@@ -37,8 +37,11 @@ type viwer struct {
 
 func loadConfig() *ConfigST {
 	tmp := ConfigST{}
+	tmp.Streams = make(map[string]StreamST)
 	lpl := rtsp.ListPayload{}
 	lpl.OffsetTail = 500
+	lpl.IsDesc = true
+	lpl.OrderBy = "id"
 	list, _, err := models.GetRtspList(&lpl)
 	if err != nil {
 		log.Fatal("rtsp数据初始化失败！")
