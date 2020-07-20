@@ -27,3 +27,32 @@ pc客户端运行后，弹出填写注册服务器地址和token，对话框，�
 
 - angular 8.0
 - ant design
+
+### 系统托盘
+
+Linux下需要先安装gtk3.0，否则程序无法编译
+
+```
+sudo apt-get install libgtk-3-dev libappindicator3-dev -y
+```
+
+使用的开源库如下：
+https://github.com/getlantern/systray
+
+文档可以参照：
+
+https://pkg.go.dev/github.com/getlantern/systray?tab=doc
+
+### 监听键盘事件的库
+
+https://github.com/go-vgo/robotgo
+
+### 图形化采用
+
+https://github.com/fyne-io/fyne
+
+### 客户端交叉编译
+
+GOOS=windows GOARCH=amd64 go build -ldflags -H=windowsgui
+
+

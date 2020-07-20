@@ -263,6 +263,7 @@ func (s *rtspsrvc) Codec(ctx context.Context, payload *rtsp.CodecPayload) (res i
 		if codecs == nil {
 			return
 		}
+		res = codecs
 	}
 	return
 }
