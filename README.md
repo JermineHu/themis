@@ -59,6 +59,22 @@ GOOS=windows GOARCH=amd64 go build -ldflags -H=windowsgui
 
 ### docker方式
 
+#### 启动postgres数据库
+
+首先执行：
+``
+docker volume create pgdata
+``
+正常启动：
+```
+docker run --restart=always --name postgres -d \
+-v pgdata:/var/lib/postgresql/data  \
+-e POSTGRES_USER=Jermine \
+-e POSTGRES_PASSWORD=123456 \  
+-e POSTGRES_DB=mean \
+-e POSTGRES_INITDB_ARGS="--data-checksums"  \
+-p 5432:5432 \
+postgres:alpine
 ```
 sudo docker run --name themis --restart always -d \
 -e DB_TYPE=postgres \
