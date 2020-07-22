@@ -10,6 +10,7 @@ require (
 	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/golang/protobuf v1.4.2
 	github.com/google/uuid v1.1.1
+	github.com/gorilla/websocket v1.4.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.0
 	github.com/guregu/null v4.0.0+incompatible
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a

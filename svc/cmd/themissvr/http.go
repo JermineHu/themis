@@ -18,6 +18,7 @@ import (
 	notice "github.com/JermineHu/themis/svc/gen/notice"
 	rtsp "github.com/JermineHu/themis/svc/gen/rtsp"
 	tokenmgr "github.com/JermineHu/themis/svc/gen/token_mgr"
+	"github.com/gorilla/websocket"
 	goahttp "goa.design/goa/v3/http"
 	httpmdlwr "goa.design/goa/v3/http/middleware"
 	"goa.design/goa/v3/middleware"
@@ -73,10 +74,11 @@ func handleHTTPServer(ctx context.Context, u *url.URL, healthEndpoints *health.E
 	)
 	{
 		eh := errorHandler(logger)
+		upgrader := &websocket.Upgrader{}
 		healthServer = healthsvr.New(healthEndpoints, mux, dec, enc, eh, nil)
 		adminServer = adminsvr.New(adminEndpoints, mux, dec, enc, eh, nil)
 		configServer = configsvr.New(configEndpoints, mux, dec, enc, eh, nil)
-		keyboardServer = keyboardsvr.New(keyboardEndpoints, mux, dec, enc, eh, nil)
+		keyboardServer = keyboardsvr.New(keyboardEndpoints, mux, dec, enc, eh, nil, upgrader, nil)
 		hostServer = hostsvr.New(hostEndpoints, mux, dec, enc, eh, nil)
 		noticeServer = noticesvr.New(noticeEndpoints, mux, dec, enc, eh, nil)
 		rtspServer = rtspsvr.New(rtspEndpoints, mux, dec, enc, eh, nil)

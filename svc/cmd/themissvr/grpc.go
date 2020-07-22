@@ -68,7 +68,7 @@ func handleGRPCServer(ctx context.Context, u *url.URL, healthEndpoints *health.E
 		healthServer = healthsvr.New(healthEndpoints, nil)
 		adminServer = adminsvr.New(adminEndpoints, nil)
 		configServer = configsvr.New(configEndpoints, nil)
-		keyboardServer = keyboardsvr.New(keyboardEndpoints, nil)
+		keyboardServer = keyboardsvr.New(keyboardEndpoints, nil, nil)
 		hostServer = hostsvr.New(hostEndpoints, nil)
 		noticeServer = noticesvr.New(noticeEndpoints, nil)
 		rtspServer = rtspsvr.New(rtspEndpoints, nil)
@@ -80,6 +80,10 @@ func handleGRPCServer(ctx context.Context, u *url.URL, healthEndpoints *health.E
 		grpcmiddleware.WithUnaryServerChain(
 			grpcmdlwr.UnaryRequestID(),
 			grpcmdlwr.UnaryServerLog(adapter),
+		),
+		grpcmiddleware.WithStreamServerChain(
+			grpcmdlwr.StreamRequestID(),
+			grpcmdlwr.StreamServerLog(adapter),
 		),
 	)
 

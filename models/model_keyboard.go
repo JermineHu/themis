@@ -14,19 +14,16 @@ var (
 	_ = null.Bool{}
 )
 
-////GetKeyboardWhere 根据参数获取精确查询条件
-//func (qs KeyboardQuerySet) GetKeyboardWhere(where *keyboard.KeyboardWhere) KeyboardQuerySet {
-//	if where.ID != nil && *where.ID != 0 {
-//		qs = qs.w(qs.db.Where("id=?", where.ID))
-//	}
-//	if where.IsEnable != nil {
-//		qs = qs.w(qs.db.Where("is_enable=?", where.IsEnable))
-//	}
-//	if where.PItemStyleID != nil {
-//		qs = qs.w(qs.db.Where("p_item_category_id=?", where.PItemStyleID))
-//	}
-//	return qs
-//}
+//GetKeyboardWhere 根据参数获取精确查询条件
+func (qs KeyboardQuerySet) GetKeyboardWhere(where *keyboard.Keyboard) KeyboardQuerySet {
+	if where != nil && *where.ID != 0 {
+		qs = qs.w(qs.db.Where("id=?", where.ID))
+	}
+	if where.HostID != nil {
+		qs = qs.w(qs.db.Where("host_id=?", where.HostID))
+	}
+	return qs
+}
 
 //获取数据列表
 func GetKeyboardList(payload *keyboard.ListPayload) (result []Keyboard, count int64, err error) {
@@ -40,9 +37,9 @@ func GetKeyboardList(payload *keyboard.ListPayload) (result []Keyboard, count in
 	if err != nil {
 		return
 	}
-	//if payload.Where != nil {
-	//	qs = qs.GetKeyboardWhere(payload.Where)
-	//}
+	if payload.Where != nil {
+		qs = qs.GetKeyboardWhere(payload.Where)
+	}
 	if payload.IsDesc {
 		qs = qs.w(qs.db.Order(payload.OrderBy + " DESC"))
 	} else {

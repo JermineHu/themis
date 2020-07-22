@@ -11,16 +11,20 @@ import (
 	. "goa.design/goa/v3/dsl"
 )
 
+var InterfaceInfo = Type("InterfaceInfo", func() {
+	Field(1, "ip_addrs", ArrayOf(String), "地址", func() {})
+	Field(2, "name", String, "网卡名称", func() {})
+	Field(3, "mac_addr", String, "主机mac地址", func() {})
+})
+
 var HostInfo = Type("HostInfo", func() {
 	Field(1, "id", UInt64, "数据ID", func() {})
-	Field(2, "ip_addr", String, "地址", func() {})
-	Field(3, "host_name", String, "主机名称", func() {})
-	Field(4, "mac_addr", String, "主机mac地址", func() {})
-	Field(5, "mark", String, "备注信息", func() {})
-	TokenField(13, "token", String, "JWTAuth token used to perform authorization", func() {
+	Field(2, "host_name", String, "主机名称", func() {})
+	Field(3, "mark", String, "备注信息", func() {})
+	TokenField(4, "token", String, "JWTAuth token used to perform authorization", func() {
 		//Meta("rpc:tag", "10")
 	})
-
+	Field(5, "interfaces", ArrayOf(InterfaceInfo), "网卡信息", func() {})
 })
 
 var PageModelHost = ResultType("application/vnd.host_list+json", func() {
@@ -49,14 +53,13 @@ var HostResult = ResultType("application/vnd.host_result+json", func() {
 	Description("用户模型")
 	Attributes(func() {
 		Field(1, "id", UInt64, "数据ID", func() {})
-		Field(2, "ip_addr", String, "地址", func() {})
-		Field(3, "host_name", String, "主机名称", func() {})
-		Field(4, "mac_addr", String, "主机mac地址", func() {})
-		Field(5, "mark", String, "备注信息", func() {})
-		Field(6, "created_at", String, "创建时间", func() {
+		Field(2, "host_name", String, "主机名称", func() {})
+		Field(3, "mark", String, "备注信息", func() {})
+		Field(4, "created_at", String, "创建时间", func() {
 			Format(FormatDateTime)
 			//Meta("rpc:tag", "8")
 		})
+		Field(5, "interfaces", ArrayOf(InterfaceInfo), "网卡信息", func() {})
 	})
 })
 
@@ -131,13 +134,32 @@ var res_host = Service("host", func() {
 	})
 
 	Method("registry", func() {
+		NoSecurity()
 		Description("agent注册")
-		Payload(HostInfo)
+		Payload(func() {
+			Field(1, "id", UInt64, "数据ID", func() {})
+			Field(2, "host_name", String, "主机名称", func() {})
+			Field(3, "mark", String, "备注信息", func() {})
+			Field(4, "token", String, "JWTAuth token used to perform authorization", func() {
+				//Meta("rpc:tag", "10")
+			})
+			Field(5, "interfaces", ArrayOf(InterfaceInfo), "网卡信息", func() {})
+			Required("token")
+		})
 		Error("Unauthorized")
-		Result(HostResult)
+		Result(func() {
+			//TokenField(1, "token", String, "JWTAuth token used to perform authorization", func() {
+			//	//Meta("rpc:tag", "10")
+			//})
+			Field(1, "token", String, "JWTAuth token used to perform authorization", func() {
+				//Meta("rpc:tag", "10")
+			})
+		})
 		HTTP(func() {
 			POST("")
+			Header("token:Authorization")
 			Response(StatusOK, func() {
+				Header("token:Authorization")
 			})
 			Response(StatusNotFound)
 			Response("Unauthorized", StatusUnauthorized)

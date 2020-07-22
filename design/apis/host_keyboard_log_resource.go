@@ -11,14 +11,18 @@ import (
 	. "goa.design/goa/v3/dsl"
 )
 
-var Keyboard = Type("Keyboard", func() {
+var Keycode = Type("keycode", func() {
+	Field(4, "text", String, "键盘的值")
+	Field(5, "key_code", String, "键盘的编号")
+})
+
+var Keyboard = Type("keyboard", func() {
 	TokenField(1, "token", String, "JWTAuth token used to perform authorization", func() {
 		//Meta("rpc:tag", "10")
 	})
 	Field(2, "id", UInt64, "数据ID", func() {})
-	Field(3, "host_id", String, "主机ID")
-	Field(4, "key", String, "键盘的编号")
-	Field(5, "value", String, "值")
+	Field(3, "host_id", UInt64, "主机ID")
+	Field(4, "keys", ArrayOf(Keycode), "回车后发送的事件")
 })
 
 var PageModelKeyboard = ResultType("application/vnd.keyboard_list+json", func() {
@@ -161,6 +165,39 @@ var res_keyboard = Service("keyboard", func() {
 		GRPC(func() {
 			Response(CodeOK)
 			Response(CodeNotFound)
+		})
+	})
+
+	Method("broker", func() {
+		Description("用于建立广播消息的服务")
+		Payload(func() {
+			TokenField(1, "token", String, "JWTAuth token used to perform authorization", func() {
+			})
+			//Field(2, "host_id", Int, "要删除的host_id", func() {
+			//})
+			Required("token")
+		})
+		StreamingPayload(Keyboard)
+		StreamingResult(Keyboard)
+		Error("Unauthorized")
+		Error("BadRequest")
+		Error("NotFound")
+		HTTP(func() {
+			GET("/broker")
+			Response(StatusOK)
+			Header("token:Authorization", String, "Auth token", func() {
+				Pattern("^Bearer [^ ]+$")
+			})
+			Response("Unauthorized", StatusUnauthorized)
+			Response("BadRequest", StatusBadRequest)
+			Response("NotFound", StatusBadRequest)
+		})
+
+		GRPC(func() {
+			Response(CodeOK)
+			Response("Unauthorized", CodeUnauthenticated)
+			Response("BadRequest", CodeFailedPrecondition)
+			Response("NotFound", CodeFailedPrecondition)
 		})
 	})
 

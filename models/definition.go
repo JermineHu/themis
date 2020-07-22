@@ -54,29 +54,43 @@ type Admin struct {
 //gen:qs
 type Host struct {
 	CommonDBModel
-	// 地址
-	IPAddr *string
 	// 主机名称
-	HostName *string
-	// 主机mac地址
-	MacAddr *string
+	//HostName *string `json:"host_name" gorm:"unique;not null;type:varchar(100)"`
+	HostName *string `json:"host_name"`
 	// 备注信息
-	Mark *string
+	Mark *string `json:"mark"`
 	// 发布者
-	CreatorID *uint64
-	Creator   *Admin
+	CreatorID *uint64 `json:"creator_id"`
+	Creator   *Admin  `json:"creator"`
+	// 网卡信息
+	Interfaces json.RawMessage `json:"interfaces" gorm:"type:json"`
+}
+
+type Keycode struct {
+	// 键盘的值
+	Text *string `json:"text"`
+	// 键盘的编号
+	KeyCode *string `json:"key_code"`
 }
 
 // 键盘的事件
 //gen:qs
+// Keyboard is the payload type of the keyboard service log method.
 type Keyboard struct {
 	CommonDBModel
 	// 主机ID
-	HostID *string
-	// 键盘的编号
-	Key *string
-	// 值
-	Value *string
+	HostID *uint64 `json:"host_id"`
+	// 回车后发送的事件
+	Keys json.RawMessage `json:"keys" gorm:"type:json"`
+}
+
+type InterfaceInfo struct {
+	// 地址
+	IPAddrs []string `json:"ip_addrs"`
+	// 网卡名称
+	Name *string `json:"name"`
+	// 主机mac地址
+	MacAddr *string `json:"mac_addr"`
 }
 
 // 通知信息
@@ -84,10 +98,10 @@ type Keyboard struct {
 type Notice struct {
 	CommonDBModel
 	// 消息消息提醒内容
-	Notice *string
+	Notice *string `json:"notice"`
 	// 发布者
-	CreatorID *uint64
-	Creator   *Admin
+	CreatorID *uint64 `json:"creator_id"`
+	Creator   *Admin  `json:"creator"`
 }
 
 // RTSP的数据
@@ -95,15 +109,15 @@ type Notice struct {
 type Rtsp struct {
 	CommonDBModel
 	// 发布者
-	CreatorID *uint64
-	Creator   *Admin
+	CreatorID *uint64 `json:"creator_id"`
+	Creator   *Admin  `json:"creator"`
 	// rtsp的地址
-	RtspURL *string
+	RtspURL *string `json:"rtsp_url"`
 	// 主机ID
-	HostID *string
-	Host   Host
+	HostID *string `json:"host_id"`
+	Host   Host    `json:"host"`
 	// 其他的扩展属性，采用json字符串展示
-	Ext *string
+	Ext *string `json:"ext"`
 }
 
 // 后台生成token

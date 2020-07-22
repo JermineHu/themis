@@ -2,8 +2,10 @@ package svc
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/JermineHu/themis/models"
 	"github.com/jinzhu/copier"
+	"io"
 	"log"
 
 	keyboard "github.com/JermineHu/themis/svc/gen/keyboard"
@@ -61,12 +63,17 @@ func (s *keyboardsrvc) List(ctx context.Context, p *keyboard.ListPayload) (res *
 
 // 创建日志数据
 func (s *keyboardsrvc) Log(ctx context.Context, p *keyboard.Keyboard) (res *keyboard.KeyboardResult, err error) {
+
 	res = &keyboard.KeyboardResult{}
 	cp := models.Keyboard{}
-	err = copier.Copy(&cp, p)
+	v, err := json.Marshal(p.Keys)
 	if err != nil {
+		err = keyboard.MakeBadRequest(err)
 		return
 	}
+	cp.Keys = v
+	cp.HostID = p.HostID
+
 	err = models.CreateKeyboard(&cp)
 	if err != nil {
 		err = keyboard.MakeBadRequest(err)
@@ -84,4 +91,55 @@ func (s *keyboardsrvc) Clear(ctx context.Context, p *keyboard.ClearPayload) (res
 	count, err := models.DeleteKeyboardByHostID(p.HostID)
 	res = count > 0
 	return
+}
+
+// 用于建立广播消息的服务
+func (s *keyboardsrvc) Broker(ctx context.Context, p *keyboard.BrokerPayload, stream keyboard.BrokerServerStream) (err error) {
+
+	host_id, err := GetHostIDByJWT(p.Token)
+	if err != nil {
+		return
+	}
+
+	keybCh := make(chan *keyboard.Keyboard) // 定义接收数据的管道
+	errCh := make(chan error)               // 定义接收错误的管道
+	go func() {
+		for {
+			str, err := stream.Recv()
+			if err != nil {
+				if err != io.EOF {
+					errCh <- err
+				}
+				close(keybCh)
+				close(errCh)
+				return
+			}
+			keybCh <- str
+		}
+	}()
+
+	// Listen for context cancellation and stream input simultaneously.
+	for done := false; !done; {
+		select {
+		case keyb := <-keybCh:
+			//s.storeMessage(keyb)  // 存储消息操作
+			h := keyboard.Keyboard{
+				HostID: host_id,
+				Keys:   keyb.Keys,
+			}
+			s.Log(ctx, &h)
+
+			if err = stream.Send(keyb); err != nil { // 将收到的消息再广播回去
+				return err
+			}
+		case err := <-errCh: // 错误处理
+			if err != nil {
+				return err
+			}
+			done = true
+		case <-ctx.Done():
+			done = true
+		}
+	}
+	return stream.Close()
 }

@@ -97,3 +97,10 @@ func GetTokenById(id *uint64) (result Token, err error) {
 	err = qs.w(qs.db.Where("id =?", id)).One(&pc)
 	return pc, err
 }
+
+//查询token是否存在
+func IsExistToken(tk string) (exist bool, err error) {
+	qs := NewTokenQuerySet(rdb_themis)
+	count, err := qs.w(qs.db.Where("token =?", tk)).Count()
+	return count > 0, err
+}

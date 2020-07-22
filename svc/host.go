@@ -2,6 +2,8 @@ package svc
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"github.com/JermineHu/themis/models"
 	"github.com/jinzhu/copier"
 	"log"
@@ -60,22 +62,36 @@ func (s *hostsrvc) List(ctx context.Context, p *host.ListPayload) (res *host.Hos
 }
 
 // agent注册
-func (s *hostsrvc) Registry(ctx context.Context, p *host.HostInfo) (res *host.HostResult, err error) {
-	res = &host.HostResult{}
+func (s *hostsrvc) Registry(ctx context.Context, p *host.RegistryPayload) (res *host.RegistryResult, err error) {
+	ok, err := models.IsExistToken(p.Token)
+	if err != nil {
+		return
+	}
+	if !ok {
+		return nil, host.MakeBadRequest(errors.New("token不存在，无法注册！"))
+	}
+	res = &host.RegistryResult{}
 	cp := models.Host{}
 	err = copier.Copy(&cp, p)
 	if err != nil {
 		return
 	}
+	v, err := json.Marshal(p.Interfaces)
+	if err != nil {
+		err = host.MakeBadRequest(err)
+		return
+	}
+	cp.Interfaces = v
 	err = models.CreateHost(&cp)
 	if err != nil {
 		err = host.MakeBadRequest(err)
 		return
 	}
-	err = copier.Copy(&res, &cp)
+	tk, err := makeJWTWithHost(cp)
 	if err != nil {
-		return
+		return res, err
 	}
+	res.Token = tk
 	return
 }
 

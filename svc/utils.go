@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/JermineHu/themis/common"
+	"github.com/JermineHu/themis/models"
 	"github.com/JermineHu/themis/svc/gen/admin"
 	"github.com/JermineHu/themis/svc/gen/config"
 	"github.com/JermineHu/themis/utils"
@@ -56,6 +57,19 @@ func GetUserIDByJWT(tokenStr string) (uID *uint64, er error) {
 	}
 	// Use the claims to authorize
 	usrID := uint64((*claims)["usr_id"].(float64))
+	uID = &usrID
+	return
+}
+
+// 根据JWT获取主机ID
+func GetHostIDByJWT(tokenStr string) (uID *uint64, er error) {
+
+	claims, er := GetClaimsByTokenStr(tokenStr)
+	if er != nil {
+		return nil, er
+	}
+	// Use the claims to authorize
+	usrID := uint64((*claims)["host_id"].(float64))
 	uID = &usrID
 	return
 }
@@ -135,7 +149,7 @@ func makeJWTWithAdmin(respon admin.Admin) (tokenStr *string, err error) {
 	in60d := time.Now().Add(time.Duration(GetTokenTimeoutTime()) * time.Second).Unix()
 	uid, _ := uuid.NewV4()
 	token.Claims = jwtgo.MapClaims{
-		"iss":      "hersjade.cn",     // who creates the token and signs it
+		"iss":      "jermine.vdo.pub", // who creates the token and signs it
 		"aud":      respon.ID,         // to whom the token is intended to be sent
 		"exp":      in60d,             // time when the token will expire (60 day from now)
 		"jti":      uid.String(),      // a unique identifier for the token
@@ -159,13 +173,42 @@ func makeJWTWithAdmin(respon admin.Admin) (tokenStr *string, err error) {
 	return &token_str, nil
 }
 
+func makeJWTWithHost(respon models.Host) (tokenStr *string, err error) {
+	// Generate JWT
+	token := jwtgo.New(jwtgo.SigningMethodRS512)
+	in60d := time.Now().Add(time.Duration(GetTokenTimeoutTime()) * time.Second).Unix()
+	uid, _ := uuid.NewV4()
+	token.Claims = jwtgo.MapClaims{
+		"iss":     "jermine.vdo.pub", // who creates the token and signs it
+		"aud":     respon.ID,         // to whom the token is intended to be sent
+		"exp":     in60d,             // time when the token will expire (60 day from now)
+		"jti":     uid.String(),      // a unique identifier for the token
+		"iat":     time.Now().Unix(), // when the token was issued/created (now)
+		"nbf":     2,                 // time before which the token is not yet valid (2 minutes ago)
+		"sub":     "themis_login",    // the subject/principal is whom the token is about
+		"scopes":  "api:access",      // token scope - not a standard claim
+		"host_id": respon.ID,         // token scope - not a standard claim
+	}
+
+	prik, err := GetPrivateKey()
+	if err != nil {
+		return nil, err
+	}
+	signedToken, err := token.SignedString(prik)
+	if err != nil {
+		return nil, fmt.Errorf("failed to sign token: %s", err) // internal error
+	}
+	token_str := "Bearer " + signedToken
+	return &token_str, nil
+}
+
 func makeJWT(respon admin.Admin) (tokenStr *string, err error) {
 	// Generate JWT
 	token := jwtgo.New(jwtgo.SigningMethodRS512)
 	in60d := time.Now().Add(time.Duration(GetTokenTimeoutTime()) * time.Second).Unix()
 	uid, _ := uuid.NewV4()
 	token.Claims = jwtgo.MapClaims{
-		"iss":      "hersjade.cn",     // who creates the token and signs it
+		"iss":      "jermine.vdo.pub", // who creates the token and signs it
 		"aud":      respon.ID,         // to whom the token is intended to be sent
 		"exp":      in60d,             // time when the token will expire (60 day from now)
 		"jti":      uid.String(),      // a unique identifier for the token
