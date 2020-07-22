@@ -55,4 +55,19 @@ https://github.com/fyne-io/fyne
 
 GOOS=windows GOARCH=amd64 go build -ldflags -H=windowsgui
 
+## 部署方案
 
+### docker方式
+
+```
+sudo docker run --name themis --restart always -d \
+-e DB_TYPE=postgres \
+-e DB_CON_STR="sslmode=disable host=192.168.1.250 port=5432 user=Jermine dbname=%v password=123456" \
+-e DB_IS_UPGRADE=true \
+-e APP_PORT=8080 \
+-e DOMAIN="https://jermine.vdo.pub" \
+-e TOKEN_TIMEOUT=5184000 \
+-p 8080:8080 \
+-p 8081:8081 \
+registry.cn-hangzhou.aliyuncs.com/vdo/themis:release-v1.0.1
+```

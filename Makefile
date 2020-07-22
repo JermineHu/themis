@@ -23,7 +23,7 @@ DEPEND=	bitbucket.org/pkg/inflect \
 
 CURRENT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
-Version:=v1.2.9
+Version:=v1.0.1
 
 all: depend clean generate build docker docker-release push-release
 
