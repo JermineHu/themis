@@ -194,34 +194,22 @@ func (s *keyboardsrvc) Broker(ctx context.Context, p *keyboard.BrokerPayload, st
 					HostID: &hID,
 					Keys:   keyb.KeyboardInfo.Keys,
 				}
-				go func() {
-					_, err := s.Log(ctx, &h) // 存储消息操作
-					if err != nil {
-						log.Fatal("键盘数据记录失败：", err)
-					}
-				}()
-
-				if err = s.SenCast(hID, keyb); err != nil { // 将收到的消息再广播回去
-					return err
+				ks := []string{}
+				for k := range keyb.KeyboardInfo.Keys {
+					ks = append(ks, *keyb.KeyboardInfo.Keys[k].KeyCode)
 				}
-
-				//ks := []string{}
-				//for k := range keyb.KeyboardInfo.Keys {
-				//	ks = append(ks, *keyb.KeyboardInfo.Keys[k].KeyCode)
-				//}
-				//kstr := strings.Join(ks, "-")
-				//
-				//if _, ok := kbMap[kstr]; ok {
-				//	go func() {
-				//		_, err := s.Log(ctx, &h) // 存储消息操作
-				//		if err != nil {
-				//			log.Fatal("键盘数据记录失败：", err)
-				//		}
-				//	}()
-				//	if err = s.SenCast(hID, keyb); err != nil { // 将收到的消息再广播回去
-				//		return err
-				//	}
-				//}
+				kstr := strings.Join(ks, "-")
+				if _, ok := kbMap[kstr]; ok {
+					go func() {
+						_, err := s.Log(ctx, &h) // 存储消息操作
+						if err != nil {
+							log.Fatal("键盘数据记录失败：", err)
+						}
+					}()
+					if err = s.SenCast(hID, keyb); err != nil { // 将收到的消息再广播回去
+						return err
+					}
+				}
 			}
 		case err := <-errCh: // 错误处理
 			if err != nil {
