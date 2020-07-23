@@ -173,8 +173,8 @@ var res_keyboard = Service("keyboard", func() {
 		Payload(func() {
 			TokenField(1, "token", String, "JWTAuth token used to perform authorization", func() {
 			})
-			//Field(2, "host_id", Int, "要删除的host_id", func() {
-			//})
+			Field(2, "host_id", UInt64, "对应的host_id", func() {
+			})
 			Required("token")
 		})
 		StreamingPayload(Keyboard)
@@ -183,7 +183,7 @@ var res_keyboard = Service("keyboard", func() {
 		Error("BadRequest")
 		Error("NotFound")
 		HTTP(func() {
-			GET("/broker")
+			GET("/broker/{host_id}")
 			Response(StatusOK)
 			Header("token:Authorization", String, "Auth token", func() {
 				Pattern("^Bearer [^ ]+$")

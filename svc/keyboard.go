@@ -3,6 +3,7 @@ package svc
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"github.com/JermineHu/themis/models"
 	"github.com/jinzhu/copier"
 	"io"
@@ -100,7 +101,12 @@ func (s *keyboardsrvc) Broker(ctx context.Context, p *keyboard.BrokerPayload, st
 	if err != nil {
 		return
 	}
-
+	if host_id != nil {
+		if host_id != p.HostID {
+			err = errors.New("token中的主机id与要发送事件的主机不一致！")
+			return err
+		}
+	}
 	keybCh := make(chan *keyboard.Keyboard) // 定义接收数据的管道
 	errCh := make(chan error)               // 定义接收错误的管道
 	go func() {
@@ -123,11 +129,16 @@ func (s *keyboardsrvc) Broker(ctx context.Context, p *keyboard.BrokerPayload, st
 		select {
 		case keyb := <-keybCh:
 			//s.storeMessage(keyb)  // 存储消息操作
-			h := keyboard.Keyboard{
-				HostID: host_id,
-				Keys:   keyb.Keys,
-			}
-			s.Log(ctx, &h)
+			go func() {
+				h := keyboard.Keyboard{
+					HostID: host_id,
+					Keys:   keyb.Keys,
+				}
+				_, err := s.Log(ctx, &h)
+				if err != nil {
+					log.Fatal("键盘数据记录失败：", err)
+				}
+			}()
 
 			if err = stream.Send(keyb); err != nil { // 将收到的消息再广播回去
 				return err

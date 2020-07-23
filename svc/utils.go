@@ -63,14 +63,15 @@ func GetUserIDByJWT(tokenStr string) (uID *uint64, er error) {
 
 // 根据JWT获取主机ID
 func GetHostIDByJWT(tokenStr string) (uID *uint64, er error) {
-
 	claims, er := GetClaimsByTokenStr(tokenStr)
 	if er != nil {
 		return nil, er
 	}
 	// Use the claims to authorize
-	usrID := uint64((*claims)["host_id"].(float64))
-	uID = &usrID
+	if v, ok := (*claims)["host_id"]; ok {
+		hostID := uint64(v.(float64))
+		uID = &hostID
+	}
 	return
 }
 
