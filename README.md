@@ -76,6 +76,10 @@ docker run --restart=always --name postgres -d \
 -p 5432:5432 \
 postgres:alpine
 ```
+以上-e参数为变量，可以自行设置。
+
+#### 启动Themis server端
+```
 sudo docker run --name themis --restart always -d \
 -e DB_TYPE=postgres \
 -e DB_CON_STR="sslmode=disable host=192.168.1.250 port=5432 user=Jermine dbname=%v password=123456" \
@@ -87,3 +91,19 @@ sudo docker run --name themis --restart always -d \
 -p 8081:8081 \
 registry.cn-hangzhou.aliyuncs.com/vdo/themis:release-v1.0.1
 ```
+
+以上-e参数为变量，可以自行设置，DB_CON_STR是数据库连接字符串，必填。
+
+#### 启动Themis UI端
+
+```
+sudo docker run --name themis-ui --restart always -d  \
+-e BASE_API="192.168.1.250:8081" \
+-p 8090:80 \
+registry.cn-hangzhou.aliyuncs.com/vdo/themis-ui:v1.0.2
+```
+BASE_API是填写服务端访问地址，对外映射端口可以更换8090
+#### windows下启动Themis agent端
+
+安装包安装后，填写后台server地址和使用后台生成的token，如：server：192.168.1.250：8081 (可以不加http) token：56d7340d-7bbc-4847-b5de-2ec7c9ea3b4e
+。如果有其他需要更改的配置，找到安装目录，编辑config.toml文件即可。
