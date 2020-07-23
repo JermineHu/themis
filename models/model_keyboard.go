@@ -16,10 +16,10 @@ var (
 
 //GetKeyboardWhere 根据参数获取精确查询条件
 func (qs KeyboardQuerySet) GetKeyboardWhere(where *keyboard.Keyboard) KeyboardQuerySet {
-	if where != nil && *where.ID != 0 {
+	if where.ID != nil && *where.ID != 0 {
 		qs = qs.w(qs.db.Where("id=?", where.ID))
 	}
-	if where.HostID != nil {
+	if where != nil && where.HostID != nil {
 		qs = qs.w(qs.db.Where("host_id=?", where.HostID))
 	}
 	return qs
@@ -49,6 +49,24 @@ func GetKeyboardList(payload *keyboard.ListPayload) (result []Keyboard, count in
 	count = int64(totalNum)
 	list := []Keyboard{}
 	err = qs.db.Offset(int(offsetHead)).Limit(int(OffsetTail - offsetHead)).Find(&list).Error
+	return list, count, err
+}
+
+//获取数据列表
+func GetKeyboardListByHostID(payload *keyboard.ListPayload) (result []Keyboard, count int64, err error) {
+	qs := NewKeyboardQuerySet(rdb_themis)
+	if payload.Where != nil {
+		qs = qs.GetKeyboardWhere(payload.Where)
+	}
+	if payload.IsDesc {
+		qs = qs.w(qs.db.Order(payload.OrderBy + " DESC"))
+	} else {
+		qs = qs.w(qs.db.Order(payload.OrderBy + " ASC"))
+	}
+	totalNum, err := qs.Count() //查询count
+	count = int64(totalNum)
+	list := []Keyboard{}
+	err = qs.db.Find(&list).Error
 	return list, count, err
 }
 

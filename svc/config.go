@@ -10,6 +10,20 @@ import (
 	"log"
 )
 
+type KeyboardSetting struct {
+	Color    string     `json:"color"`
+	Desc     string     `json:"desc"`
+	Keycodes []Keycodes `json:"keycodes"`
+}
+type Keycodes struct {
+	KeyCode int    `json:"keyCode"`
+	Text    string `json:"text"`
+}
+
+var (
+	kbMap = map[string]KeyboardSetting{}
+)
+
 // config service example implementation.
 // The example methods log the requests and return zero values.
 type configsrvc struct {
@@ -84,6 +98,7 @@ func (s *configsrvc) Create(ctx context.Context, p *config.Config) (res *config.
 	if err != nil {
 		return
 	}
+	loadKeyMapSetting()
 	return
 }
 
@@ -113,6 +128,7 @@ func (s *configsrvc) Update(ctx context.Context, p *config.Config) (res *config.
 	if err != nil {
 		return
 	}
+	loadKeyMapSetting()
 	return
 }
 
@@ -120,6 +136,9 @@ func (s *configsrvc) Update(ctx context.Context, p *config.Config) (res *config.
 func (s *configsrvc) Delete(ctx context.Context, p *config.DeletePayload) (res bool, err error) {
 	count, err := models.DeleteConfigByKey(p.Key)
 	res = count > 0
+	if res {
+		loadKeyMapSetting()
+	}
 	return
 }
 

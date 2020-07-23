@@ -25,6 +25,15 @@ var Keyboard = Type("keyboard", func() {
 	Field(4, "keys", ArrayOf(Keycode), "回车后发送的事件")
 })
 
+var KeyboardEvent = Type("KeyboardEvent", func() {
+	Field(1, "type", String, "键盘的值", func() {
+		Enum("heartbeat", "keyboard")
+	})
+	Field(2, "Keyboard_info", Keyboard, "键盘信息")
+	Field(3, "ext", String, "其他信息")
+	Required("type")
+})
+
 var PageModelKeyboard = ResultType("application/vnd.keyboard_list+json", func() {
 	Description("分页返回是数据模型")
 	Attributes(func() {
@@ -53,7 +62,7 @@ var KeyboardResult = ResultType("application/vnd.keyboard_result+json", func() {
 	Attributes(func() {
 		Field(1, "id")
 		Field(2, "host_id")
-		Field(3, "key")
+		Field(3, "keys", Any)
 		Field(4, "value")
 		Field(5, "created_at")
 	})
@@ -120,12 +129,31 @@ var res_keyboard = Service("keyboard", func() {
 			Response("Unauthorized", StatusUnauthorized)
 			Response("NotFound", StatusNoContent)
 		})
-
-		GRPC(func() {
-			Response(CodeOK)
-			Response(CodeNotFound)
-		})
 	})
+
+	Method("list_by_host_id", func() {
+		Description("键盘日志分页列表；")
+		Payload(func() {
+			TokenField(1, "token", String, "JWTAuth token used to perform authorization", func() {
+			})
+			Field(2, "host_id", UInt64, "主机ID", func() {
+			})
+		})
+		Error("Unauthorized")
+		Error("BadRequest")
+		Error("NotFound")
+		Result(CollectionOf(KeyboardResult))
+		HTTP(func() {
+			GET("/logs/{host_id}")
+			Response(StatusOK, func() {
+
+			})
+			Response("Unauthorized", StatusUnauthorized)
+			Response("NotFound", StatusNoContent)
+		})
+
+	})
+
 	Method("log", func() {
 		Description("创建日志数据")
 		Payload(Keyboard)
@@ -137,10 +165,6 @@ var res_keyboard = Service("keyboard", func() {
 			})
 			Response(StatusNotFound)
 			Response("Unauthorized", StatusUnauthorized)
-		})
-		GRPC(func() {
-			Response(CodeOK)
-			Response(CodeNotFound)
 		})
 	})
 
@@ -170,15 +194,17 @@ var res_keyboard = Service("keyboard", func() {
 
 	Method("broker", func() {
 		Description("用于建立广播消息的服务")
+		NoSecurity()
 		Payload(func() {
-			TokenField(1, "token", String, "JWTAuth token used to perform authorization", func() {
+			Field(1, "token", String, "JWTAuth token used to perform authorization", func() {
 			})
 			Field(2, "host_id", UInt64, "对应的host_id", func() {
 			})
-			Required("token")
+			Required("host_id")
 		})
-		StreamingPayload(Keyboard)
-		StreamingResult(Keyboard)
+
+		StreamingPayload(KeyboardEvent)
+		StreamingResult(KeyboardEvent)
 		Error("Unauthorized")
 		Error("BadRequest")
 		Error("NotFound")
@@ -186,8 +212,11 @@ var res_keyboard = Service("keyboard", func() {
 			GET("/broker/{host_id}")
 			Response(StatusOK)
 			Header("token:Authorization", String, "Auth token", func() {
-				Pattern("^Bearer [^ ]+$")
+				//Pattern("^Bearer [^ ]+$")
 			})
+			//Cookie("token:Authorization", String, "Auth token", func() {
+			//	Pattern("^Bearer [^ ]+$")
+			//})
 			Response("Unauthorized", StatusUnauthorized)
 			Response("BadRequest", StatusBadRequest)
 			Response("NotFound", StatusBadRequest)

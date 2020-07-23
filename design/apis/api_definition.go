@@ -57,7 +57,7 @@ var _ = API("themis", func() {
 	cors.Origin("*", func() { // Define CORS policy, may be prefixed with "*" wildcard
 		cors.Methods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")                                                                                                                                  // One or more authorized HTTP methods
 		cors.Headers("Origin, No-Cache, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type,Content-Disposition,Content-Transfer-Encoding, Authorization,*") // One or more authorized headers, use "*" to authorize all
-		cors.Expose("Authorization", "token", "Content-Disposition", "Content-Transfer-Encoding", "File-Name")                                                                                            // One or more headers exposed to clients
+		cors.Expose("Authorization", "token", "Content-Disposition", "Content-Transfer-Encoding", "File-Name", "CheckOrigin")                                                                             // One or more headers exposed to clients
 		cors.MaxAge(600)                                                                                                                                                                                  // How long to cache a preflight request response
 		cors.Credentials()                                                                                                                                                                                // Sets Access-Control-Allow-Credentials header
 	})

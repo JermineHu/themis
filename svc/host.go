@@ -7,6 +7,7 @@ import (
 	"github.com/JermineHu/themis/models"
 	"github.com/jinzhu/copier"
 	"log"
+	"strconv"
 
 	host "github.com/JermineHu/themis/svc/gen/host"
 	"goa.design/goa/v3/security"
@@ -92,6 +93,8 @@ func (s *hostsrvc) Registry(ctx context.Context, p *host.RegistryPayload) (res *
 		return res, err
 	}
 	res.Token = tk
+	tID := strconv.FormatUint(cp.ID, 10)
+	res.HostID = &tID
 	return
 }
 

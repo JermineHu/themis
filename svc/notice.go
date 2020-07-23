@@ -114,7 +114,7 @@ func (s *noticesrvc) Show(ctx context.Context, p *notice.ShowPayload) (res *noti
 		err = notice.MakeBadRequest(err)
 		return
 	}
-	err = copier.Copy(&cp, &res)
+	err = copier.Copy(&res, &cp)
 	if err != nil {
 		return
 	}

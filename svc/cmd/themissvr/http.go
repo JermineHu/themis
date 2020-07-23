@@ -74,7 +74,12 @@ func handleHTTPServer(ctx context.Context, u *url.URL, healthEndpoints *health.E
 	)
 	{
 		eh := errorHandler(logger)
-		upgrader := &websocket.Upgrader{}
+		upgrader := &websocket.Upgrader{
+			// 解决跨域问题
+			CheckOrigin: func(r *http.Request) bool {
+				return true
+			},
+		}
 		healthServer = healthsvr.New(healthEndpoints, mux, dec, enc, eh, nil)
 		adminServer = adminsvr.New(adminEndpoints, mux, dec, enc, eh, nil)
 		configServer = configsvr.New(configEndpoints, mux, dec, enc, eh, nil)

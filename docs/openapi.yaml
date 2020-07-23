@@ -536,6 +536,9 @@ paths:
             Authorization:
               description: JWTAuth token used to perform authorization
               type: string
+            HostID:
+              description: 返回主机ID
+              type: string
         "401":
           description: Unauthorized response.
           schema:
@@ -752,11 +755,7 @@ paths:
       tags:
       - keyboard
       summary: broker keyboard
-      description: |-
-        用于建立广播消息的服务
-
-        **Required security scopes for jwt**:
-          * `api:access`
+      description: 用于建立广播消息的服务
       operationId: keyboard#broker
       parameters:
       - name: host_id
@@ -767,14 +766,15 @@ paths:
       - name: Authorization
         in: header
         description: Auth token
-        required: true
+        required: false
         type: string
-        pattern: ^Bearer [^ ]+$
       responses:
         "101":
           description: Switching Protocols response.
           schema:
             $ref: '#/definitions/KeyboardBrokerResponseBody'
+            required:
+            - type
         "400":
           description: Bad Request response.
           schema:
@@ -785,8 +785,6 @@ paths:
             $ref: '#/definitions/KeyboardBrokerUnauthorizedResponseBody'
       schemes:
       - ws
-      security:
-      - jwt_header_Authorization: []
   /themis/v1/keyboard/log/{host_id}:
     post:
       tags:
@@ -869,6 +867,45 @@ paths:
           description: Unauthorized response.
           schema:
             $ref: '#/definitions/KeyboardListUnauthorizedResponseBody'
+      schemes:
+      - http
+      security:
+      - jwt_header_Authorization: []
+  /themis/v1/keyboard/logs/{host_id}:
+    get:
+      tags:
+      - keyboard
+      summary: list_by_host_id keyboard
+      description: |-
+        键盘日志分页列表；
+
+        **Required security scopes for jwt**:
+          * `api:access`
+      operationId: keyboard#list_by_host_id
+      parameters:
+      - name: host_id
+        in: path
+        description: 主机ID
+        required: true
+        type: integer
+      - name: Authorization
+        in: header
+        description: JWTAuth token used to perform authorization
+        required: false
+        type: string
+      responses:
+        "200":
+          description: OK response.
+          schema:
+            $ref: '#/definitions/KeyboardKeyboardResultResponseCollection'
+        "204":
+          description: No Content response.
+          schema:
+            $ref: '#/definitions/KeyboardListByHostIDNotFoundResponseBody'
+        "401":
+          description: Unauthorized response.
+          schema:
+            $ref: '#/definitions/KeyboardListByHostIDUnauthorizedResponseBody'
       schemes:
       - http
       security:
@@ -1486,7 +1523,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+        example: 62ffa704-ccb3-4466-a5a4-e10347d775a4
         format: uuid
       id:
         type: integer
@@ -1504,7 +1541,7 @@ definitions:
     description: CreateNot FoundResponseBody result type (default view)
     example:
       created_at: Possimus accusamus.
-      created_by: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+      created_by: 62ffa704-ccb3-4466-a5a4-e10347d775a4
       id: 4421300266067684308
       login_name: ZhangSan
       token: Exercitationem vel magni.
@@ -1519,7 +1556,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+        example: 62ffa704-ccb3-4466-a5a4-e10347d775a4
         format: uuid
       id:
         type: integer
@@ -1537,7 +1574,7 @@ definitions:
     description: CreateOKResponseBody result type (default view)
     example:
       created_at: Fugiat vitae aut maxime qui quia deleniti.
-      created_by: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+      created_by: 62ffa704-ccb3-4466-a5a4-e10347d775a4
       id: 11427590763778543712
       login_name: ZhangSan
       token: Et est enim ipsa.
@@ -1552,7 +1589,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+        example: 62ffa704-ccb3-4466-a5a4-e10347d775a4
         format: uuid
       id:
         type: integer
@@ -1570,18 +1607,18 @@ definitions:
       salt:
         type: string
         description: 生成密码是使用的盐
-        example: 2ABhFKSwRBbWD
+        example: 1MpHM0Zuzc2XY
       updated_at:
         type: string
         description: 更新时间
         example: Veniam totam cum in rerum.
     example:
       created_at: Occaecati voluptatibus veritatis soluta quasi qui.
-      created_by: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+      created_by: 62ffa704-ccb3-4466-a5a4-e10347d775a4
       id: 4229859442517050647
       login_name: ZhangSan
       password: "123456"
-      salt: 2ABhFKSwRBbWD
+      salt: 1MpHM0Zuzc2XY
       updated_at: Impedit impedit veniam ea totam ut veritatis.
   AdminCreateUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
@@ -1745,11 +1782,11 @@ definitions:
       order_by: id
       where:
         created_at: Vel veritatis vitae magni.
-        created_by: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+        created_by: 62ffa704-ccb3-4466-a5a4-e10347d775a4
         id: 4176264860512583429
         login_name: ZhangSan
         password: "123456"
-        salt: 2ABhFKSwRBbWD
+        salt: 1MpHM0Zuzc2XY
         token: Quis aut aut enim fugiat fugit corporis.
         updated_at: Sed enim dolore.
     required:
@@ -1771,17 +1808,17 @@ definitions:
       count: 200
       page_data:
       - created_at: Neque nemo.
-        created_by: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+        created_by: 62ffa704-ccb3-4466-a5a4-e10347d775a4
         id: 5660693377371806628
         login_name: ZhangSan
         token: Vero beatae.
       - created_at: Neque nemo.
-        created_by: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+        created_by: 62ffa704-ccb3-4466-a5a4-e10347d775a4
         id: 5660693377371806628
         login_name: ZhangSan
         token: Vero beatae.
       - created_at: Neque nemo.
-        created_by: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+        created_by: 62ffa704-ccb3-4466-a5a4-e10347d775a4
         id: 5660693377371806628
         login_name: ZhangSan
         token: Vero beatae.
@@ -1930,7 +1967,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+        example: 62ffa704-ccb3-4466-a5a4-e10347d775a4
         format: uuid
       id:
         type: integer
@@ -1948,7 +1985,7 @@ definitions:
     description: LoginNot FoundResponseBody result type (tiny view) (default view)
     example:
       created_at: Et et nam fugit fugiat labore.
-      created_by: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+      created_by: 62ffa704-ccb3-4466-a5a4-e10347d775a4
       id: 17848334160887398685
       login_name: ZhangSan
       token: Fugiat amet quam assumenda perferendis eum sequi.
@@ -1963,7 +2000,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+        example: 62ffa704-ccb3-4466-a5a4-e10347d775a4
         format: uuid
       id:
         type: integer
@@ -1977,7 +2014,7 @@ definitions:
     description: LoginOKResponseBody result type (tiny view) (default view)
     example:
       created_at: Tempore qui beatae expedita aliquid non.
-      created_by: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+      created_by: 62ffa704-ccb3-4466-a5a4-e10347d775a4
       id: 6462657064666042111
       login_name: ZhangSan
   AdminLoginRequestBody:
@@ -2009,7 +2046,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+        example: 62ffa704-ccb3-4466-a5a4-e10347d775a4
         format: uuid
       id:
         type: integer
@@ -2027,7 +2064,7 @@ definitions:
       salt:
         type: string
         description: 生成密码是使用的盐
-        example: 2ABhFKSwRBbWD
+        example: 1MpHM0Zuzc2XY
       token:
         type: string
         description: JWTAuth token used to perform authorization
@@ -2038,11 +2075,11 @@ definitions:
         example: Adipisci minima officiis praesentium adipisci qui.
     example:
       created_at: Voluptates necessitatibus blanditiis repellat omnis cupiditate.
-      created_by: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+      created_by: 62ffa704-ccb3-4466-a5a4-e10347d775a4
       id: 7355578750134109068
       login_name: ZhangSan
       password: "123456"
-      salt: 2ABhFKSwRBbWD
+      salt: 1MpHM0Zuzc2XY
       token: Assumenda ut eaque id error.
       updated_at: Repudiandae animi ut dolores.
   AdminResultResponseBody:
@@ -2056,7 +2093,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+        example: 62ffa704-ccb3-4466-a5a4-e10347d775a4
         format: uuid
       id:
         type: integer
@@ -2074,7 +2111,7 @@ definitions:
     description: 管理员模型 (default view)
     example:
       created_at: Et dolorem dolor occaecati quo voluptatem numquam.
-      created_by: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+      created_by: 62ffa704-ccb3-4466-a5a4-e10347d775a4
       id: 11330690755743400388
       login_name: ZhangSan
       token: Est minus nihil placeat et eligendi.
@@ -2086,17 +2123,17 @@ definitions:
     description: Admin_resultCollectionResponseBody is the result type for an array of Admin_resultResponseBody (default view)
     example:
     - created_at: Neque nemo.
-      created_by: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+      created_by: 62ffa704-ccb3-4466-a5a4-e10347d775a4
       id: 5660693377371806628
       login_name: ZhangSan
       token: Vero beatae.
     - created_at: Neque nemo.
-      created_by: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+      created_by: 62ffa704-ccb3-4466-a5a4-e10347d775a4
       id: 5660693377371806628
       login_name: ZhangSan
       token: Vero beatae.
     - created_at: Neque nemo.
-      created_by: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+      created_by: 62ffa704-ccb3-4466-a5a4-e10347d775a4
       id: 5660693377371806628
       login_name: ZhangSan
       token: Vero beatae.
@@ -2111,7 +2148,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+        example: 62ffa704-ccb3-4466-a5a4-e10347d775a4
         format: uuid
       id:
         type: integer
@@ -2129,7 +2166,7 @@ definitions:
     description: ShowNot FoundResponseBody result type (default view)
     example:
       created_at: Voluptatibus a aut qui.
-      created_by: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+      created_by: 62ffa704-ccb3-4466-a5a4-e10347d775a4
       id: 5092606521967893951
       login_name: ZhangSan
       token: Vitae dolores et in.
@@ -2144,7 +2181,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+        example: 62ffa704-ccb3-4466-a5a4-e10347d775a4
         format: uuid
       id:
         type: integer
@@ -2162,7 +2199,7 @@ definitions:
     description: ShowOKResponseBody result type (default view)
     example:
       created_at: Laboriosam veniam temporibus eius.
-      created_by: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+      created_by: 62ffa704-ccb3-4466-a5a4-e10347d775a4
       id: 5467848156839181241
       login_name: ZhangSan
       token: Ab quam earum voluptatem sunt.
@@ -2220,7 +2257,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+        example: 62ffa704-ccb3-4466-a5a4-e10347d775a4
         format: uuid
       id:
         type: integer
@@ -2238,7 +2275,7 @@ definitions:
     description: UpdateNot FoundResponseBody result type (default view)
     example:
       created_at: Necessitatibus mollitia quaerat dolor facere doloribus.
-      created_by: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+      created_by: 62ffa704-ccb3-4466-a5a4-e10347d775a4
       id: 12550670657954154649
       login_name: ZhangSan
       token: Fugiat aut ex ab.
@@ -2253,7 +2290,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+        example: 62ffa704-ccb3-4466-a5a4-e10347d775a4
         format: uuid
       id:
         type: integer
@@ -2271,7 +2308,7 @@ definitions:
     description: UpdateOKResponseBody result type (default view)
     example:
       created_at: Consequatur voluptatibus natus reiciendis quasi perspiciatis nam.
-      created_by: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+      created_by: 62ffa704-ccb3-4466-a5a4-e10347d775a4
       id: 1085287484786018886
       login_name: ZhangSan
       token: Dolor accusantium et nulla est.
@@ -2286,7 +2323,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+        example: 62ffa704-ccb3-4466-a5a4-e10347d775a4
         format: uuid
       login_name:
         type: string
@@ -2299,17 +2336,17 @@ definitions:
       salt:
         type: string
         description: 生成密码是使用的盐
-        example: 2ABhFKSwRBbWD
+        example: 1MpHM0Zuzc2XY
       updated_at:
         type: string
         description: 更新时间
         example: Vero non magni voluptas.
     example:
       created_at: Omnis et consequatur voluptate.
-      created_by: 34a5d011-06e8-4cd3-a915-96b86df7f1b9
+      created_by: 62ffa704-ccb3-4466-a5a4-e10347d775a4
       login_name: ZhangSan
       password: "123456"
-      salt: 2ABhFKSwRBbWD
+      salt: 1MpHM0Zuzc2XY
       updated_at: Sed ducimus.
   AdminUpdateUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
@@ -2891,19 +2928,19 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: false
+        example: true
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: true
+        example: false
     description: delete_Unauthorized_response_body result type (default view)
     example:
       fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: true
-      timeout: true
+      temporary: false
+      timeout: false
     required:
     - name
     - id
@@ -2918,11 +2955,11 @@ definitions:
       host_name:
         type: string
         description: 主机名称
-        example: Nulla adipisci qui aperiam.
+        example: Ut neque.
       id:
         type: integer
         description: 数据ID
-        example: 9299117863997958074
+        example: 1566464492414771384
         format: int64
       interfaces:
         type: array
@@ -2931,68 +2968,49 @@ definitions:
         description: 网卡信息
         example:
         - ip_addrs:
-          - Odit quisquam possimus quos hic eligendi.
-          - Corporis corporis vitae quo ducimus ea impedit.
-          - Atque praesentium.
-          - Minima aut aut explicabo minima commodi.
-          mac_addr: Omnis animi et vero consequatur iure.
-          name: Sunt qui eaque eum aut doloribus.
+          - Et vero consequatur iure voluptas dolor optio.
+          - Quos est et.
+          - Voluptatem sunt voluptatibus ut esse.
+          mac_addr: Illo possimus odit et et dolorem ut.
+          name: Dolore pariatur omnis et.
         - ip_addrs:
-          - Odit quisquam possimus quos hic eligendi.
-          - Corporis corporis vitae quo ducimus ea impedit.
-          - Atque praesentium.
-          - Minima aut aut explicabo minima commodi.
-          mac_addr: Omnis animi et vero consequatur iure.
-          name: Sunt qui eaque eum aut doloribus.
+          - Et vero consequatur iure voluptas dolor optio.
+          - Quos est et.
+          - Voluptatem sunt voluptatibus ut esse.
+          mac_addr: Illo possimus odit et et dolorem ut.
+          name: Dolore pariatur omnis et.
         - ip_addrs:
-          - Odit quisquam possimus quos hic eligendi.
-          - Corporis corporis vitae quo ducimus ea impedit.
-          - Atque praesentium.
-          - Minima aut aut explicabo minima commodi.
-          mac_addr: Omnis animi et vero consequatur iure.
-          name: Sunt qui eaque eum aut doloribus.
-        - ip_addrs:
-          - Odit quisquam possimus quos hic eligendi.
-          - Corporis corporis vitae quo ducimus ea impedit.
-          - Atque praesentium.
-          - Minima aut aut explicabo minima commodi.
-          mac_addr: Omnis animi et vero consequatur iure.
-          name: Sunt qui eaque eum aut doloribus.
+          - Et vero consequatur iure voluptas dolor optio.
+          - Quos est et.
+          - Voluptatem sunt voluptatibus ut esse.
+          mac_addr: Illo possimus odit et et dolorem ut.
+          name: Dolore pariatur omnis et.
       mark:
         type: string
         description: 备注信息
-        example: Deleniti recusandae quibusdam est perspiciatis dolorem et.
+        example: Omnis debitis sint pariatur tempore culpa.
       token:
         type: string
         description: JWTAuth token used to perform authorization
-        example: Est est nihil consequuntur perspiciatis dolores harum.
+        example: Omnis assumenda voluptates eligendi quam consequuntur exercitationem.
     example:
-      host_name: Harum ipsa molestiae veritatis.
-      id: 2237517475304733333
+      host_name: Iusto sit id est aspernatur.
+      id: 2642311515071791209
       interfaces:
       - ip_addrs:
-        - Odit quisquam possimus quos hic eligendi.
-        - Corporis corporis vitae quo ducimus ea impedit.
-        - Atque praesentium.
-        - Minima aut aut explicabo minima commodi.
-        mac_addr: Omnis animi et vero consequatur iure.
-        name: Sunt qui eaque eum aut doloribus.
+        - Et vero consequatur iure voluptas dolor optio.
+        - Quos est et.
+        - Voluptatem sunt voluptatibus ut esse.
+        mac_addr: Illo possimus odit et et dolorem ut.
+        name: Dolore pariatur omnis et.
       - ip_addrs:
-        - Odit quisquam possimus quos hic eligendi.
-        - Corporis corporis vitae quo ducimus ea impedit.
-        - Atque praesentium.
-        - Minima aut aut explicabo minima commodi.
-        mac_addr: Omnis animi et vero consequatur iure.
-        name: Sunt qui eaque eum aut doloribus.
-      - ip_addrs:
-        - Odit quisquam possimus quos hic eligendi.
-        - Corporis corporis vitae quo ducimus ea impedit.
-        - Atque praesentium.
-        - Minima aut aut explicabo minima commodi.
-        mac_addr: Omnis animi et vero consequatur iure.
-        name: Sunt qui eaque eum aut doloribus.
-      mark: Qui eligendi possimus ratione dignissimos accusamus.
-      token: Sit corporis velit.
+        - Et vero consequatur iure voluptas dolor optio.
+        - Quos est et.
+        - Voluptatem sunt voluptatibus ut esse.
+        mac_addr: Illo possimus odit et et dolorem ut.
+        name: Dolore pariatur omnis et.
+      mark: Deserunt quia autem incidunt fuga.
+      token: Ut vel ipsum nostrum sapiente.
   HostInfoResponseBody:
     title: HostInfoResponseBody
     type: object
@@ -3000,11 +3018,11 @@ definitions:
       host_name:
         type: string
         description: 主机名称
-        example: In pariatur tempora earum consequatur recusandae.
+        example: Velit ad quas placeat facere.
       id:
         type: integer
         description: 数据ID
-        example: 14367072442240741516
+        example: 9819650316090655171
         format: int64
       interfaces:
         type: array
@@ -3013,54 +3031,68 @@ definitions:
         description: 网卡信息
         example:
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        - ip_addrs:
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        - ip_addrs:
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
       mark:
         type: string
         description: 备注信息
-        example: Qui rem soluta deserunt magni.
+        example: Recusandae odio quas.
       token:
         type: string
         description: JWTAuth token used to perform authorization
-        example: Est tempora.
+        example: Quos vitae eum ad.
     example:
-      host_name: Quae eligendi quia et laborum.
-      id: 5515046862842189398
+      host_name: Praesentium eius at et.
+      id: 13595908546203077492
       interfaces:
       - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
       - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
       - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
-      mark: Ut facilis.
-      token: Optio numquam eligendi quisquam veritatis et.
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
+      mark: Corporis voluptatem et.
+      token: Veniam voluptatibus ipsum.
   HostListNotFoundResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -3088,14 +3120,14 @@ definitions:
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: false
+        example: true
     description: list_NotFound_response_body result type (default view)
     example:
-      fault: false
+      fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
+      temporary: true
       timeout: false
     required:
     - name
@@ -3136,32 +3168,23 @@ definitions:
       offset_tail: 20
       order_by: id
       where:
-        host_name: Ut praesentium libero.
-        id: 11999498103579445828
+        host_name: Quo ducimus ea impedit cumque atque praesentium.
+        id: 321388353988852187
         interfaces:
         - ip_addrs:
-          - Odit quisquam possimus quos hic eligendi.
-          - Corporis corporis vitae quo ducimus ea impedit.
-          - Atque praesentium.
-          - Minima aut aut explicabo minima commodi.
-          mac_addr: Omnis animi et vero consequatur iure.
-          name: Sunt qui eaque eum aut doloribus.
+          - Et vero consequatur iure voluptas dolor optio.
+          - Quos est et.
+          - Voluptatem sunt voluptatibus ut esse.
+          mac_addr: Illo possimus odit et et dolorem ut.
+          name: Dolore pariatur omnis et.
         - ip_addrs:
-          - Odit quisquam possimus quos hic eligendi.
-          - Corporis corporis vitae quo ducimus ea impedit.
-          - Atque praesentium.
-          - Minima aut aut explicabo minima commodi.
-          mac_addr: Omnis animi et vero consequatur iure.
-          name: Sunt qui eaque eum aut doloribus.
-        - ip_addrs:
-          - Odit quisquam possimus quos hic eligendi.
-          - Corporis corporis vitae quo ducimus ea impedit.
-          - Atque praesentium.
-          - Minima aut aut explicabo minima commodi.
-          mac_addr: Omnis animi et vero consequatur iure.
-          name: Sunt qui eaque eum aut doloribus.
-        mark: Saepe in voluptatem.
-        token: Perferendis facilis voluptates.
+          - Et vero consequatur iure voluptas dolor optio.
+          - Quos est et.
+          - Voluptatem sunt voluptatibus ut esse.
+          mac_addr: Illo possimus odit et et dolorem ut.
+          name: Dolore pariatur omnis et.
+        mark: Minima aut aut explicabo minima commodi.
+        token: Sunt qui eaque eum aut doloribus.
     required:
     - offset_head
     - offset_tail
@@ -3180,72 +3203,82 @@ definitions:
     example:
       count: 200
       page_data:
-      - created_at: "2012-12-27T02:40:31Z"
-        host_name: Ratione voluptatem.
-        id: 7759848307951449396
+      - created_at: "1999-07-12T21:06:08Z"
+        host_name: Aut id quia nulla maxime tempora unde.
+        id: 8789440352853410478
         interfaces:
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
-        - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
-        - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
-        mark: Voluptatibus ut esse quisquam dolore pariatur.
-      - created_at: "2012-12-27T02:40:31Z"
-        host_name: Ratione voluptatem.
-        id: 7759848307951449396
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        mark: Nemo ut.
+      - created_at: "1999-07-12T21:06:08Z"
+        host_name: Aut id quia nulla maxime tempora unde.
+        id: 8789440352853410478
         interfaces:
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        mark: Nemo ut.
+      - created_at: "1999-07-12T21:06:08Z"
+        host_name: Aut id quia nulla maxime tempora unde.
+        id: 8789440352853410478
+        interfaces:
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
-        mark: Voluptatibus ut esse quisquam dolore pariatur.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        mark: Nemo ut.
+      - created_at: "1999-07-12T21:06:08Z"
+        host_name: Aut id quia nulla maxime tempora unde.
+        id: 8789440352853410478
+        interfaces:
+        - ip_addrs:
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        - ip_addrs:
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        mark: Nemo ut.
   HostListUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -3253,7 +3286,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: false
+        example: true
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -3269,14 +3302,14 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: false
+        example: true
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: true
+        example: false
     description: list_Unauthorized_response_body result type (default view)
     example:
-      fault: false
+      fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
@@ -3293,12 +3326,17 @@ definitions:
     title: HostRegistryNotFoundResponseBody
     type: object
     properties:
+      host_id:
+        type: string
+        description: 返回主机ID
+        example: Delectus sunt ratione.
       token:
         type: string
         description: JWTAuth token used to perform authorization
-        example: Laboriosam corrupti dolore sed.
+        example: Est modi qui placeat vel.
     example:
-      token: Vel omnis est laboriosam.
+      host_id: Eum eos odit consectetur.
+      token: Architecto nulla et dolore minus.
   HostRegistryRequestBody:
     title: HostRegistryRequestBody
     type: object
@@ -3306,11 +3344,11 @@ definitions:
       host_name:
         type: string
         description: 主机名称
-        example: Enim commodi iusto sit id est aspernatur.
+        example: Eos laborum quis omnis libero.
       id:
         type: integer
         description: 数据ID
-        example: 12434556575872310243
+        example: 4812768474102738072
         format: int64
       interfaces:
         type: array
@@ -3319,49 +3357,50 @@ definitions:
         description: 网卡信息
         example:
         - ip_addrs:
-          - Odit quisquam possimus quos hic eligendi.
-          - Corporis corporis vitae quo ducimus ea impedit.
-          - Atque praesentium.
-          - Minima aut aut explicabo minima commodi.
-          mac_addr: Omnis animi et vero consequatur iure.
-          name: Sunt qui eaque eum aut doloribus.
+          - Et vero consequatur iure voluptas dolor optio.
+          - Quos est et.
+          - Voluptatem sunt voluptatibus ut esse.
+          mac_addr: Illo possimus odit et et dolorem ut.
+          name: Dolore pariatur omnis et.
         - ip_addrs:
-          - Odit quisquam possimus quos hic eligendi.
-          - Corporis corporis vitae quo ducimus ea impedit.
-          - Atque praesentium.
-          - Minima aut aut explicabo minima commodi.
-          mac_addr: Omnis animi et vero consequatur iure.
-          name: Sunt qui eaque eum aut doloribus.
+          - Et vero consequatur iure voluptas dolor optio.
+          - Quos est et.
+          - Voluptatem sunt voluptatibus ut esse.
+          mac_addr: Illo possimus odit et et dolorem ut.
+          name: Dolore pariatur omnis et.
+        - ip_addrs:
+          - Et vero consequatur iure voluptas dolor optio.
+          - Quos est et.
+          - Voluptatem sunt voluptatibus ut esse.
+          mac_addr: Illo possimus odit et et dolorem ut.
+          name: Dolore pariatur omnis et.
+        - ip_addrs:
+          - Et vero consequatur iure voluptas dolor optio.
+          - Quos est et.
+          - Voluptatem sunt voluptatibus ut esse.
+          mac_addr: Illo possimus odit et et dolorem ut.
+          name: Dolore pariatur omnis et.
       mark:
         type: string
         description: 备注信息
-        example: Deserunt quia autem incidunt fuga.
+        example: Minima placeat provident.
     example:
-      host_name: Ipsum nostrum sapiente.
-      id: 17937125939489024289
+      host_name: Id temporibus cumque.
+      id: 3478515868441437821
       interfaces:
       - ip_addrs:
-        - Odit quisquam possimus quos hic eligendi.
-        - Corporis corporis vitae quo ducimus ea impedit.
-        - Atque praesentium.
-        - Minima aut aut explicabo minima commodi.
-        mac_addr: Omnis animi et vero consequatur iure.
-        name: Sunt qui eaque eum aut doloribus.
+        - Et vero consequatur iure voluptas dolor optio.
+        - Quos est et.
+        - Voluptatem sunt voluptatibus ut esse.
+        mac_addr: Illo possimus odit et et dolorem ut.
+        name: Dolore pariatur omnis et.
       - ip_addrs:
-        - Odit quisquam possimus quos hic eligendi.
-        - Corporis corporis vitae quo ducimus ea impedit.
-        - Atque praesentium.
-        - Minima aut aut explicabo minima commodi.
-        mac_addr: Omnis animi et vero consequatur iure.
-        name: Sunt qui eaque eum aut doloribus.
-      - ip_addrs:
-        - Odit quisquam possimus quos hic eligendi.
-        - Corporis corporis vitae quo ducimus ea impedit.
-        - Atque praesentium.
-        - Minima aut aut explicabo minima commodi.
-        mac_addr: Omnis animi et vero consequatur iure.
-        name: Sunt qui eaque eum aut doloribus.
-      mark: Non est modi.
+        - Et vero consequatur iure voluptas dolor optio.
+        - Quos est et.
+        - Voluptatem sunt voluptatibus ut esse.
+        mac_addr: Illo possimus odit et et dolorem ut.
+        name: Dolore pariatur omnis et.
+      mark: Autem illo corrupti quis facere.
   HostRegistryUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -3369,7 +3408,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: false
+        example: true
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -3385,14 +3424,14 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: false
+        example: true
       timeout:
         type: boolean
         description: Is the error a timeout?
         example: true
     description: registry_Unauthorized_response_body result type (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
@@ -3412,16 +3451,16 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: "2013-09-25T07:26:45Z"
+        example: "2006-04-18T13:09:28Z"
         format: date-time
       host_name:
         type: string
         description: 主机名称
-        example: Maiores et rerum rem sit hic praesentium.
+        example: Et ut ea optio quisquam.
       id:
         type: integer
         description: 数据ID
-        example: 580520072977647218
+        example: 1924077991709423357
         format: int64
       interfaces:
         type: array
@@ -3430,58 +3469,58 @@ definitions:
         description: 网卡信息
         example:
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
-        - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
       mark:
         type: string
         description: 备注信息
-        example: Asperiores deleniti nostrum molestias deleniti aperiam.
+        example: Tempore nam debitis dolores maiores.
     description: 用户模型 (default view)
     example:
-      created_at: "1987-02-23T07:45:51Z"
-      host_name: Necessitatibus expedita omnis sint eos.
-      id: 16133509679376611126
+      created_at: "2012-07-18T00:16:28Z"
+      host_name: Iusto perferendis et.
+      id: 7803600777977301951
       interfaces:
       - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
       - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
-      mark: Rem soluta error soluta qui dolores.
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
+      - ip_addrs:
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
+      mark: Alias corporis amet.
   HostResultResponseBodyCollection:
     title: 'Mediatype identifier: application/vnd.host_result+json; type=collection; view=default'
     type: array
@@ -3489,105 +3528,63 @@ definitions:
       $ref: '#/definitions/HostResultResponseBody'
     description: Host_resultCollectionResponseBody is the result type for an array of Host_resultResponseBody (default view)
     example:
-    - created_at: "2012-12-27T02:40:31Z"
-      host_name: Ratione voluptatem.
-      id: 7759848307951449396
+    - created_at: "1999-07-12T21:06:08Z"
+      host_name: Aut id quia nulla maxime tempora unde.
+      id: 8789440352853410478
       interfaces:
       - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
       - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
-      - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
-      - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
-      mark: Voluptatibus ut esse quisquam dolore pariatur.
-    - created_at: "2012-12-27T02:40:31Z"
-      host_name: Ratione voluptatem.
-      id: 7759848307951449396
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
+      mark: Nemo ut.
+    - created_at: "1999-07-12T21:06:08Z"
+      host_name: Aut id quia nulla maxime tempora unde.
+      id: 8789440352853410478
       interfaces:
       - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
       - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
-      - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
-      - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
-      mark: Voluptatibus ut esse quisquam dolore pariatur.
-    - created_at: "2012-12-27T02:40:31Z"
-      host_name: Ratione voluptatem.
-      id: 7759848307951449396
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
+      mark: Nemo ut.
+    - created_at: "1999-07-12T21:06:08Z"
+      host_name: Aut id quia nulla maxime tempora unde.
+      id: 8789440352853410478
       interfaces:
       - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
       - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
-      - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
-      - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
-      mark: Voluptatibus ut esse quisquam dolore pariatur.
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
+      mark: Nemo ut.
   HostShowNotFoundResponseBody:
     title: 'Mediatype identifier: application/vnd.host_result+json; view=default'
     type: object
@@ -3595,16 +3592,16 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: "2005-04-02T11:49:08Z"
+        example: "2012-10-17T03:34:34Z"
         format: date-time
       host_name:
         type: string
         description: 主机名称
-        example: Eos non tempore dolores consequatur dignissimos et.
+        example: Dolorum voluptatibus facilis nisi quae.
       id:
         type: integer
         description: 数据ID
-        example: 16731108307949819650
+        example: 10149022091450626817
         format: int64
       interfaces:
         type: array
@@ -3613,51 +3610,51 @@ definitions:
         description: 网卡信息
         example:
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
       mark:
         type: string
         description: 备注信息
-        example: Nesciunt doloribus esse labore excepturi architecto.
+        example: Debitis nobis iusto ex.
     description: ShowNot FoundResponseBody result type (default view)
     example:
-      created_at: "1979-07-08T17:46:24Z"
-      host_name: Est a nam sed.
-      id: 3563015823852641285
+      created_at: "1975-04-24T09:59:16Z"
+      host_name: Ad rerum soluta.
+      id: 13939319716657799702
       interfaces:
       - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
       - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
-      mark: Provident sed est sit doloremque quod.
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
+      mark: Dolores vel eveniet libero odit et quod.
   HostShowOKResponseBody:
     title: 'Mediatype identifier: application/vnd.host_result+json; view=default'
     type: object
@@ -3665,16 +3662,16 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: "2005-01-18T08:38:59Z"
+        example: "1986-09-16T08:58:54Z"
         format: date-time
       host_name:
         type: string
         description: 主机名称
-        example: Adipisci dolorem corrupti itaque in.
+        example: Ut repellat natus recusandae.
       id:
         type: integer
         description: 数据ID
-        example: 12903032574950365267
+        example: 12803223542384400017
         format: int64
       interfaces:
         type: array
@@ -3683,44 +3680,51 @@ definitions:
         description: 网卡信息
         example:
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
       mark:
         type: string
         description: 备注信息
-        example: Autem recusandae corrupti unde sit ad praesentium.
+        example: Amet aut sed autem odio rerum voluptatem.
     description: ShowOKResponseBody result type (default view)
     example:
-      created_at: "1998-04-03T14:05:13Z"
-      host_name: Sed autem odio rerum voluptatem assumenda laboriosam.
-      id: 14789967181475815112
+      created_at: "2006-02-27T13:50:35Z"
+      host_name: Quae eaque tempora cum.
+      id: 4113585652289156134
       interfaces:
       - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
       - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
-      mark: Aut et officiis voluptatem exercitationem vel eligendi.
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
+      - ip_addrs:
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
+      mark: Quisquam officia.
   HostShowUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -3751,7 +3755,7 @@ definitions:
         example: true
     description: show_Unauthorized_response_body result type (default view)
     example:
-      fault: false
+      fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
@@ -3771,16 +3775,16 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: "2010-05-16T07:34:45Z"
+        example: "1979-08-03T11:36:28Z"
         format: date-time
       host_name:
         type: string
         description: 主机名称
-        example: Sed ut aspernatur et vel mollitia eveniet.
+        example: Eos alias facilis omnis.
       id:
         type: integer
         description: 数据ID
-        example: 17998142938768576129
+        example: 16983070898323733160
         format: int64
       interfaces:
         type: array
@@ -3789,58 +3793,65 @@ definitions:
         description: 网卡信息
         example:
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
       mark:
         type: string
         description: 备注信息
-        example: Recusandae magnam.
+        example: Quidem explicabo debitis vero facilis expedita.
     description: UpdateNot FoundResponseBody result type (default view)
     example:
-      created_at: "1992-04-27T08:36:31Z"
-      host_name: Quidem explicabo debitis vero facilis expedita.
-      id: 6264729595657587799
+      created_at: "1983-08-15T01:27:12Z"
+      host_name: Veniam voluptas ut sunt.
+      id: 10471166136104362721
       interfaces:
       - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
       - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
-      mark: Sed illum sed quos ut.
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
+      - ip_addrs:
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
+      mark: Saepe modi autem.
   HostUpdateOKResponseBody:
     title: 'Mediatype identifier: application/vnd.host_result+json; view=default'
     type: object
@@ -3848,16 +3859,16 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: "1973-02-25T21:36:36Z"
+        example: "1978-06-22T03:52:01Z"
         format: date-time
       host_name:
         type: string
         description: 主机名称
-        example: Libero delectus sunt ratione atque architecto.
+        example: Ipsum autem harum et omnis.
       id:
         type: integer
         description: 数据ID
-        example: 7491584047047013128
+        example: 620102557177553821
         format: int64
       interfaces:
         type: array
@@ -3866,58 +3877,51 @@ definitions:
         description: 网卡信息
         example:
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
-        - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
-        - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
       mark:
         type: string
         description: 备注信息
-        example: Et dolore.
+        example: Tenetur quo veritatis nulla possimus.
     description: UpdateOKResponseBody result type (default view)
     example:
-      created_at: "1990-09-29T15:26:23Z"
-      host_name: Nulla possimus non odit voluptas.
-      id: 12916250997282998104
+      created_at: "1990-12-25T11:24:27Z"
+      host_name: Explicabo inventore provident beatae vitae sed ut.
+      id: 15013427577300972526
       interfaces:
       - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
       - ip_addrs:
-        - Dolores accusamus.
-        - Vitae voluptas similique.
-        - Pariatur laborum placeat consequuntur.
-        - Veniam praesentium sed.
-        mac_addr: Consequatur quia vitae recusandae.
-        name: Consequatur odit consequatur deleniti eum eum.
-      mark: Tempore tenetur.
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
+      - ip_addrs:
+        - Maiores qui beatae et.
+        - Quidem beatae quo assumenda ut.
+        - Eveniet reprehenderit.
+        - Animi ea quo voluptas dolor.
+        mac_addr: Qui eaque expedita alias non.
+        name: Maiores laborum minus non.
+      mark: Et vel.
   HostUpdateRequestBody:
     title: HostUpdateRequestBody
     type: object
@@ -3925,7 +3929,7 @@ definitions:
       host_name:
         type: string
         description: 主机名称
-        example: Nisi ipsum quas sint rem enim.
+        example: Non cumque similique sit.
       interfaces:
         type: array
         items:
@@ -3933,48 +3937,43 @@ definitions:
         description: 网卡信息
         example:
         - ip_addrs:
-          - Odit quisquam possimus quos hic eligendi.
-          - Corporis corporis vitae quo ducimus ea impedit.
-          - Atque praesentium.
-          - Minima aut aut explicabo minima commodi.
-          mac_addr: Omnis animi et vero consequatur iure.
-          name: Sunt qui eaque eum aut doloribus.
+          - Et vero consequatur iure voluptas dolor optio.
+          - Quos est et.
+          - Voluptatem sunt voluptatibus ut esse.
+          mac_addr: Illo possimus odit et et dolorem ut.
+          name: Dolore pariatur omnis et.
         - ip_addrs:
-          - Odit quisquam possimus quos hic eligendi.
-          - Corporis corporis vitae quo ducimus ea impedit.
-          - Atque praesentium.
-          - Minima aut aut explicabo minima commodi.
-          mac_addr: Omnis animi et vero consequatur iure.
-          name: Sunt qui eaque eum aut doloribus.
-        - ip_addrs:
-          - Odit quisquam possimus quos hic eligendi.
-          - Corporis corporis vitae quo ducimus ea impedit.
-          - Atque praesentium.
-          - Minima aut aut explicabo minima commodi.
-          mac_addr: Omnis animi et vero consequatur iure.
-          name: Sunt qui eaque eum aut doloribus.
+          - Et vero consequatur iure voluptas dolor optio.
+          - Quos est et.
+          - Voluptatem sunt voluptatibus ut esse.
+          mac_addr: Illo possimus odit et et dolorem ut.
+          name: Dolore pariatur omnis et.
       mark:
         type: string
         description: 备注信息
-        example: Voluptatem saepe.
+        example: Aut perferendis voluptas et dolorem doloremque nemo.
     example:
-      host_name: Eum dolor eveniet veniam autem harum.
+      host_name: Fuga ratione nam consequatur quaerat.
       interfaces:
       - ip_addrs:
-        - Odit quisquam possimus quos hic eligendi.
-        - Corporis corporis vitae quo ducimus ea impedit.
-        - Atque praesentium.
-        - Minima aut aut explicabo minima commodi.
-        mac_addr: Omnis animi et vero consequatur iure.
-        name: Sunt qui eaque eum aut doloribus.
+        - Et vero consequatur iure voluptas dolor optio.
+        - Quos est et.
+        - Voluptatem sunt voluptatibus ut esse.
+        mac_addr: Illo possimus odit et et dolorem ut.
+        name: Dolore pariatur omnis et.
       - ip_addrs:
-        - Odit quisquam possimus quos hic eligendi.
-        - Corporis corporis vitae quo ducimus ea impedit.
-        - Atque praesentium.
-        - Minima aut aut explicabo minima commodi.
-        mac_addr: Omnis animi et vero consequatur iure.
-        name: Sunt qui eaque eum aut doloribus.
-      mark: Et aut molestiae et quia.
+        - Et vero consequatur iure voluptas dolor optio.
+        - Quos est et.
+        - Voluptatem sunt voluptatibus ut esse.
+        mac_addr: Illo possimus odit et et dolorem ut.
+        name: Dolore pariatur omnis et.
+      - ip_addrs:
+        - Et vero consequatur iure voluptas dolor optio.
+        - Quos est et.
+        - Voluptatem sunt voluptatibus ut esse.
+        mac_addr: Illo possimus odit et et dolorem ut.
+        name: Dolore pariatur omnis et.
+      mark: Inventore earum dolorum iste aut fugiat.
   HostUpdateUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -3982,7 +3981,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: false
+        example: true
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -3998,7 +3997,7 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: true
+        example: false
       timeout:
         type: boolean
         description: Is the error a timeout?
@@ -4010,7 +4009,7 @@ definitions:
       message: parameter 'p' must be an integer
       name: bad_request
       temporary: false
-      timeout: true
+      timeout: false
     required:
     - name
     - id
@@ -4026,28 +4025,28 @@ definitions:
         type: array
         items:
           type: string
-          example: Hic voluptas eligendi occaecati necessitatibus magni vel.
+          example: Et expedita facilis.
         description: 地址
         example:
-        - Porro animi consequuntur.
-        - Officia id doloribus quas quia eum nisi.
-        - Quos eum repellat est.
+        - Et voluptas voluptatem dolorum.
+        - Praesentium quis.
+        - Occaecati molestias aperiam tempore molestias.
+        - Enim sit.
       mac_addr:
         type: string
         description: 主机mac地址
-        example: Et ut neque et omnis debitis.
+        example: Veritatis cupiditate qui eligendi possimus ratione.
       name:
         type: string
         description: 网卡名称
-        example: Facilis veritatis.
+        example: Velit odit harum ipsa.
     example:
       ip_addrs:
-      - Tempore culpa ut.
-      - Assumenda voluptates eligendi quam consequuntur exercitationem officiis.
-      - Expedita facilis deserunt ut et voluptas.
-      - Dolorum quo praesentium quis.
-      mac_addr: Enim sit.
-      name: Occaecati molestias aperiam tempore molestias.
+      - Voluptatem sit.
+      - Velit id.
+      - Laboriosam corrupti dolore sed.
+      mac_addr: Omnis id sunt accusamus nisi nostrum.
+      name: Vel omnis est laboriosam.
   InterfaceInfoResponseBody:
     title: InterfaceInfoResponseBody
     type: object
@@ -4056,26 +4055,25 @@ definitions:
         type: array
         items:
           type: string
-          example: Optio quisquam nesciunt tempore nam debitis dolores.
+          example: Sint eos modi rem soluta.
         description: 地址
         example:
-        - Autem est ullam cupiditate dolor.
-        - Sit quae.
-        - Ducimus harum.
+        - Qui dolores repellat beatae corrupti laudantium.
+        - Recusandae est.
       mac_addr:
         type: string
         description: 主机mac地址
-        example: Velit impedit eos iste.
+        example: Ipsa veritatis repudiandae corporis.
       name:
         type: string
         description: 网卡名称
-        example: Occaecati qui sed voluptas.
+        example: Sint vero eum et ab.
     example:
       ip_addrs:
-      - Amet praesentium minima.
-      - Odio neque consequatur.
-      mac_addr: Soluta qui natus.
-      name: Molestiae voluptatem vero voluptatem.
+      - Quia aut sapiente deserunt iusto.
+      - Molestiae iure.
+      mac_addr: Expedita quisquam mollitia velit debitis.
+      name: Cum voluptatum labore aliquid qui adipisci.
   KeyboardBrokerBadRequestResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -4099,14 +4097,14 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: false
+        example: true
       timeout:
         type: boolean
         description: Is the error a timeout?
         example: false
     description: broker_BadRequest_response_body result type (default view)
     example:
-      fault: false
+      fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
@@ -4126,7 +4124,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: true
+        example: false
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -4142,18 +4140,18 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: false
+        example: true
       timeout:
         type: boolean
         description: Is the error a timeout?
         example: false
     description: broker_NotFound_response_body result type (default view)
     example:
-      fault: false
+      fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: true
+      temporary: false
       timeout: false
     required:
     - name
@@ -4166,45 +4164,37 @@ definitions:
     title: KeyboardBrokerResponseBody
     type: object
     properties:
-      host_id:
-        type: integer
-        description: 主机ID
-        example: 16874610460160778691
-        format: int64
-      id:
-        type: integer
-        description: 数据ID
-        example: 15387999967197568752
-        format: int64
-      keys:
-        type: array
-        items:
-          $ref: '#/definitions/keycodeResponseBody'
-        description: 回车后发送的事件
-        example:
-        - key_code: Sit quaerat fuga placeat soluta nam.
-          text: Rem eum tenetur accusantium eos at.
-        - key_code: Sit quaerat fuga placeat soluta nam.
-          text: Rem eum tenetur accusantium eos at.
-        - key_code: Sit quaerat fuga placeat soluta nam.
-          text: Rem eum tenetur accusantium eos at.
-        - key_code: Sit quaerat fuga placeat soluta nam.
-          text: Rem eum tenetur accusantium eos at.
-      token:
+      Keyboard_info:
+        $ref: '#/definitions/keyboardResponseBody'
+      ext:
         type: string
-        description: JWTAuth token used to perform authorization
-        example: Quo sapiente nemo.
+        description: 其他信息
+        example: Rem atque provident vel doloremque.
+      type:
+        type: string
+        description: 键盘的值
+        example: heartbeat
+        enum:
+        - heartbeat
+        - keyboard
     example:
-      host_id: 4221306930079825006
-      id: 13058947761527195781
-      keys:
-      - key_code: Sit quaerat fuga placeat soluta nam.
-        text: Rem eum tenetur accusantium eos at.
-      - key_code: Sit quaerat fuga placeat soluta nam.
-        text: Rem eum tenetur accusantium eos at.
-      - key_code: Sit quaerat fuga placeat soluta nam.
-        text: Rem eum tenetur accusantium eos at.
-      token: Debitis ipsam sunt soluta sequi excepturi.
+      Keyboard_info:
+        host_id: 3151678655982702456
+        id: 9665593468195603254
+        keys:
+        - key_code: Vel tempore delectus esse accusantium.
+          text: Alias ratione architecto.
+        - key_code: Vel tempore delectus esse accusantium.
+          text: Alias ratione architecto.
+        - key_code: Vel tempore delectus esse accusantium.
+          text: Alias ratione architecto.
+        - key_code: Vel tempore delectus esse accusantium.
+          text: Alias ratione architecto.
+        token: Alias inventore.
+      ext: Dolor sint voluptate facilis modi dolore perferendis.
+      type: heartbeat
+    required:
+    - type
   KeyboardBrokerUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -4235,12 +4225,12 @@ definitions:
         example: true
     description: broker_Unauthorized_response_body result type (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: true
-      timeout: true
+      temporary: false
+      timeout: false
     required:
     - name
     - id
@@ -4271,7 +4261,7 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: true
+        example: false
       timeout:
         type: boolean
         description: Is the error a timeout?
@@ -4284,6 +4274,114 @@ definitions:
       name: bad_request
       temporary: false
       timeout: true
+    required:
+    - name
+    - id
+    - message
+    - temporary
+    - timeout
+    - fault
+  KeyboardKeyboardResultResponseCollection:
+    title: 'Mediatype identifier: application/vnd.keyboard_result+json; type=collection; view=default'
+    type: array
+    items:
+      $ref: '#/definitions/KeyboardResultResponse'
+    description: list_by_host_id_response_body is the result type for an array of Keyboard_resultResponse (default view)
+    example:
+    - created_at: In qui impedit sapiente excepturi.
+      host_id: 3758893540149825696
+      id: 7300969453603711356
+      keys: Animi sit similique qui.
+      value: Quasi at voluptatem consequuntur iste et sunt.
+    - created_at: In qui impedit sapiente excepturi.
+      host_id: 3758893540149825696
+      id: 7300969453603711356
+      keys: Animi sit similique qui.
+      value: Quasi at voluptatem consequuntur iste et sunt.
+    - created_at: In qui impedit sapiente excepturi.
+      host_id: 3758893540149825696
+      id: 7300969453603711356
+      keys: Animi sit similique qui.
+      value: Quasi at voluptatem consequuntur iste et sunt.
+  KeyboardListByHostIDNotFoundResponseBody:
+    title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+    type: object
+    properties:
+      fault:
+        type: boolean
+        description: Is the error a server-side fault?
+        example: false
+      id:
+        type: string
+        description: ID is a unique identifier for this particular occurrence of the problem.
+        example: 123abc
+      message:
+        type: string
+        description: Message is a human-readable explanation specific to this occurrence of the problem.
+        example: parameter 'p' must be an integer
+      name:
+        type: string
+        description: Name is the name of this class of errors.
+        example: bad_request
+      temporary:
+        type: boolean
+        description: Is the error temporary?
+        example: false
+      timeout:
+        type: boolean
+        description: Is the error a timeout?
+        example: true
+    description: list_by_host_id_NotFound_response_body result type (default view)
+    example:
+      fault: false
+      id: 123abc
+      message: parameter 'p' must be an integer
+      name: bad_request
+      temporary: false
+      timeout: false
+    required:
+    - name
+    - id
+    - message
+    - temporary
+    - timeout
+    - fault
+  KeyboardListByHostIDUnauthorizedResponseBody:
+    title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+    type: object
+    properties:
+      fault:
+        type: boolean
+        description: Is the error a server-side fault?
+        example: false
+      id:
+        type: string
+        description: ID is a unique identifier for this particular occurrence of the problem.
+        example: 123abc
+      message:
+        type: string
+        description: Message is a human-readable explanation specific to this occurrence of the problem.
+        example: parameter 'p' must be an integer
+      name:
+        type: string
+        description: Name is the name of this class of errors.
+        example: bad_request
+      temporary:
+        type: boolean
+        description: Is the error temporary?
+        example: true
+      timeout:
+        type: boolean
+        description: Is the error a timeout?
+        example: true
+    description: list_by_host_id_Unauthorized_response_body result type (default view)
+    example:
+      fault: false
+      id: 123abc
+      message: parameter 'p' must be an integer
+      name: bad_request
+      temporary: false
+      timeout: false
     required:
     - name
     - id
@@ -4399,17 +4497,17 @@ definitions:
       - created_at: In qui impedit sapiente excepturi.
         host_id: 3758893540149825696
         id: 7300969453603711356
-        key: Animi sit similique qui.
+        keys: Animi sit similique qui.
         value: Quasi at voluptatem consequuntur iste et sunt.
       - created_at: In qui impedit sapiente excepturi.
         host_id: 3758893540149825696
         id: 7300969453603711356
-        key: Animi sit similique qui.
+        keys: Animi sit similique qui.
         value: Quasi at voluptatem consequuntur iste et sunt.
       - created_at: In qui impedit sapiente excepturi.
         host_id: 3758893540149825696
         id: 7300969453603711356
-        key: Animi sit similique qui.
+        keys: Animi sit similique qui.
         value: Quasi at voluptatem consequuntur iste et sunt.
   KeyboardListUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
@@ -4460,60 +4558,60 @@ definitions:
     properties:
       created_at:
         type: string
-        example: Voluptatem natus eveniet.
+        example: Totam quia pariatur earum nulla voluptatem.
       host_id:
         type: integer
         description: 主机ID
-        example: 7630293243530814112
+        example: 1914673488776631202
         format: int64
       id:
         type: integer
         description: 数据ID
-        example: 10232893492164045960
+        example: 16945833391020222257
         format: int64
-      key:
-        type: string
-        example: Est molestias illum dicta excepturi voluptates.
+      keys:
+        description: 回车后发送的事件
+        example: Possimus repellendus recusandae enim rerum eligendi fugiat.
       value:
         type: string
-        example: Vel laudantium quisquam est et.
+        example: Voluptates quo sapiente nemo velit.
     description: LogNot FoundResponseBody result type (default view)
     example:
-      created_at: Nisi ut voluptatem quasi.
-      host_id: 1574900764332481330
-      id: 5975371886342938765
-      key: Quis tenetur aspernatur.
-      value: Assumenda reprehenderit molestiae nisi eos sunt autem.
+      created_at: Quasi et dolores nemo unde.
+      host_id: 13078676496319464612
+      id: 6847997055643902304
+      keys: Quia magni nam at vero.
+      value: Impedit dolore expedita.
   KeyboardLogOKResponseBody:
     title: 'Mediatype identifier: application/vnd.keyboard_result+json; view=default'
     type: object
     properties:
       created_at:
         type: string
-        example: Quisquam quidem at sint.
+        example: Tenetur aspernatur aut assumenda.
       host_id:
         type: integer
         description: 主机ID
-        example: 17818221739997693287
+        example: 7986022340729927887
         format: int64
       id:
         type: integer
         description: 数据ID
-        example: 17630182444913564068
+        example: 10236094028071189891
         format: int64
-      key:
-        type: string
-        example: Deleniti totam repellendus quod.
+      keys:
+        description: 回车后发送的事件
+        example: Voluptatem natus eveniet.
       value:
         type: string
-        example: Quidem esse est.
+        example: Nesciunt dolore.
     description: LogOKResponseBody result type (default view)
     example:
-      created_at: Sapiente distinctio consectetur iusto et.
-      host_id: 1656322091063976354
-      id: 5668434784066817824
-      key: Soluta distinctio.
-      value: Quis pariatur ipsa voluptatibus et nemo.
+      created_at: Saepe quasi.
+      host_id: 4393443215161270157
+      id: 15252542734908832391
+      keys: Eos sunt autem labore nisi ut.
+      value: Quasi sint et.
   KeyboardLogRequestBody:
     title: KeyboardLogRequestBody
     type: object
@@ -4521,7 +4619,7 @@ definitions:
       id:
         type: integer
         description: 数据ID
-        example: 1914673488776631202
+        example: 4807473926192621187
         format: int64
       keys:
         type: array
@@ -4533,15 +4631,9 @@ definitions:
           text: Tenetur reprehenderit.
         - key_code: Aperiam vitae repellendus consequatur quia quidem.
           text: Tenetur reprehenderit.
-        - key_code: Aperiam vitae repellendus consequatur quia quidem.
-          text: Tenetur reprehenderit.
-        - key_code: Aperiam vitae repellendus consequatur quia quidem.
-          text: Tenetur reprehenderit.
     example:
-      id: 10034206063568060179
+      id: 13058947761527195781
       keys:
-      - key_code: Aperiam vitae repellendus consequatur quia quidem.
-        text: Tenetur reprehenderit.
       - key_code: Aperiam vitae repellendus consequatur quia quidem.
         text: Tenetur reprehenderit.
       - key_code: Aperiam vitae repellendus consequatur quia quidem.
@@ -4555,7 +4647,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: false
+        example: true
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -4575,15 +4667,15 @@ definitions:
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: true
+        example: false
     description: log_Unauthorized_response_body result type (default view)
     example:
-      fault: false
+      fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
       temporary: true
-      timeout: true
+      timeout: false
     required:
     - name
     - id
@@ -4591,6 +4683,36 @@ definitions:
     - temporary
     - timeout
     - fault
+  KeyboardResultResponse:
+    title: 'Mediatype identifier: application/vnd.keyboard_result+json; view=default'
+    type: object
+    properties:
+      created_at:
+        type: string
+        example: Quisquam quidem at sint.
+      host_id:
+        type: integer
+        description: 主机ID
+        example: 17818221739997693287
+        format: int64
+      id:
+        type: integer
+        description: 数据ID
+        example: 17630182444913564068
+        format: int64
+      keys:
+        description: 回车后发送的事件
+        example: Deleniti totam repellendus quod.
+      value:
+        type: string
+        example: Quidem esse est.
+    description: 键盘数据模型 (default view)
+    example:
+      created_at: Sapiente distinctio consectetur iusto et.
+      host_id: 1656322091063976354
+      id: 5668434784066817824
+      keys: Soluta distinctio.
+      value: Quis pariatur ipsa voluptatibus et nemo.
   KeyboardResultResponseBody:
     title: 'Mediatype identifier: application/vnd.keyboard_result+json; view=default'
     type: object
@@ -4608,8 +4730,8 @@ definitions:
         description: 数据ID
         example: 14898916548374880010
         format: int64
-      key:
-        type: string
+      keys:
+        description: 回车后发送的事件
         example: A ut temporibus in nihil aspernatur distinctio.
       value:
         type: string
@@ -4619,7 +4741,7 @@ definitions:
       created_at: Esse et cum.
       host_id: 6994337444803946135
       id: 2364814806318046404
-      key: Dolorem sint similique aut libero eaque repudiandae.
+      keys: Dolorem sint similique aut libero eaque repudiandae.
       value: Autem ut ex.
   KeyboardResultResponseBodyCollection:
     title: 'Mediatype identifier: application/vnd.keyboard_result+json; type=collection; view=default'
@@ -4631,22 +4753,22 @@ definitions:
     - created_at: In qui impedit sapiente excepturi.
       host_id: 3758893540149825696
       id: 7300969453603711356
-      key: Animi sit similique qui.
+      keys: Animi sit similique qui.
       value: Quasi at voluptatem consequuntur iste et sunt.
     - created_at: In qui impedit sapiente excepturi.
       host_id: 3758893540149825696
       id: 7300969453603711356
-      key: Animi sit similique qui.
+      keys: Animi sit similique qui.
       value: Quasi at voluptatem consequuntur iste et sunt.
     - created_at: In qui impedit sapiente excepturi.
       host_id: 3758893540149825696
       id: 7300969453603711356
-      key: Animi sit similique qui.
+      keys: Animi sit similique qui.
       value: Quasi at voluptatem consequuntur iste et sunt.
     - created_at: In qui impedit sapiente excepturi.
       host_id: 3758893540149825696
       id: 7300969453603711356
-      key: Animi sit similique qui.
+      keys: Animi sit similique qui.
       value: Quasi at voluptatem consequuntur iste et sunt.
   NoticeCreateNotFoundResponseBody:
     title: 'Mediatype identifier: application/vnd.notice_result+json; view=default'
@@ -4655,32 +4777,32 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Animi odit dolores nesciunt nemo delectus at.
+        example: Odio ad dolorem.
       creator:
         type: integer
         description: 发布者
-        example: 6564792596785300436
+        example: 11511022951977535132
         format: int64
       id:
         type: integer
         description: 数据ID
-        example: 1303758375240091112
+        example: 5341369402188297309
         format: int64
       notice:
         type: string
         description: 消息消息提醒内容
-        example: Non autem.
+        example: Ut earum excepturi magni voluptates laudantium perferendis.
       updated_at:
         type: string
         description: 更新时间
-        example: Aliquam ex voluptate iusto.
+        example: Dicta exercitationem aut provident pariatur voluptatibus.
     description: CreateNot FoundResponseBody result type (default view)
     example:
-      created_at: Porro et beatae tempore non.
-      creator: 8196763711363238706
-      id: 9472461543962441354
-      notice: Nobis reprehenderit molestiae libero ullam.
-      updated_at: Voluptatibus officia laudantium excepturi iusto magni.
+      created_at: Iusto vel qui sequi vero aut sint.
+      creator: 14796263903290057684
+      id: 1552806942396245273
+      notice: Magnam vero ducimus rerum soluta quis aut.
+      updated_at: Quia corrupti iusto atque laboriosam.
   NoticeCreateOKResponseBody:
     title: 'Mediatype identifier: application/vnd.notice_result+json; view=default'
     type: object
@@ -4688,32 +4810,32 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Voluptates numquam quas ut.
+        example: Ex voluptate.
       creator:
         type: integer
         description: 发布者
-        example: 4288090251652294494
+        example: 10361052834717679778
         format: int64
       id:
         type: integer
         description: 数据ID
-        example: 1542923215238616136
+        example: 6564792596785300436
         format: int64
       notice:
         type: string
         description: 消息消息提醒内容
-        example: Est autem.
+        example: Animi odit dolores nesciunt nemo delectus at.
       updated_at:
         type: string
         description: 更新时间
-        example: Vitae rerum omnis.
+        example: Laboriosam voluptas nobis reprehenderit molestiae.
     description: CreateOKResponseBody result type (default view)
     example:
-      created_at: Doloribus accusamus quidem dolor accusantium.
-      creator: 4429234601345653729
-      id: 5752364857509224762
-      notice: Omnis ut.
-      updated_at: Sit tempore et.
+      created_at: Officia laudantium excepturi iusto magni ea.
+      creator: 6497946363519685057
+      id: 14906463611921639638
+      notice: Eaque alias porro et beatae tempore non.
+      updated_at: Dolorum dignissimos corporis suscipit aut.
   NoticeCreateRequestBody:
     title: NoticeCreateRequestBody
     type: object
@@ -4721,15 +4843,15 @@ definitions:
       id:
         type: integer
         description: 数据ID
-        example: 12992164906845810101
+        example: 7868088986214413767
         format: int64
       notice:
         type: string
         description: 消息消息提醒内容
-        example: Itaque ut earum excepturi magni.
+        example: Est dolorem cum inventore sapiente ut.
     example:
-      id: 5701587917576434498
-      notice: Perferendis sit eos.
+      id: 2367196567062456808
+      notice: Reiciendis perspiciatis fugit illo.
   NoticeCreateUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -4737,7 +4859,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: false
+        example: true
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -4760,11 +4882,11 @@ definitions:
         example: true
     description: create_Unauthorized_response_body result type (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
+      temporary: true
       timeout: true
     required:
     - name
@@ -4800,10 +4922,10 @@ definitions:
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: true
+        example: false
     description: delete_Unauthorized_response_body result type (default view)
     example:
-      fault: false
+      fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
@@ -4823,7 +4945,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: true
+        example: false
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -4843,10 +4965,10 @@ definitions:
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: true
+        example: false
     description: list_NotFound_response_body result type (default view)
     example:
-      fault: false
+      fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
@@ -4891,9 +5013,9 @@ definitions:
       offset_tail: 20
       order_by: id
       where:
-        id: 722092930190979972
-        notice: Qui est omnis hic neque.
-        token: Cupiditate sed.
+        id: 14677569881572745159
+        notice: Cumque consequuntur laborum.
+        token: Expedita explicabo ipsam est ea.
     required:
     - offset_head
     - offset_tail
@@ -4912,21 +5034,26 @@ definitions:
     example:
       count: 200
       page_data:
-      - created_at: Provident ullam.
-        creator: 9686053302875445316
-        id: 14938565341823414668
-        notice: Mollitia commodi qui ad rerum dolor a.
-        updated_at: Eius natus quos.
-      - created_at: Provident ullam.
-        creator: 9686053302875445316
-        id: 14938565341823414668
-        notice: Mollitia commodi qui ad rerum dolor a.
-        updated_at: Eius natus quos.
-      - created_at: Provident ullam.
-        creator: 9686053302875445316
-        id: 14938565341823414668
-        notice: Mollitia commodi qui ad rerum dolor a.
-        updated_at: Eius natus quos.
+      - created_at: In non.
+        creator: 14909422187443098254
+        id: 14073355691791797933
+        notice: Neque ipsa aut ut.
+        updated_at: Fugit aspernatur doloribus.
+      - created_at: In non.
+        creator: 14909422187443098254
+        id: 14073355691791797933
+        notice: Neque ipsa aut ut.
+        updated_at: Fugit aspernatur doloribus.
+      - created_at: In non.
+        creator: 14909422187443098254
+        id: 14073355691791797933
+        notice: Neque ipsa aut ut.
+        updated_at: Fugit aspernatur doloribus.
+      - created_at: In non.
+        creator: 14909422187443098254
+        id: 14073355691791797933
+        notice: Neque ipsa aut ut.
+        updated_at: Fugit aspernatur doloribus.
   NoticeListUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -4934,7 +5061,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: false
+        example: true
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -4962,7 +5089,7 @@ definitions:
       message: parameter 'p' must be an integer
       name: bad_request
       temporary: false
-      timeout: true
+      timeout: false
     required:
     - name
     - id
@@ -4977,20 +5104,20 @@ definitions:
       id:
         type: integer
         description: 数据ID
-        example: 4044831944721531049
+        example: 13315464152786501592
         format: int64
       notice:
         type: string
         description: 消息消息提醒内容
-        example: Odio officia doloremque ratione et fugiat.
+        example: Accusamus quidem dolor accusantium corrupti.
       token:
         type: string
         description: JWTAuth token used to perform authorization
-        example: Facere nulla sint iste.
+        example: Rerum omnis ut et omnis ut fuga.
     example:
-      id: 1840017219708750020
-      notice: Dolorum iure neque quaerat assumenda.
-      token: Sint dolorem in quasi autem.
+      id: 1303758375240091112
+      notice: Non autem.
+      token: Tempore et.
   NoticeResultResponseBody:
     title: 'Mediatype identifier: application/vnd.notice_result+json; view=default'
     type: object
@@ -4998,32 +5125,32 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Reiciendis necessitatibus.
+        example: Qui sed perferendis sequi.
       creator:
         type: integer
         description: 发布者
-        example: 15285053019732931421
+        example: 11717169896709730822
         format: int64
       id:
         type: integer
         description: 数据ID
-        example: 2610058057962197536
+        example: 9716386160270243792
         format: int64
       notice:
         type: string
         description: 消息消息提醒内容
-        example: Consectetur ex aut dolore sit nemo eum.
+        example: Et unde quo consectetur.
       updated_at:
         type: string
         description: 更新时间
-        example: Corrupti quas rem quaerat voluptatem quo quae.
+        example: Numquam quas facere.
     description: 用户模型 (default view)
     example:
-      created_at: Est et placeat maxime sed enim sapiente.
-      creator: 5811036631187246320
-      id: 7595247708426625968
-      notice: Odio vero consequatur nam placeat et porro.
-      updated_at: Et dolor.
+      created_at: Rem sint dolorem in quasi.
+      creator: 901363663328670518
+      id: 9765103386375288505
+      notice: Iste doloribus ut odio officia doloremque ratione.
+      updated_at: Cumque accusantium dolorum iure neque.
   NoticeResultResponseBodyCollection:
     title: 'Mediatype identifier: application/vnd.notice_result+json; type=collection; view=default'
     type: array
@@ -5031,16 +5158,26 @@ definitions:
       $ref: '#/definitions/NoticeResultResponseBody'
     description: Notice_resultCollectionResponseBody is the result type for an array of Notice_resultResponseBody (default view)
     example:
-    - created_at: Provident ullam.
-      creator: 9686053302875445316
-      id: 14938565341823414668
-      notice: Mollitia commodi qui ad rerum dolor a.
-      updated_at: Eius natus quos.
-    - created_at: Provident ullam.
-      creator: 9686053302875445316
-      id: 14938565341823414668
-      notice: Mollitia commodi qui ad rerum dolor a.
-      updated_at: Eius natus quos.
+    - created_at: In non.
+      creator: 14909422187443098254
+      id: 14073355691791797933
+      notice: Neque ipsa aut ut.
+      updated_at: Fugit aspernatur doloribus.
+    - created_at: In non.
+      creator: 14909422187443098254
+      id: 14073355691791797933
+      notice: Neque ipsa aut ut.
+      updated_at: Fugit aspernatur doloribus.
+    - created_at: In non.
+      creator: 14909422187443098254
+      id: 14073355691791797933
+      notice: Neque ipsa aut ut.
+      updated_at: Fugit aspernatur doloribus.
+    - created_at: In non.
+      creator: 14909422187443098254
+      id: 14073355691791797933
+      notice: Neque ipsa aut ut.
+      updated_at: Fugit aspernatur doloribus.
   NoticeShowNotFoundResponseBody:
     title: 'Mediatype identifier: application/vnd.notice_result+json; view=default'
     type: object
@@ -5048,32 +5185,32 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Sint natus doloribus maxime impedit.
+        example: Ut accusantium.
       creator:
         type: integer
         description: 发布者
-        example: 135432382798806767
+        example: 5315841341151544675
         format: int64
       id:
         type: integer
         description: 数据ID
-        example: 1710731272121642876
+        example: 13842145375017902586
         format: int64
       notice:
         type: string
         description: 消息消息提醒内容
-        example: In suscipit facilis optio.
+        example: Voluptas iste similique veniam.
       updated_at:
         type: string
         description: 更新时间
-        example: Laboriosam libero ut nostrum dolores inventore.
+        example: Aut asperiores voluptatem neque quia sunt.
     description: ShowNot FoundResponseBody result type (default view)
     example:
-      created_at: Temporibus est dolorem quae doloribus ut.
-      creator: 3119427783732643314
-      id: 15689785861402755266
-      notice: Architecto quis officia voluptas.
-      updated_at: Culpa quisquam ut ea quos corrupti voluptates.
+      created_at: Consequatur recusandae.
+      creator: 9229392195288227679
+      id: 16104162716643059304
+      notice: Dolor eaque corrupti in pariatur.
+      updated_at: Qui rem soluta deserunt magni.
   NoticeShowOKResponseBody:
     title: 'Mediatype identifier: application/vnd.notice_result+json; view=default'
     type: object
@@ -5081,32 +5218,32 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Deleniti consequatur quibusdam quo maiores.
+        example: Architecto quis officia voluptas.
       creator:
         type: integer
         description: 发布者
-        example: 5272261188138526880
+        example: 15689785861402755266
         format: int64
       id:
         type: integer
         description: 数据ID
-        example: 4820472167726863385
+        example: 18020341013280547344
         format: int64
       notice:
         type: string
         description: 消息消息提醒内容
-        example: Esse sapiente consequuntur.
+        example: Nostrum dolores inventore.
       updated_at:
         type: string
         description: 更新时间
-        example: Possimus possimus.
+        example: Et temporibus est dolorem quae doloribus.
     description: ShowOKResponseBody result type (default view)
     example:
-      created_at: Enim aut labore tempora aut.
-      creator: 2906511777845684530
-      id: 15145019618895523699
-      notice: Rerum explicabo vitae.
-      updated_at: Facilis eos.
+      created_at: Sunt unde mollitia.
+      creator: 3466120999804924907
+      id: 1368853760859713676
+      notice: Culpa quisquam ut ea quos corrupti voluptates.
+      updated_at: Accusantium rerum voluptatem aliquid nulla suscipit modi.
   NoticeShowUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -5130,18 +5267,18 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: false
+        example: true
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: true
+        example: false
     description: show_Unauthorized_response_body result type (default view)
     example:
-      fault: false
+      fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
+      temporary: true
       timeout: true
     required:
     - name
@@ -5157,32 +5294,32 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Inventore sapiente.
+        example: Debitis quidem nihil nemo voluptas laudantium esse.
       creator:
         type: integer
         description: 发布者
-        example: 8592523349688973316
+        example: 13006037529718877718
         format: int64
       id:
         type: integer
         description: 数据ID
-        example: 16772168380902177189
+        example: 5495902594265446318
         format: int64
       notice:
         type: string
         description: 消息消息提醒内容
-        example: Dolore est.
+        example: At est ut labore dolor.
       updated_at:
         type: string
         description: 更新时间
-        example: Excepturi et reiciendis perspiciatis fugit illo natus.
+        example: Consequuntur dignissimos incidunt deleniti.
     description: UpdateNot FoundResponseBody result type (default view)
     example:
-      created_at: Culpa qui.
-      creator: 10477368329314361781
-      id: 6748945018743783415
-      notice: Tenetur quia error ipsum debitis voluptatem.
-      updated_at: Ut dolores dolore ut quos.
+      created_at: Rerum explicabo vitae.
+      creator: 15145019618895523699
+      id: 16673796346492115549
+      notice: Quo maiores nulla possimus possimus.
+      updated_at: Autem enim aut labore.
   NoticeUpdateOKResponseBody:
     title: 'Mediatype identifier: application/vnd.notice_result+json; view=default'
     type: object
@@ -5190,32 +5327,32 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Ut magnam vero ducimus rerum soluta quis.
+        example: Voluptatem ipsam non culpa.
       creator:
         type: integer
         description: 发布者
-        example: 5727003397422553402
+        example: 6189883726356620219
         format: int64
       id:
         type: integer
         description: 数据ID
-        example: 11542962101133550196
+        example: 17814988917510683927
         format: int64
       notice:
         type: string
         description: 消息消息提醒内容
-        example: Dolorem sunt dicta exercitationem aut provident pariatur.
+        example: Expedita tenetur quia error.
       updated_at:
         type: string
         description: 更新时间
-        example: Sit autem iusto vel.
+        example: Commodi ut dolores dolore.
     description: UpdateOKResponseBody result type (default view)
     example:
-      created_at: Quidem impedit.
-      creator: 8412320825421568944
-      id: 16267728358218981318
-      notice: Vero aut sint saepe quia corrupti iusto.
-      updated_at: Ut cupiditate.
+      created_at: Dicta veritatis.
+      creator: 5287932936763491210
+      id: 15175134934654862295
+      notice: Sit ipsam sint non.
+      updated_at: Doloribus natus.
   NoticeUpdateRequestBody:
     title: NoticeUpdateRequestBody
     type: object
@@ -5223,9 +5360,9 @@ definitions:
       notice:
         type: string
         description: 消息消息提醒内容
-        example: Veritatis et doloribus natus non.
+        example: In suscipit facilis optio.
     example:
-      notice: At est ut labore dolor.
+      notice: Tenetur sint.
   NoticeUpdateUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -5233,7 +5370,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: true
+        example: false
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -5253,15 +5390,15 @@ definitions:
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: true
+        example: false
     description: update_Unauthorized_response_body result type (default view)
     example:
-      fault: false
+      fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
       temporary: false
-      timeout: true
+      timeout: false
     required:
     - name
     - id
@@ -5276,7 +5413,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: false
+        example: true
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -5292,14 +5429,14 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: false
+        example: true
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: true
+        example: false
     description: codec_Unauthorized_response_body result type (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
@@ -5319,65 +5456,72 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Molestiae est.
+        example: Amet suscipit sapiente tenetur amet unde.
       ext:
         type: string
         description: 扩展信息
-        example: Eum nemo aut tempora.
+        example: Dolor veniam reprehenderit quos nam.
       host:
         $ref: '#/definitions/HostInfoResponseBody'
       host_id:
         type: string
         description: 主机ID
-        example: Voluptates quis et voluptatem et culpa quae.
+        example: Molestias qui et maxime.
       id:
         type: integer
         description: 数据ID
-        example: 13336363064858822354
+        example: 16707481358840167027
         format: int64
       rtsp_url:
         type: string
         description: rtsp地址
-        example: Dolores excepturi sit est nisi.
+        example: Laudantium qui maxime et.
       updated_at:
         type: string
         description: 更新时间
-        example: Dolorem debitis autem.
+        example: Dolorem excepturi.
     description: CreateNot FoundResponseBody result type (default view)
     example:
-      created_at: Error laudantium.
-      ext: Dolores a sit sunt porro.
+      created_at: Ipsa ut incidunt sed qui quia.
+      ext: Eum nulla dolorem sed vitae nam.
       host:
-        host_name: Non consequatur eveniet dicta eos.
-        id: 17563379865964998298
+        host_name: Et modi a qui et provident consequatur.
+        id: 15812479799844952690
         interfaces:
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
-        mark: Est tempore.
-        token: Placeat eligendi facilis.
-      host_id: Minus sunt reprehenderit facere excepturi.
-      id: 7795916394828610392
-      rtsp_url: Dicta quia quidem.
-      updated_at: Maxime et debitis molestias qui et.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        - ip_addrs:
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        mark: Numquam voluptas exercitationem et aut mollitia.
+        token: Accusantium eaque.
+      host_id: Omnis dignissimos.
+      id: 13143929698594576019
+      rtsp_url: Sunt qui.
+      updated_at: Sint consectetur pariatur quis sed et.
   RtspCreateOKResponseBody:
     title: 'Mediatype identifier: application/vnd.rtsp_result+json; view=default'
     type: object
@@ -5385,65 +5529,72 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Ut aut consequatur deleniti deserunt.
+        example: Dolores excepturi sit est nisi.
       ext:
         type: string
         description: 扩展信息
-        example: Sed dolores iusto sit cupiditate.
+        example: Incidunt quam repudiandae et expedita iusto perferendis.
       host:
         $ref: '#/definitions/HostInfoResponseBody'
       host_id:
         type: string
         description: 主机ID
-        example: Placeat fugit et.
+        example: Quibusdam voluptatem in.
       id:
         type: integer
         description: 数据ID
-        example: 3569202053193054483
+        example: 2910143435629080623
         format: int64
       rtsp_url:
         type: string
         description: rtsp地址
-        example: Quidem id et ullam libero odio dolores.
+        example: Et blanditiis corporis.
       updated_at:
         type: string
         description: 更新时间
-        example: Dolorum nostrum doloribus voluptatem minus qui.
+        example: Voluptates quis et voluptatem et culpa quae.
     description: CreateOKResponseBody result type (default view)
     example:
-      created_at: In quisquam incidunt.
-      ext: Et quibusdam.
+      created_at: Minus sunt reprehenderit facere excepturi.
+      ext: Dicta quia quidem.
       host:
-        host_name: Non consequatur eveniet dicta eos.
-        id: 17563379865964998298
+        host_name: Et modi a qui et provident consequatur.
+        id: 15812479799844952690
         interfaces:
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
-        mark: Est tempore.
-        token: Placeat eligendi facilis.
-      host_id: Doloremque et blanditiis.
-      id: 13631732835934880457
-      rtsp_url: Omnis officiis et maxime dolores esse.
-      updated_at: Repudiandae et expedita iusto.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        - ip_addrs:
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        mark: Numquam voluptas exercitationem et aut mollitia.
+        token: Accusantium eaque.
+      host_id: Est voluptas dolorem debitis autem et.
+      id: 9678076886532439347
+      rtsp_url: Nemo aut tempora occaecati.
+      updated_at: Dolores a sit sunt porro.
   RtspCreateRequestBody:
     title: RtspCreateRequestBody
     type: object
@@ -5451,35 +5602,35 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Sint sunt qui ratione omnis.
+        example: Hic velit suscipit.
       ext:
         type: string
         description: 其他的扩展属性，采用json字符串展示
-        example: Dolorem excepturi.
+        example: Id nemo qui aut occaecati magnam.
       host_id:
         type: string
         description: 主机ID
-        example: Sapiente tenetur amet unde.
+        example: Nostrum cumque tenetur occaecati minus distinctio autem.
       id:
         type: integer
         description: 数据ID
-        example: 2124882039491349232
+        example: 9758620616622327377
         format: int64
       rtsp_url:
         type: string
         description: rtsp的地址
-        example: Pariatur amet.
+        example: Sed quis laborum atque maiores iure nulla.
       updated_at:
         type: string
         description: 更新时间
-        example: Pariatur eum nulla dolorem.
+        example: Tempore perferendis.
     example:
-      created_at: Quia voluptas aut repudiandae aut.
-      ext: Quis sed et.
-      host_id: Esse sint consectetur.
-      id: 18393643370195064991
-      rtsp_url: Nam qui ipsa ut incidunt sed qui.
-      updated_at: Sed quis laborum atque maiores iure nulla.
+      created_at: Quidem maiores repellendus aspernatur.
+      ext: Accusamus iusto.
+      host_id: Earum non sint.
+      id: 15523668381690386035
+      rtsp_url: Sed dicta vel.
+      updated_at: Corporis et.
   RtspCreateUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -5507,15 +5658,15 @@ definitions:
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: false
+        example: true
     description: create_Unauthorized_response_body result type (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
-      timeout: true
+      temporary: true
+      timeout: false
     required:
     - name
     - id
@@ -5530,7 +5681,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: false
+        example: true
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -5546,7 +5697,7 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: true
+        example: false
       timeout:
         type: boolean
         description: Is the error a timeout?
@@ -5558,7 +5709,7 @@ definitions:
       message: parameter 'p' must be an integer
       name: bad_request
       temporary: false
-      timeout: false
+      timeout: true
     required:
     - name
     - id
@@ -5573,7 +5724,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: true
+        example: false
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -5593,10 +5744,10 @@ definitions:
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: false
+        example: true
     description: list_NotFound_response_body result type (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
@@ -5641,13 +5792,13 @@ definitions:
       offset_tail: 20
       order_by: id
       where:
-        created_at: Recusandae assumenda aut amet tenetur vero.
-        ext: Autem et et quo.
-        host_id: Sit beatae sit nemo non mollitia.
-        id: 10445225530749944508
-        rtsp_url: Inventore est et.
-        token: Et pariatur aut quae saepe praesentium fugiat.
-        updated_at: Autem nemo odio cumque qui aut architecto.
+        created_at: Dolorem magnam eius eum nulla corporis quae.
+        ext: Voluptas cumque.
+        host_id: Consequatur necessitatibus vitae.
+        id: 16721659234638695427
+        rtsp_url: Quas quo.
+        token: Dolor quaerat.
+        updated_at: Eos repudiandae mollitia.
     required:
     - offset_head
     - offset_tail
@@ -5666,105 +5817,126 @@ definitions:
     example:
       count: 200
       page_data:
-      - created_at: Qui hic.
-        ext: Eos repudiandae mollitia.
+      - created_at: Earum necessitatibus laboriosam accusamus occaecati doloremque amet.
+        ext: Placeat eligendi facilis.
         host:
-          host_name: Non consequatur eveniet dicta eos.
-          id: 17563379865964998298
+          host_name: Et modi a qui et provident consequatur.
+          id: 15812479799844952690
           interfaces:
           - ip_addrs:
-            - Dolores accusamus.
-            - Vitae voluptas similique.
-            - Pariatur laborum placeat consequuntur.
-            - Veniam praesentium sed.
-            mac_addr: Consequatur quia vitae recusandae.
-            name: Consequatur odit consequatur deleniti eum eum.
+            - Maiores qui beatae et.
+            - Quidem beatae quo assumenda ut.
+            - Eveniet reprehenderit.
+            - Animi ea quo voluptas dolor.
+            mac_addr: Qui eaque expedita alias non.
+            name: Maiores laborum minus non.
           - ip_addrs:
-            - Dolores accusamus.
-            - Vitae voluptas similique.
-            - Pariatur laborum placeat consequuntur.
-            - Veniam praesentium sed.
-            mac_addr: Consequatur quia vitae recusandae.
-            name: Consequatur odit consequatur deleniti eum eum.
+            - Maiores qui beatae et.
+            - Quidem beatae quo assumenda ut.
+            - Eveniet reprehenderit.
+            - Animi ea quo voluptas dolor.
+            mac_addr: Qui eaque expedita alias non.
+            name: Maiores laborum minus non.
           - ip_addrs:
-            - Dolores accusamus.
-            - Vitae voluptas similique.
-            - Pariatur laborum placeat consequuntur.
-            - Veniam praesentium sed.
-            mac_addr: Consequatur quia vitae recusandae.
-            name: Consequatur odit consequatur deleniti eum eum.
-          mark: Est tempore.
-          token: Placeat eligendi facilis.
-        host_id: Dolorem magnam eius eum nulla corporis quae.
-        id: 14547224800017467524
-        rtsp_url: Vitae qui voluptas cumque.
-        updated_at: Eos voluptas vel.
-      - created_at: Qui hic.
-        ext: Eos repudiandae mollitia.
+            - Maiores qui beatae et.
+            - Quidem beatae quo assumenda ut.
+            - Eveniet reprehenderit.
+            - Animi ea quo voluptas dolor.
+            mac_addr: Qui eaque expedita alias non.
+            name: Maiores laborum minus non.
+          - ip_addrs:
+            - Maiores qui beatae et.
+            - Quidem beatae quo assumenda ut.
+            - Eveniet reprehenderit.
+            - Animi ea quo voluptas dolor.
+            mac_addr: Qui eaque expedita alias non.
+            name: Maiores laborum minus non.
+          mark: Numquam voluptas exercitationem et aut mollitia.
+          token: Accusantium eaque.
+        host_id: Nesciunt est tempore.
+        id: 17971523181194599954
+        rtsp_url: Eveniet dicta.
+        updated_at: Corrupti magni ab doloremque id repudiandae.
+      - created_at: Earum necessitatibus laboriosam accusamus occaecati doloremque amet.
+        ext: Placeat eligendi facilis.
         host:
-          host_name: Non consequatur eveniet dicta eos.
-          id: 17563379865964998298
+          host_name: Et modi a qui et provident consequatur.
+          id: 15812479799844952690
           interfaces:
           - ip_addrs:
-            - Dolores accusamus.
-            - Vitae voluptas similique.
-            - Pariatur laborum placeat consequuntur.
-            - Veniam praesentium sed.
-            mac_addr: Consequatur quia vitae recusandae.
-            name: Consequatur odit consequatur deleniti eum eum.
+            - Maiores qui beatae et.
+            - Quidem beatae quo assumenda ut.
+            - Eveniet reprehenderit.
+            - Animi ea quo voluptas dolor.
+            mac_addr: Qui eaque expedita alias non.
+            name: Maiores laborum minus non.
           - ip_addrs:
-            - Dolores accusamus.
-            - Vitae voluptas similique.
-            - Pariatur laborum placeat consequuntur.
-            - Veniam praesentium sed.
-            mac_addr: Consequatur quia vitae recusandae.
-            name: Consequatur odit consequatur deleniti eum eum.
+            - Maiores qui beatae et.
+            - Quidem beatae quo assumenda ut.
+            - Eveniet reprehenderit.
+            - Animi ea quo voluptas dolor.
+            mac_addr: Qui eaque expedita alias non.
+            name: Maiores laborum minus non.
           - ip_addrs:
-            - Dolores accusamus.
-            - Vitae voluptas similique.
-            - Pariatur laborum placeat consequuntur.
-            - Veniam praesentium sed.
-            mac_addr: Consequatur quia vitae recusandae.
-            name: Consequatur odit consequatur deleniti eum eum.
-          mark: Est tempore.
-          token: Placeat eligendi facilis.
-        host_id: Dolorem magnam eius eum nulla corporis quae.
-        id: 14547224800017467524
-        rtsp_url: Vitae qui voluptas cumque.
-        updated_at: Eos voluptas vel.
-      - created_at: Qui hic.
-        ext: Eos repudiandae mollitia.
+            - Maiores qui beatae et.
+            - Quidem beatae quo assumenda ut.
+            - Eveniet reprehenderit.
+            - Animi ea quo voluptas dolor.
+            mac_addr: Qui eaque expedita alias non.
+            name: Maiores laborum minus non.
+          - ip_addrs:
+            - Maiores qui beatae et.
+            - Quidem beatae quo assumenda ut.
+            - Eveniet reprehenderit.
+            - Animi ea quo voluptas dolor.
+            mac_addr: Qui eaque expedita alias non.
+            name: Maiores laborum minus non.
+          mark: Numquam voluptas exercitationem et aut mollitia.
+          token: Accusantium eaque.
+        host_id: Nesciunt est tempore.
+        id: 17971523181194599954
+        rtsp_url: Eveniet dicta.
+        updated_at: Corrupti magni ab doloremque id repudiandae.
+      - created_at: Earum necessitatibus laboriosam accusamus occaecati doloremque amet.
+        ext: Placeat eligendi facilis.
         host:
-          host_name: Non consequatur eveniet dicta eos.
-          id: 17563379865964998298
+          host_name: Et modi a qui et provident consequatur.
+          id: 15812479799844952690
           interfaces:
           - ip_addrs:
-            - Dolores accusamus.
-            - Vitae voluptas similique.
-            - Pariatur laborum placeat consequuntur.
-            - Veniam praesentium sed.
-            mac_addr: Consequatur quia vitae recusandae.
-            name: Consequatur odit consequatur deleniti eum eum.
+            - Maiores qui beatae et.
+            - Quidem beatae quo assumenda ut.
+            - Eveniet reprehenderit.
+            - Animi ea quo voluptas dolor.
+            mac_addr: Qui eaque expedita alias non.
+            name: Maiores laborum minus non.
           - ip_addrs:
-            - Dolores accusamus.
-            - Vitae voluptas similique.
-            - Pariatur laborum placeat consequuntur.
-            - Veniam praesentium sed.
-            mac_addr: Consequatur quia vitae recusandae.
-            name: Consequatur odit consequatur deleniti eum eum.
+            - Maiores qui beatae et.
+            - Quidem beatae quo assumenda ut.
+            - Eveniet reprehenderit.
+            - Animi ea quo voluptas dolor.
+            mac_addr: Qui eaque expedita alias non.
+            name: Maiores laborum minus non.
           - ip_addrs:
-            - Dolores accusamus.
-            - Vitae voluptas similique.
-            - Pariatur laborum placeat consequuntur.
-            - Veniam praesentium sed.
-            mac_addr: Consequatur quia vitae recusandae.
-            name: Consequatur odit consequatur deleniti eum eum.
-          mark: Est tempore.
-          token: Placeat eligendi facilis.
-        host_id: Dolorem magnam eius eum nulla corporis quae.
-        id: 14547224800017467524
-        rtsp_url: Vitae qui voluptas cumque.
-        updated_at: Eos voluptas vel.
+            - Maiores qui beatae et.
+            - Quidem beatae quo assumenda ut.
+            - Eveniet reprehenderit.
+            - Animi ea quo voluptas dolor.
+            mac_addr: Qui eaque expedita alias non.
+            name: Maiores laborum minus non.
+          - ip_addrs:
+            - Maiores qui beatae et.
+            - Quidem beatae quo assumenda ut.
+            - Eveniet reprehenderit.
+            - Animi ea quo voluptas dolor.
+            mac_addr: Qui eaque expedita alias non.
+            name: Maiores laborum minus non.
+          mark: Numquam voluptas exercitationem et aut mollitia.
+          token: Accusantium eaque.
+        host_id: Nesciunt est tempore.
+        id: 17971523181194599954
+        rtsp_url: Eveniet dicta.
+        updated_at: Corrupti magni ab doloremque id repudiandae.
   RtspListUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -5772,7 +5944,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: false
+        example: true
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -5788,19 +5960,19 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: false
+        example: true
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: true
+        example: false
     description: list_Unauthorized_response_body result type (default view)
     example:
-      fault: false
+      fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
       temporary: true
-      timeout: false
+      timeout: true
     required:
     - name
     - id
@@ -5815,14 +5987,14 @@ definitions:
       data:
         type: string
         description: 接收远程SDP的base64
-        example: Rerum dolores est voluptas iure.
+        example: Aut et sit sunt odio aperiam.
       rtsp_id:
         type: string
         description: 根基rtsp_id获取解码信息
-        example: Est fugit qui.
+        example: Ex asperiores.
     example:
-      data: Porro nostrum est.
-      rtsp_id: Perferendis fuga neque non ducimus recusandae.
+      data: Vero ipsum non laboriosam nisi ut.
+      rtsp_id: Hic voluptatem aperiam impedit qui.
     required:
     - rtsp_id
     - data
@@ -5833,7 +6005,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: true
+        example: false
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -5849,19 +6021,19 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: false
+        example: true
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: true
+        example: false
     description: receive_Unauthorized_response_body result type (default view)
     example:
       fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
-      timeout: false
+      temporary: true
+      timeout: true
     required:
     - name
     - id
@@ -5876,40 +6048,40 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Nesciunt itaque ipsa animi pariatur cumque.
+        example: At reiciendis beatae mollitia saepe.
       ext:
         type: string
         description: 其他的扩展属性，采用json字符串展示
-        example: Possimus nulla consequuntur aut eos et.
+        example: At ullam occaecati quis ad omnis.
       host_id:
         type: string
         description: 主机ID
-        example: Id molestiae cumque qui accusantium ipsa.
+        example: Necessitatibus qui earum eum.
       id:
         type: integer
         description: 数据ID
-        example: 2440004914030061074
+        example: 16742207243814342192
         format: int64
       rtsp_url:
         type: string
         description: rtsp的地址
-        example: Nihil sed est omnis esse aperiam cumque.
+        example: Ea nihil atque.
       token:
         type: string
         description: JWTAuth token used to perform authorization
-        example: Harum veniam voluptatibus ipsum et.
+        example: Quis id.
       updated_at:
         type: string
         description: 更新时间
-        example: Deleniti aspernatur quisquam ea.
+        example: Deleniti et tempore error.
     example:
-      created_at: Perferendis at reiciendis beatae mollitia saepe debitis.
-      ext: Ullam occaecati quis ad.
-      host_id: Qui earum eum pariatur.
-      id: 6050005092475413349
-      rtsp_url: Ea ea nihil atque laborum.
-      token: Sit saepe totam architecto quis.
-      updated_at: Et tempore error exercitationem.
+      created_at: Dolorum nostrum doloribus voluptatem minus qui.
+      ext: Ut aut consequatur deleniti deserunt.
+      host_id: Sed dolores iusto sit cupiditate.
+      id: 16068354255010371105
+      rtsp_url: Libero odio dolores pariatur placeat fugit et.
+      token: Nesciunt non quidem id et.
+      updated_at: Voluptates omnis officiis et maxime dolores.
   RtspResultResponseBody:
     title: 'Mediatype identifier: application/vnd.rtsp_result+json; view=default'
     type: object
@@ -5917,65 +6089,72 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Voluptatem neque quia.
+        example: Labore aut fugiat voluptatem labore qui.
       ext:
         type: string
         description: 扩展信息
-        example: Atque ut accusantium expedita aut.
+        example: Nesciunt ducimus dolores totam nam ut repellat.
       host:
         $ref: '#/definitions/HostInfoResponseBody'
       host_id:
         type: string
         description: 主机ID
-        example: Voluptas iste similique veniam.
+        example: Optio numquam eligendi quisquam veritatis et.
       id:
         type: integer
         description: 数据ID
-        example: 12989392808943788316
+        example: 326188827524788767
         format: int64
       rtsp_url:
         type: string
         description: rtsp地址
-        example: Voluptatem aliquid nulla suscipit modi magnam.
+        example: Quia et laborum nesciunt ut facilis.
       updated_at:
         type: string
         description: 更新时间
-        example: In nesciunt dolor.
+        example: Ab accusantium enim atque quam dolores maxime.
     description: RTSP数据信息 (default view)
     example:
-      created_at: Earum velit ad quas placeat.
-      ext: Ab accusantium enim atque quam dolores maxime.
+      created_at: Consequuntur aut eos et excepturi.
+      ext: Cumque qui accusantium ipsa sunt possimus.
       host:
-        host_name: Non consequatur eveniet dicta eos.
-        id: 17563379865964998298
+        host_name: Et modi a qui et provident consequatur.
+        id: 15812479799844952690
         interfaces:
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
-        mark: Est tempore.
-        token: Placeat eligendi facilis.
-      host_id: Labore aut fugiat voluptatem labore qui.
-      id: 8932522958941318559
-      rtsp_url: Dolores totam nam ut repellat.
-      updated_at: Soluta recusandae odio quas voluptatem quos.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        - ip_addrs:
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        mark: Numquam voluptas exercitationem et aut mollitia.
+        token: Accusantium eaque.
+      host_id: Voluptatibus id.
+      id: 11707445853154540453
+      rtsp_url: Sed est omnis esse aperiam.
+      updated_at: Itaque ipsa.
   RtspResultResponseBodyCollection:
     title: 'Mediatype identifier: application/vnd.rtsp_result+json; type=collection; view=default'
     type: array
@@ -5983,105 +6162,126 @@ definitions:
       $ref: '#/definitions/RtspResultResponseBody'
     description: Rtsp_resultCollectionResponseBody is the result type for an array of Rtsp_resultResponseBody (default view)
     example:
-    - created_at: Qui hic.
-      ext: Eos repudiandae mollitia.
+    - created_at: Earum necessitatibus laboriosam accusamus occaecati doloremque amet.
+      ext: Placeat eligendi facilis.
       host:
-        host_name: Non consequatur eveniet dicta eos.
-        id: 17563379865964998298
+        host_name: Et modi a qui et provident consequatur.
+        id: 15812479799844952690
         interfaces:
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
-        mark: Est tempore.
-        token: Placeat eligendi facilis.
-      host_id: Dolorem magnam eius eum nulla corporis quae.
-      id: 14547224800017467524
-      rtsp_url: Vitae qui voluptas cumque.
-      updated_at: Eos voluptas vel.
-    - created_at: Qui hic.
-      ext: Eos repudiandae mollitia.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        - ip_addrs:
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        mark: Numquam voluptas exercitationem et aut mollitia.
+        token: Accusantium eaque.
+      host_id: Nesciunt est tempore.
+      id: 17971523181194599954
+      rtsp_url: Eveniet dicta.
+      updated_at: Corrupti magni ab doloremque id repudiandae.
+    - created_at: Earum necessitatibus laboriosam accusamus occaecati doloremque amet.
+      ext: Placeat eligendi facilis.
       host:
-        host_name: Non consequatur eveniet dicta eos.
-        id: 17563379865964998298
+        host_name: Et modi a qui et provident consequatur.
+        id: 15812479799844952690
         interfaces:
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
-        mark: Est tempore.
-        token: Placeat eligendi facilis.
-      host_id: Dolorem magnam eius eum nulla corporis quae.
-      id: 14547224800017467524
-      rtsp_url: Vitae qui voluptas cumque.
-      updated_at: Eos voluptas vel.
-    - created_at: Qui hic.
-      ext: Eos repudiandae mollitia.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        - ip_addrs:
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        mark: Numquam voluptas exercitationem et aut mollitia.
+        token: Accusantium eaque.
+      host_id: Nesciunt est tempore.
+      id: 17971523181194599954
+      rtsp_url: Eveniet dicta.
+      updated_at: Corrupti magni ab doloremque id repudiandae.
+    - created_at: Earum necessitatibus laboriosam accusamus occaecati doloremque amet.
+      ext: Placeat eligendi facilis.
       host:
-        host_name: Non consequatur eveniet dicta eos.
-        id: 17563379865964998298
+        host_name: Et modi a qui et provident consequatur.
+        id: 15812479799844952690
         interfaces:
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
-        mark: Est tempore.
-        token: Placeat eligendi facilis.
-      host_id: Dolorem magnam eius eum nulla corporis quae.
-      id: 14547224800017467524
-      rtsp_url: Vitae qui voluptas cumque.
-      updated_at: Eos voluptas vel.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        - ip_addrs:
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        mark: Numquam voluptas exercitationem et aut mollitia.
+        token: Accusantium eaque.
+      host_id: Nesciunt est tempore.
+      id: 17971523181194599954
+      rtsp_url: Eveniet dicta.
+      updated_at: Corrupti magni ab doloremque id repudiandae.
   RtspShowNotFoundResponseBody:
     title: 'Mediatype identifier: application/vnd.rtsp_result+json; view=default'
     type: object
@@ -6089,65 +6289,72 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Qui aut et qui sunt quaerat ut.
+        example: Facere occaecati rerum dolores est voluptas.
       ext:
         type: string
         description: 扩展信息
-        example: Ut pariatur et similique unde aperiam sit.
+        example: Tempore magnam dolor illum quia ut.
       host:
         $ref: '#/definitions/HostInfoResponseBody'
       host_id:
         type: string
         description: 主机ID
-        example: Occaecati magni sunt.
+        example: Aut nihil et in hic.
       id:
         type: integer
         description: 数据ID
-        example: 2268459298651916127
+        example: 7720926708365174886
         format: int64
       rtsp_url:
         type: string
         description: rtsp地址
-        example: Similique animi non repellat consequatur libero.
+        example: Possimus et non est quis.
       updated_at:
         type: string
         description: 更新时间
-        example: Qui error earum ea nesciunt aut.
+        example: Pariatur est.
     description: ShowNot FoundResponseBody result type (default view)
     example:
-      created_at: Doloribus possimus et.
-      ext: Et consequuntur.
+      created_at: Deleniti laborum quia.
+      ext: Asperiores nostrum alias alias rem molestiae asperiores.
       host:
-        host_name: Non consequatur eveniet dicta eos.
-        id: 17563379865964998298
+        host_name: Et modi a qui et provident consequatur.
+        id: 15812479799844952690
         interfaces:
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
-        mark: Est tempore.
-        token: Placeat eligendi facilis.
-      host_id: Ut eius.
-      id: 2629394693306342927
-      rtsp_url: Beatae accusamus sed.
-      updated_at: Est quis eius aut nihil.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        - ip_addrs:
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        mark: Numquam voluptas exercitationem et aut mollitia.
+        token: Accusantium eaque.
+      host_id: Non ducimus recusandae iure nihil sit.
+      id: 13548906109354239144
+      rtsp_url: Omnis porro nostrum est molestiae perferendis fuga.
+      updated_at: Ipsum molestias quam.
   RtspShowOKResponseBody:
     title: 'Mediatype identifier: application/vnd.rtsp_result+json; view=default'
     type: object
@@ -6155,65 +6362,72 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Ut aut eum provident.
+        example: Sunt eum ut pariatur et similique unde.
       ext:
         type: string
         description: 扩展信息
-        example: Ipsam id accusamus nemo vero.
+        example: Consequatur libero natus occaecati.
       host:
         $ref: '#/definitions/HostInfoResponseBody'
       host_id:
         type: string
         description: 主机ID
-        example: Velit tempore id.
+        example: Nihil similique animi non.
       id:
         type: integer
         description: 数据ID
-        example: 18204574945705348839
+        example: 16563441721919451518
         format: int64
       rtsp_url:
         type: string
         description: rtsp地址
-        example: Qui dignissimos temporibus.
+        example: Dicta dolores et velit.
       updated_at:
         type: string
         description: 更新时间
-        example: Voluptatum maxime.
+        example: Sit ad qui aut et qui sunt.
     description: ShowOKResponseBody result type (default view)
     example:
-      created_at: Ipsam ut facilis.
-      ext: Quae eum porro voluptas.
+      created_at: Ut eius.
+      ext: Beatae accusamus sed.
       host:
-        host_name: Non consequatur eveniet dicta eos.
-        id: 17563379865964998298
+        host_name: Et modi a qui et provident consequatur.
+        id: 15812479799844952690
         interfaces:
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
-        mark: Est tempore.
-        token: Placeat eligendi facilis.
-      host_id: Commodi repellendus voluptatum.
-      id: 13102913968577481535
-      rtsp_url: Qui omnis quibusdam.
-      updated_at: Explicabo dicta dolores et velit.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        - ip_addrs:
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        mark: Numquam voluptas exercitationem et aut mollitia.
+        token: Accusantium eaque.
+      host_id: Nesciunt aut incidunt.
+      id: 7117300651343197273
+      rtsp_url: Quia qui error earum.
+      updated_at: Et consequuntur.
   RtspShowUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -6241,14 +6455,14 @@ definitions:
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: false
+        example: true
     description: show_Unauthorized_response_body result type (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
+      temporary: true
       timeout: true
     required:
     - name
@@ -6264,65 +6478,72 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Enim aliquam autem eos aliquam voluptatum.
+        example: Hic ex ad.
       ext:
         type: string
         description: 扩展信息
-        example: Aut est voluptas cumque mollitia voluptas.
+        example: Sapiente quos quia ratione omnis ad.
       host:
         $ref: '#/definitions/HostInfoResponseBody'
       host_id:
         type: string
         description: 主机ID
-        example: Et distinctio dolorum fugiat quod.
+        example: Dolore qui ab ut ipsam eos.
       id:
         type: integer
         description: 数据ID
-        example: 15179386748912317321
+        example: 16139755162157499794
         format: int64
       rtsp_url:
         type: string
         description: rtsp地址
-        example: Voluptatem quo ut aut consequatur nisi.
+        example: Sit architecto voluptas tempore laborum.
       updated_at:
         type: string
         description: 更新时间
-        example: Eum ut velit est qui in iusto.
+        example: Beatae modi rerum rerum voluptatem exercitationem ullam.
     description: UpdateNot FoundResponseBody result type (default view)
     example:
-      created_at: Voluptas tempore laborum vel dolore.
-      ext: Minima sit.
+      created_at: Veritatis doloribus cum repudiandae.
+      ext: Illum fuga.
       host:
-        host_name: Non consequatur eveniet dicta eos.
-        id: 17563379865964998298
+        host_name: Et modi a qui et provident consequatur.
+        id: 15812479799844952690
         interfaces:
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
-        mark: Est tempore.
-        token: Placeat eligendi facilis.
-      host_id: Voluptas eligendi rerum corrupti provident magnam quos.
-      id: 1017977986775415731
-      rtsp_url: Tenetur omnis.
-      updated_at: Ab ut ipsam eos veniam sapiente quos.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        - ip_addrs:
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        mark: Numquam voluptas exercitationem et aut mollitia.
+        token: Accusantium eaque.
+      host_id: Dolores sit possimus.
+      id: 4984320898186596423
+      rtsp_url: Unde et dolorem.
+      updated_at: Ipsam atque provident rem saepe quia culpa.
   RtspUpdateOKResponseBody:
     title: 'Mediatype identifier: application/vnd.rtsp_result+json; view=default'
     type: object
@@ -6330,65 +6551,72 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Velit suscipit ipsam tempore.
+        example: Et distinctio dolorum fugiat quod.
       ext:
         type: string
         description: 扩展信息
-        example: Magnam eligendi.
+        example: Ut voluptatem quo ut aut consequatur nisi.
       host:
         $ref: '#/definitions/HostInfoResponseBody'
       host_id:
         type: string
         description: 主机ID
-        example: Distinctio autem eveniet id nemo qui aut.
+        example: Ut laborum repellendus rem minima aut.
       id:
         type: integer
         description: 数据ID
-        example: 1798950023917411135
+        example: 12098899829806656352
         format: int64
       rtsp_url:
         type: string
         description: rtsp地址
-        example: Tenetur occaecati.
+        example: Nulla suscipit sed.
       updated_at:
         type: string
         description: 更新时间
-        example: Ab quod sed dicta vel.
+        example: Aut est voluptas cumque mollitia voluptas.
     description: UpdateOKResponseBody result type (default view)
     example:
-      created_at: Qui vel nulla suscipit sed.
-      ext: Corporis et.
+      created_at: Tenetur omnis.
+      ext: Ut velit est qui in iusto quis.
       host:
-        host_name: Non consequatur eveniet dicta eos.
-        id: 17563379865964998298
+        host_name: Et modi a qui et provident consequatur.
+        id: 15812479799844952690
         interfaces:
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
         - ip_addrs:
-          - Dolores accusamus.
-          - Vitae voluptas similique.
-          - Pariatur laborum placeat consequuntur.
-          - Veniam praesentium sed.
-          mac_addr: Consequatur quia vitae recusandae.
-          name: Consequatur odit consequatur deleniti eum eum.
-        mark: Est tempore.
-        token: Placeat eligendi facilis.
-      host_id: Quidem maiores repellendus aspernatur.
-      id: 17721826425396669322
-      rtsp_url: Non sint adipisci accusamus iusto.
-      updated_at: Ut laborum repellendus rem minima aut.
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        - ip_addrs:
+          - Maiores qui beatae et.
+          - Quidem beatae quo assumenda ut.
+          - Eveniet reprehenderit.
+          - Animi ea quo voluptas dolor.
+          mac_addr: Qui eaque expedita alias non.
+          name: Maiores laborum minus non.
+        mark: Numquam voluptas exercitationem et aut mollitia.
+        token: Accusantium eaque.
+      host_id: Voluptatum repudiandae.
+      id: 17714071714258168104
+      rtsp_url: Aliquam autem eos.
+      updated_at: Voluptas eligendi rerum corrupti provident magnam quos.
   RtspUpdateRequestBody:
     title: RtspUpdateRequestBody
     type: object
@@ -6396,29 +6624,29 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Illum fuga.
+        example: Eaque aut enim qui.
       ext:
         type: string
         description: 其他的扩展属性，采用json字符串展示
-        example: Dolores sit possimus.
+        example: Tempora ducimus facere libero quidem incidunt.
       host_id:
         type: string
         description: 主机ID
-        example: Exercitationem ullam sit pariatur unde et dolorem.
+        example: Qui error a et eaque eum.
       rtsp_url:
         type: string
         description: rtsp的地址
-        example: Ad est beatae modi rerum rerum.
+        example: Laudantium id at blanditiis earum.
       updated_at:
         type: string
         description: 更新时间
-        example: Veritatis doloribus cum repudiandae.
+        example: Temporibus beatae velit tempore id cum ipsam.
     example:
-      created_at: Ipsa qui.
-      ext: At blanditiis.
-      host_id: Dolor maxime nihil dolorem incidunt sint laudantium.
-      rtsp_url: Ipsam atque provident rem saepe quia culpa.
-      updated_at: A et eaque eum sit tempora ducimus.
+      created_at: Est qui omnis quibusdam harum commodi repellendus.
+      ext: Eum provident id voluptatum maxime.
+      host_id: Maiores ut.
+      rtsp_url: Accusamus nemo.
+      updated_at: Officia quae eum.
   RtspUpdateUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -6453,7 +6681,7 @@ definitions:
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
+      temporary: true
       timeout: true
     required:
     - name
@@ -6469,42 +6697,42 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Laborum consequuntur quisquam qui.
+        example: Blanditiis error sed.
       creator:
         type: integer
         description: 发布者
-        example: 13946785970114564869
+        example: 290165988871750762
         format: int64
       description:
         type: string
         description: 描述
-        example: Deserunt aut pariatur aut eius.
+        example: Reiciendis rerum debitis.
       id:
         type: integer
         description: 数据ID
-        example: 905248525648885222
+        example: 889283923365851007
         format: int64
       name:
         type: string
         description: 名称
-        example: Velit nam voluptates ut.
+        example: Voluptatem est quae quia iure.
       token:
         type: string
         description: Token数据
-        example: Sit esse.
+        example: Omnis enim cupiditate ut.
       updated_at:
         type: string
         description: 更新时间
-        example: Sequi aut minus doloribus vitae cupiditate.
+        example: Voluptate sequi occaecati quibusdam minima.
     description: CreateNot FoundResponseBody result type (default view)
     example:
-      created_at: Amet aspernatur laboriosam non omnis enim cupiditate.
-      creator: 2573987477255044623
-      description: Voluptatem est quae quia iure.
-      id: 13309324808986968248
-      name: Sed iste voluptate sequi occaecati quibusdam minima.
-      token: Sed repudiandae animi vero.
-      updated_at: Molestiae facilis blanditiis.
+      created_at: Necessitatibus cum aut.
+      creator: 16286123421620331877
+      description: Magni in totam architecto.
+      id: 11092174215718267500
+      name: Esse veniam ut optio.
+      token: Libero rerum et blanditiis tempora non.
+      updated_at: Vero culpa laboriosam temporibus sed.
   TokenMgrCreateOKResponseBody:
     title: 'Mediatype identifier: application/vnd.token_result+json; view=default'
     type: object
@@ -6512,42 +6740,42 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Nemo sint occaecati sunt omnis ut eaque.
+        example: Ad et veniam.
       creator:
         type: integer
         description: 发布者
-        example: 6297192566429601608
+        example: 2613291081398016433
         format: int64
       description:
         type: string
         description: 描述
-        example: Incidunt est iure exercitationem et.
+        example: Dolor dolor laborum consequuntur quisquam qui.
       id:
         type: integer
         description: 数据ID
-        example: 15233318511153064137
+        example: 13997848065860000559
         format: int64
       name:
         type: string
         description: 名称
-        example: Et tempore molestiae voluptas aliquid.
+        example: Aut sit.
       token:
         type: string
         description: Token数据
-        example: Cum magnam veniam iste qui possimus.
+        example: Dolor ratione.
       updated_at:
         type: string
         description: 更新时间
-        example: Quia ut delectus fugit nihil rerum tenetur.
+        example: Et occaecati.
     description: CreateOKResponseBody result type (default view)
     example:
-      created_at: Voluptatibus iusto iste.
-      creator: 3311350463138041544
-      description: Veniam quia et occaecati.
-      id: 6653874621655872549
-      name: Quae deserunt dolor ratione nisi harum ad.
-      token: Assumenda et repudiandae perferendis nisi.
-      updated_at: Itaque fugiat et eum ut doloribus doloribus.
+      created_at: Velit nam voluptates ut.
+      creator: 92137683886754234
+      description: Tempora amet aspernatur.
+      id: 16165594918952538048
+      name: Voluptas sed repudiandae animi vero.
+      token: Aut minus doloribus vitae.
+      updated_at: Deserunt aut pariatur aut eius.
   TokenMgrCreateRequestBody:
     title: TokenMgrCreateRequestBody
     type: object
@@ -6555,14 +6783,14 @@ definitions:
       description:
         type: string
         description: 描述
-        example: Non ut nemo necessitatibus cum aut dicta.
+        example: Molestiae et deleniti ut nam nihil possimus.
       name:
         type: string
         description: 名称
-        example: Rerum et blanditiis.
+        example: At numquam voluptas dolores.
     example:
-      description: Sed non esse.
-      name: Culpa laboriosam.
+      description: Et assumenda aliquid et veritatis.
+      name: A minima.
   TokenMgrCreateUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -6590,15 +6818,15 @@ definitions:
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: false
+        example: true
     description: create_Unauthorized_response_body result type (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
       temporary: true
-      timeout: true
+      timeout: false
     required:
     - name
     - id
@@ -6613,7 +6841,7 @@ definitions:
       fault:
         type: boolean
         description: Is the error a server-side fault?
-        example: true
+        example: false
       id:
         type: string
         description: ID is a unique identifier for this particular occurrence of the problem.
@@ -6636,11 +6864,11 @@ definitions:
         example: true
     description: delete_Unauthorized_response_body result type (default view)
     example:
-      fault: false
+      fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
+      temporary: true
       timeout: true
     required:
     - name
@@ -6739,20 +6967,27 @@ definitions:
     example:
       count: 200
       page_data:
-      - created_at: Omnis et quo fugiat blanditiis minus.
-        creator: 11998397488156672806
-        description: Similique id sit dolorem ex nam aut.
-        id: 2846538516943985011
-        name: Iusto laboriosam eligendi repellat sed.
-        token: Nam eligendi.
-        updated_at: Non eum.
-      - created_at: Omnis et quo fugiat blanditiis minus.
-        creator: 11998397488156672806
-        description: Similique id sit dolorem ex nam aut.
-        id: 2846538516943985011
-        name: Iusto laboriosam eligendi repellat sed.
-        token: Nam eligendi.
-        updated_at: Non eum.
+      - created_at: Expedita doloribus consequatur quia aut et.
+        creator: 8182254055631774860
+        description: Suscipit et facilis repellendus.
+        id: 14435022931376405779
+        name: Explicabo est dolor voluptas.
+        token: Et in.
+        updated_at: Qui voluptatum.
+      - created_at: Expedita doloribus consequatur quia aut et.
+        creator: 8182254055631774860
+        description: Suscipit et facilis repellendus.
+        id: 14435022931376405779
+        name: Explicabo est dolor voluptas.
+        token: Et in.
+        updated_at: Qui voluptatum.
+      - created_at: Expedita doloribus consequatur quia aut et.
+        creator: 8182254055631774860
+        description: Suscipit et facilis repellendus.
+        id: 14435022931376405779
+        name: Explicabo est dolor voluptas.
+        token: Et in.
+        updated_at: Qui voluptatum.
   TokenMgrListUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -6780,7 +7015,7 @@ definitions:
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: true
+        example: false
     description: list_Unauthorized_response_body result type (default view)
     example:
       fault: false
@@ -6803,42 +7038,42 @@ definitions:
       created_at:
         type: string
         description: 创建时间
-        example: Deleniti laborum quia.
+        example: In provident omnis cum magnam veniam.
       creator:
         type: integer
         description: 发布者
-        example: 7675982613776132911
+        example: 16441857455884330113
         format: int64
       description:
         type: string
         description: 描述
-        example: Qui perspiciatis provident quisquam dolores.
+        example: Ut eaque voluptatem quia ut delectus.
       id:
         type: integer
         description: 数据ID
-        example: 960857362086500522
+        example: 7746364201566477049
         format: int64
       name:
         type: string
         description: 名称
-        example: Enim est assumenda.
+        example: Occaecati sunt.
       token:
         type: string
         description: Token数据
-        example: Rem molestiae.
+        example: Vitae ut.
       updated_at:
         type: string
         description: 更新时间
-        example: Ipsum molestias quam.
+        example: Qui possimus cum numquam nemo.
     description: Token模型 (default view)
     example:
-      created_at: Asperiores dolore vero.
-      creator: 2935714394935735133
-      description: Aperiam impedit qui.
-      id: 267268024170624432
-      name: Ut et hic.
-      token: Voluptas aut et sit sunt odio aperiam.
-      updated_at: Non laboriosam.
+      created_at: Molestiae voluptas aliquid ut.
+      creator: 2870221901044976954
+      description: Nisi quisquam.
+      id: 1854745013166485814
+      name: Et aut commodi assumenda et repudiandae.
+      token: Rerum tenetur qui.
+      updated_at: Est iure.
   TokenResultResponseBodyCollection:
     title: 'Mediatype identifier: application/vnd.token_result+json; type=collection; view=default'
     type: array
@@ -6846,20 +7081,34 @@ definitions:
       $ref: '#/definitions/TokenResultResponseBody'
     description: Token_resultCollectionResponseBody is the result type for an array of Token_resultResponseBody (default view)
     example:
-    - created_at: Omnis et quo fugiat blanditiis minus.
-      creator: 11998397488156672806
-      description: Similique id sit dolorem ex nam aut.
-      id: 2846538516943985011
-      name: Iusto laboriosam eligendi repellat sed.
-      token: Nam eligendi.
-      updated_at: Non eum.
-    - created_at: Omnis et quo fugiat blanditiis minus.
-      creator: 11998397488156672806
-      description: Similique id sit dolorem ex nam aut.
-      id: 2846538516943985011
-      name: Iusto laboriosam eligendi repellat sed.
-      token: Nam eligendi.
-      updated_at: Non eum.
+    - created_at: Expedita doloribus consequatur quia aut et.
+      creator: 8182254055631774860
+      description: Suscipit et facilis repellendus.
+      id: 14435022931376405779
+      name: Explicabo est dolor voluptas.
+      token: Et in.
+      updated_at: Qui voluptatum.
+    - created_at: Expedita doloribus consequatur quia aut et.
+      creator: 8182254055631774860
+      description: Suscipit et facilis repellendus.
+      id: 14435022931376405779
+      name: Explicabo est dolor voluptas.
+      token: Et in.
+      updated_at: Qui voluptatum.
+    - created_at: Expedita doloribus consequatur quia aut et.
+      creator: 8182254055631774860
+      description: Suscipit et facilis repellendus.
+      id: 14435022931376405779
+      name: Explicabo est dolor voluptas.
+      token: Et in.
+      updated_at: Qui voluptatum.
+    - created_at: Expedita doloribus consequatur quia aut et.
+      creator: 8182254055631774860
+      description: Suscipit et facilis repellendus.
+      id: 14435022931376405779
+      name: Explicabo est dolor voluptas.
+      token: Et in.
+      updated_at: Qui voluptatum.
   keyboardRequestBody:
     title: keyboardRequestBody
     type: object
@@ -6897,6 +7146,51 @@ definitions:
       - key_code: Aperiam vitae repellendus consequatur quia quidem.
         text: Tenetur reprehenderit.
       token: Inventore eum cumque et.
+  keyboardResponseBody:
+    title: keyboardResponseBody
+    type: object
+    properties:
+      host_id:
+        type: integer
+        description: 主机ID
+        example: 9745654092799790121
+        format: int64
+      id:
+        type: integer
+        description: 数据ID
+        example: 8917315624406424035
+        format: int64
+      keys:
+        type: array
+        items:
+          $ref: '#/definitions/keycodeResponseBody'
+        description: 回车后发送的事件
+        example:
+        - key_code: Vel tempore delectus esse accusantium.
+          text: Alias ratione architecto.
+        - key_code: Vel tempore delectus esse accusantium.
+          text: Alias ratione architecto.
+        - key_code: Vel tempore delectus esse accusantium.
+          text: Alias ratione architecto.
+        - key_code: Vel tempore delectus esse accusantium.
+          text: Alias ratione architecto.
+      token:
+        type: string
+        description: JWTAuth token used to perform authorization
+        example: Excepturi facere accusantium.
+    example:
+      host_id: 2072740889718101313
+      id: 5951349538004832221
+      keys:
+      - key_code: Vel tempore delectus esse accusantium.
+        text: Alias ratione architecto.
+      - key_code: Vel tempore delectus esse accusantium.
+        text: Alias ratione architecto.
+      - key_code: Vel tempore delectus esse accusantium.
+        text: Alias ratione architecto.
+      - key_code: Vel tempore delectus esse accusantium.
+        text: Alias ratione architecto.
+      token: Ipsa sed.
   keycodeRequestBody:
     title: keycodeRequestBody
     type: object
@@ -6919,14 +7213,14 @@ definitions:
       key_code:
         type: string
         description: 键盘的编号
-        example: Quia magni nam at vero.
+        example: Quod dolorem maiores et rerum rem.
       text:
         type: string
         description: 键盘的值
-        example: Quia pariatur earum nulla voluptatem deleniti aut.
+        example: Et temporibus autem saepe.
     example:
-      key_code: Quasi et dolores nemo unde.
-      text: Impedit dolore expedita.
+      key_code: Deleniti aperiam.
+      text: Hic praesentium excepturi asperiores deleniti nostrum.
 securityDefinitions:
   jwt_header_Authorization:
     type: apiKey

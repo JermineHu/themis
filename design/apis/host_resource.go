@@ -154,12 +154,16 @@ var res_host = Service("host", func() {
 			Field(1, "token", String, "JWTAuth token used to perform authorization", func() {
 				//Meta("rpc:tag", "10")
 			})
+			Field(2, "host_id", String, "返回主机ID", func() {
+				//Meta("rpc:tag", "10")
+			})
 		})
 		HTTP(func() {
 			POST("")
 			Header("token:Authorization")
 			Response(StatusOK, func() {
 				Header("token:Authorization")
+				Header("host_id:HostID")
 			})
 			Response(StatusNotFound)
 			Response("Unauthorized", StatusUnauthorized)
