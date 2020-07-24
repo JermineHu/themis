@@ -6,6 +6,7 @@ import (
 	"github.com/JermineHu/themis/models"
 	config "github.com/JermineHu/themis/svc/gen/config"
 	"github.com/jinzhu/copier"
+	"github.com/jinzhu/gorm"
 	"goa.design/goa/v3/security"
 	"log"
 )
@@ -108,7 +109,7 @@ func (s *configsrvc) Update(ctx context.Context, p *config.Config) (res *config.
 	res = &config.ConfigResult{}
 	view = "default"
 	cp, err := models.GetConfigByKey(*p.Key)
-	if err != nil {
+	if err != nil && !gorm.IsRecordNotFoundError(err) {
 		err = config.MakeBadRequest(err)
 		return
 	}

@@ -51,7 +51,9 @@ func GetRtspList(payload *rtsp.ListPayload) (result []Rtsp, count int64, err err
 	totalNum, err := qs.Count() //查询count
 	count = int64(totalNum)
 	list := []Rtsp{}
-	err = qs.db.Offset(int(offsetHead)).Limit(int(OffsetTail - offsetHead)).Preload("Host").Find(&list).Error
+	if count > 0 {
+		err = qs.db.Offset(int(offsetHead)).Limit(int(OffsetTail - offsetHead)).Preload("Host").Find(&list).Error
+	}
 	return list, count, err
 }
 

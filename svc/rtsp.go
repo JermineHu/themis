@@ -3,6 +3,7 @@ package svc
 import (
 	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"github.com/JermineHu/themis/models"
 	rtsp "github.com/JermineHu/themis/svc/gen/rtsp"
@@ -14,6 +15,7 @@ import (
 	"goa.design/goa/v3/security"
 	"log"
 	"math/rand"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -324,6 +326,11 @@ func (s *rtspsrvc) Create(ctx context.Context, p *rtsp.Rtsp) (res *rtsp.RtspResu
 	if err != nil {
 		return
 	}
+
+	if ok, _ := regexp.MatchString("\\d+", p.HostID); !ok {
+		return nil, "", rtsp.MakeBadRequest(errors.New("主机为必填！如果没有主机请先通过agent进行注册！"))
+	}
+
 	err = models.CreateRtsp(&cp)
 	if err != nil {
 		err = rtsp.MakeBadRequest(err)

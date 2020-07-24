@@ -21,6 +21,11 @@ var Rtsp = Type("Rtsp", func() {
 	Field(5, "created_at", String, "创建时间")
 	Field(6, "updated_at", String, "更新时间")
 	Field(7, "id", UInt64, "数据ID", func() {})
+	Required("host_id")
+})
+var RtspWhere = Type("RtspWhere", func() {
+	Field(1, "host_id", String, "主机ID")
+	Field(2, "id", UInt64, "数据ID", func() {})
 })
 
 var PageModelRtsp = ResultType("application/vnd.rtsp_list+json", func() {
@@ -137,7 +142,7 @@ var res_rtsp = Service("rtsp", func() {
 				Default(true)
 				//Meta("rpc:tag", "5")
 			})
-			Field(6, "where", Rtsp, "条件", func() {})
+			Field(6, "where", RtspWhere, "条件", func() {})
 			Required("offset_head", "offset_tail")
 		})
 		Error("Unauthorized")

@@ -207,16 +207,17 @@ func (s *keyboardsrvc) Broker(ctx context.Context, p *keyboard.BrokerPayload, st
 						}
 					}()
 					if err = s.SenCast(hID, keyb); err != nil { // 将收到的消息再广播回去
-						return err
+						log.Fatal("发送失败：", err)
 					}
 				}
 			}
 		case err := <-errCh: // 错误处理
 			if err != nil {
+				s.DelMapByKey(hID, sessionID)
 				return err
 			}
 			done = true
-			s.DelMapByKey(hID, sessionID)
+
 		case <-ctx.Done():
 			done = true
 			s.DelMapByKey(hID, sessionID)
