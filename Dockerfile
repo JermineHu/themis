@@ -8,9 +8,10 @@ ENV APP_HOME /go/src/${APP_PACKAGE}
 ENV APP_NAME themis
 ENV SHOW_SWAGGER=$SHOW_SWAGGER
 WORKDIR $APP_HOME
-RUN echo -e "http://dl-cdn.alpinelinux.org/alpine/edge/main\nhttp://dl-cdn.alpinelinux.org/alpine/edge/community" > /etc/apk/repositories && \
-    sed -i 's@http://dl-cdn.alpinelinux.org@https://mirrors.ustc.edu.cn@g' /etc/apk/repositories && apk update && apk add upx binutils ca-certificates
-RUN apk add --no-cache tzdata make protoc git && \
+RUN apk update && apk add upx git binutils ca-certificates
+#echo -e "http://dl-cdn.alpinelinux.org/alpine/edge/main\nhttp://dl-cdn.alpinelinux.org/alpine/edge/community" > /etc/apk/repositories && \
+#   sed -i 's@http://dl-cdn.alpinelinux.org@https://mirrors.ustc.edu.cn@g' /etc/apk/repositories && apk update && apk add upx git binutils ca-certificates
+RUN apk add --no-cache tzdata make protoc && \
     echo ${TIME_ZONE} > /etc/timezone && \
     ln -sf /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime
 COPY . $APP_HOME

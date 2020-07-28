@@ -64,6 +64,7 @@ func DataInit() {
 	key := "settings"
 	_, err := models.GetConfigByKey(key)
 	if gorm.IsRecordNotFoundError(err) {
+		// 初始化配置
 		cf := models.Config{}
 		cf.Key = &key
 		sets := Settings{DataInit: true}
@@ -73,16 +74,27 @@ func DataInit() {
 		if err != nil {
 			panic(err)
 		}
-		cp := models.Admin{}
+		// 初始化用户
+		admin := models.Admin{}
 		ln := "admin"
-		cp.LoginName = &ln
+		admin.LoginName = &ln
 		str := utils.GetRandomString(8)
-		cp.Salt = &str
+		admin.Salt = &str
 		pwd := utils.Md5("CZ1lHMQvZVdBe5fn" + str)
-		cp.Password = &pwd
-		err = models.CreateAdmin(&cp)
+		admin.Password = &pwd
+		err = models.CreateAdmin(&admin)
 		if err != nil {
 			panic(err)
 		}
+
+		nt := models.Notice{}
+		nt.CreatorID = &admin.ID
+		nstr := ""
+		nt.Notice = &nstr
+		err = models.CreateNotice(&nt)
+		if err != nil {
+			panic(err)
+		}
+
 	}
 }
