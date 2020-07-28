@@ -89,7 +89,7 @@ sudo docker run --name themis --restart always -d \
 -e TOKEN_TIMEOUT=5184000 \
 -p 8080:8080 \
 -p 8081:8081 \
-registry.cn-hangzhou.aliyuncs.com/vdo/themis:release-v1.0.3
+registry.cn-hangzhou.aliyuncs.com/vdo/themis:release-v1.0.4
 ```
 
 以上-e参数为变量，可以自行设置，DB_CON_STR是数据库连接字符串，必填。
