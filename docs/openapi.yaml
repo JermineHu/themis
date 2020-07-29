@@ -1527,7 +1527,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+        example: 52a4b9a0-2ad3-456a-bd21-d971d806146c
         format: uuid
       id:
         type: integer
@@ -1545,7 +1545,7 @@ definitions:
     description: CreateNot FoundResponseBody result type (default view)
     example:
       created_at: Illo quod id molestiae nulla.
-      created_by: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+      created_by: 52a4b9a0-2ad3-456a-bd21-d971d806146c
       id: 3356566430678129356
       login_name: ZhangSan
       token: Voluptatum quidem porro quo at.
@@ -1560,7 +1560,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+        example: 52a4b9a0-2ad3-456a-bd21-d971d806146c
         format: uuid
       id:
         type: integer
@@ -1578,7 +1578,7 @@ definitions:
     description: CreateOKResponseBody result type (default view)
     example:
       created_at: Adipisci minima officiis praesentium adipisci qui.
-      created_by: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+      created_by: 52a4b9a0-2ad3-456a-bd21-d971d806146c
       id: 12189558847165432318
       login_name: ZhangSan
       token: Aut assumenda ut eaque.
@@ -1593,7 +1593,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+        example: 52a4b9a0-2ad3-456a-bd21-d971d806146c
         format: uuid
       id:
         type: integer
@@ -1611,18 +1611,18 @@ definitions:
       salt:
         type: string
         description: 生成密码是使用的盐
-        example: hMzQDccDH7HTg
+        example: nKduwBNnbsmqc
       updated_at:
         type: string
         description: 更新时间
         example: Quas sed sit.
     example:
       created_at: Facilis iusto molestiae nulla quaerat.
-      created_by: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+      created_by: 52a4b9a0-2ad3-456a-bd21-d971d806146c
       id: 15535741356880241334
       login_name: ZhangSan
       password: "123456"
-      salt: hMzQDccDH7HTg
+      salt: nKduwBNnbsmqc
       updated_at: Occaecati in.
   AdminCreateUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
@@ -1786,11 +1786,11 @@ definitions:
       order_by: id
       where:
         created_at: Rerum est.
-        created_by: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+        created_by: 52a4b9a0-2ad3-456a-bd21-d971d806146c
         id: 1695099831319294049
         login_name: ZhangSan
         password: "123456"
-        salt: hMzQDccDH7HTg
+        salt: nKduwBNnbsmqc
         token: Qui et accusantium sint.
         updated_at: Nemo molestias vero.
     required:
@@ -1812,12 +1812,12 @@ definitions:
       count: 200
       page_data:
       - created_at: Aut non.
-        created_by: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+        created_by: 52a4b9a0-2ad3-456a-bd21-d971d806146c
         id: 14297826529849373646
         login_name: ZhangSan
         token: Exercitationem eaque neque officiis autem consequatur.
       - created_at: Aut non.
-        created_by: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+        created_by: 52a4b9a0-2ad3-456a-bd21-d971d806146c
         id: 14297826529849373646
         login_name: ZhangSan
         token: Exercitationem eaque neque officiis autem consequatur.
@@ -1966,7 +1966,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+        example: 52a4b9a0-2ad3-456a-bd21-d971d806146c
         format: uuid
       id:
         type: integer
@@ -1984,7 +1984,7 @@ definitions:
     description: LoginNot FoundResponseBody result type (tiny view) (default view)
     example:
       created_at: Est tenetur quam est magni.
-      created_by: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+      created_by: 52a4b9a0-2ad3-456a-bd21-d971d806146c
       id: 18168816519936804573
       login_name: ZhangSan
       token: Qui vel ut tempore.
@@ -1999,7 +1999,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+        example: 52a4b9a0-2ad3-456a-bd21-d971d806146c
         format: uuid
       id:
         type: integer
@@ -2013,7 +2013,7 @@ definitions:
     description: LoginOKResponseBody result type (tiny view) (default view)
     example:
       created_at: Non nam totam dignissimos commodi ut quia.
-      created_by: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+      created_by: 52a4b9a0-2ad3-456a-bd21-d971d806146c
       id: 14758802076734235240
       login_name: ZhangSan
   AdminLoginRequestBody:
@@ -2045,7 +2045,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+        example: 52a4b9a0-2ad3-456a-bd21-d971d806146c
         format: uuid
       id:
         type: integer
@@ -2063,7 +2063,7 @@ definitions:
       salt:
         type: string
         description: 生成密码是使用的盐
-        example: hMzQDccDH7HTg
+        example: nKduwBNnbsmqc
       token:
         type: string
         description: JWTAuth token used to perform authorization
@@ -2074,11 +2074,11 @@ definitions:
         example: Quo voluptatem.
     example:
       created_at: Molestias qui.
-      created_by: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+      created_by: 52a4b9a0-2ad3-456a-bd21-d971d806146c
       id: 5447515476738339089
       login_name: ZhangSan
       password: "123456"
-      salt: hMzQDccDH7HTg
+      salt: nKduwBNnbsmqc
       token: Est minus nihil placeat et eligendi.
       updated_at: Ut placeat iure odit porro aspernatur.
   AdminResultResponseBody:
@@ -2092,7 +2092,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+        example: 52a4b9a0-2ad3-456a-bd21-d971d806146c
         format: uuid
       id:
         type: integer
@@ -2110,7 +2110,7 @@ definitions:
     description: 管理员模型 (default view)
     example:
       created_at: Molestiae dicta a est.
-      created_by: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+      created_by: 52a4b9a0-2ad3-456a-bd21-d971d806146c
       id: 10071718617036516711
       login_name: ZhangSan
       token: Tempore omnis aliquam odio.
@@ -2122,17 +2122,17 @@ definitions:
     description: Admin_resultCollectionResponseBody is the result type for an array of Admin_resultResponseBody (default view)
     example:
     - created_at: Aut non.
-      created_by: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+      created_by: 52a4b9a0-2ad3-456a-bd21-d971d806146c
       id: 14297826529849373646
       login_name: ZhangSan
       token: Exercitationem eaque neque officiis autem consequatur.
     - created_at: Aut non.
-      created_by: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+      created_by: 52a4b9a0-2ad3-456a-bd21-d971d806146c
       id: 14297826529849373646
       login_name: ZhangSan
       token: Exercitationem eaque neque officiis autem consequatur.
     - created_at: Aut non.
-      created_by: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+      created_by: 52a4b9a0-2ad3-456a-bd21-d971d806146c
       id: 14297826529849373646
       login_name: ZhangSan
       token: Exercitationem eaque neque officiis autem consequatur.
@@ -2147,7 +2147,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+        example: 52a4b9a0-2ad3-456a-bd21-d971d806146c
         format: uuid
       id:
         type: integer
@@ -2165,7 +2165,7 @@ definitions:
     description: ShowNot FoundResponseBody result type (default view)
     example:
       created_at: Voluptas quidem omnis et consequatur voluptate deserunt.
-      created_by: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+      created_by: 52a4b9a0-2ad3-456a-bd21-d971d806146c
       id: 16439831749767477428
       login_name: ZhangSan
       token: Ducimus dolor dolore a nihil doloribus labore.
@@ -2180,7 +2180,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+        example: 52a4b9a0-2ad3-456a-bd21-d971d806146c
         format: uuid
       id:
         type: integer
@@ -2198,7 +2198,7 @@ definitions:
     description: ShowOKResponseBody result type (default view)
     example:
       created_at: Fugiat aut ex ab.
-      created_by: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+      created_by: 52a4b9a0-2ad3-456a-bd21-d971d806146c
       id: 2211973285205415840
       login_name: ZhangSan
       token: Occaecati accusantium voluptate.
@@ -2256,7 +2256,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+        example: 52a4b9a0-2ad3-456a-bd21-d971d806146c
         format: uuid
       id:
         type: integer
@@ -2274,7 +2274,7 @@ definitions:
     description: UpdateNot FoundResponseBody result type (default view)
     example:
       created_at: Impedit veniam ea totam ut veritatis ea.
-      created_by: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+      created_by: 52a4b9a0-2ad3-456a-bd21-d971d806146c
       id: 8248705837781971268
       login_name: ZhangSan
       token: Esse minima sit sapiente neque ut.
@@ -2289,7 +2289,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+        example: 52a4b9a0-2ad3-456a-bd21-d971d806146c
         format: uuid
       id:
         type: integer
@@ -2307,7 +2307,7 @@ definitions:
     description: UpdateOKResponseBody result type (default view)
     example:
       created_at: Explicabo eius magnam ad voluptas officia ut.
-      created_by: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+      created_by: 52a4b9a0-2ad3-456a-bd21-d971d806146c
       id: 711371102815683288
       login_name: ZhangSan
       token: Non veniam totam.
@@ -2322,7 +2322,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+        example: 52a4b9a0-2ad3-456a-bd21-d971d806146c
         format: uuid
       login_name:
         type: string
@@ -2335,17 +2335,17 @@ definitions:
       salt:
         type: string
         description: 生成密码是使用的盐
-        example: hMzQDccDH7HTg
+        example: nKduwBNnbsmqc
       updated_at:
         type: string
         description: 更新时间
         example: Quia dolor.
     example:
       created_at: Et nulla.
-      created_by: 68077fbe-180e-4d94-8e4a-8e4eab426d19
+      created_by: 52a4b9a0-2ad3-456a-bd21-d971d806146c
       login_name: ZhangSan
       password: "123456"
-      salt: hMzQDccDH7HTg
+      salt: nKduwBNnbsmqc
       updated_at: Beatae et.
   AdminUpdateUnauthorizedResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'

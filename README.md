@@ -100,7 +100,7 @@ registry.cn-hangzhou.aliyuncs.com/vdo/themis:release-v1.0.4
 sudo docker run --name themis-ui --restart always -d  \
 -e BASE_API="192.168.1.250:8081" \
 -p 8090:80 \
-registry.cn-hangzhou.aliyuncs.com/vdo/themis-ui:v1.0.2
+registry.cn-hangzhou.aliyuncs.com/vdo/themis-ui:v1.0.4
 ```
 BASE_API是填写服务端访问地址，对外映射端口可以更换8090
 #### windows下启动Themis agent端
