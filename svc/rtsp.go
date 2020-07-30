@@ -91,11 +91,11 @@ func (s *rtspsrvc) Receive(ctx context.Context, r *rtsp.ReceivePayload) (res str
 
 		peerConnection, err := api.NewPeerConnection(webrtc.Configuration{
 			ICEServers: []webrtc.ICEServer{
-				{
-					URLs:       []string{"turn:numb.viagenie.ca"},
-					Credential: "muazkh",
-					Username:   "webrtc@live.com",
-				},
+				//{
+				//	URLs:       []string{"turn:numb.viagenie.ca"},
+				//	Credential: "muazkh",
+				//	Username:   "webrtc@live.com",
+				//},
 				{
 					URLs: []string{"stun:stun.l.google.com:19302"},
 				},
@@ -156,7 +156,7 @@ func (s *rtspsrvc) Receive(ctx context.Context, r *rtsp.ReceivePayload) (res str
 			}
 			if err != nil {
 				log.Println(err)
-				return res, rtsp.MakeBadRequest(fmt.Errorf(" error：%v", err))
+				return res, nil
 			}
 			_, err = peerConnection.AddTransceiverFromTrack(audioTrack,
 				webrtc.RtpTransceiverInit{
@@ -170,7 +170,7 @@ func (s *rtspsrvc) Receive(ctx context.Context, r *rtsp.ReceivePayload) (res str
 			_, err = peerConnection.AddTrack(audioTrack)
 			if err != nil {
 				log.Println(err)
-				return res, rtsp.MakeBadRequest(fmt.Errorf("error：%v", err))
+				return res, nil
 			}
 		}
 		if err := peerConnection.SetRemoteDescription(offer); err != nil {
