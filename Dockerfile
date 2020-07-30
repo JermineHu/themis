@@ -27,9 +27,10 @@ RUN strip --strip-unneeded $APP_NAME
 RUN upx -9 $APP_NAME
 RUN if [ "$SHOW_SWAGGER" != "true" ] ; then rm -rf $APP_HOME/svc/gen/http/* ; echo "swagger 文档删除成功！"; fi #根据环境变量决定是否删除swagger文档
 # 最终镜像设置
-FROM scratch
+FROM busybox
 MAINTAINER Jermine.hu@qq.com
 ENV TIME_ZONE Asia/Shanghai
+ENV BASE_API="https://jermine.vdo.pub"
 ENV APP_HOME /go/src/github.com/JermineHu/themis
 WORKDIR /bin
 COPY --from=go $APP_HOME/themis /bin/
@@ -37,8 +38,9 @@ COPY --from=go $APP_HOME/themis /bin/
 COPY --from=go /etc/timezone /etc/timezone
 COPY --from=go /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime
 COPY --from=go /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY jwtkey /bin/jwtkey
+COPY ui /bin/ui
 ENV APP_PORT 8081
 ENV ENV development
-COPY jwtkey /bin/jwtkey
 EXPOSE  $APP_PORT
-CMD ["themis"]
+CMD sed -i "s@BASE_API@$BASE_API@g" `grep BASE_API -rl .` && ./themis

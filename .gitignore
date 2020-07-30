@@ -22,3 +22,4 @@ tmp
 *.idea
 svc/tmp
 svc/gen
+/ui/

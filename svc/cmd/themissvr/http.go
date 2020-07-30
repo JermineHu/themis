@@ -13,6 +13,7 @@ import (
 	keyboardsvr "github.com/JermineHu/themis/svc/gen/http/keyboard/server"
 	noticesvr "github.com/JermineHu/themis/svc/gen/http/notice/server"
 	rtspsvr "github.com/JermineHu/themis/svc/gen/http/rtsp/server"
+	staticssvr "github.com/JermineHu/themis/svc/gen/http/statics/server"
 	tokenmgrsvr "github.com/JermineHu/themis/svc/gen/http/token_mgr/server"
 	keyboard "github.com/JermineHu/themis/svc/gen/keyboard"
 	notice "github.com/JermineHu/themis/svc/gen/notice"
@@ -71,6 +72,7 @@ func handleHTTPServer(ctx context.Context, u *url.URL, healthEndpoints *health.E
 		noticeServer   *noticesvr.Server
 		rtspServer     *rtspsvr.Server
 		tokenMgrServer *tokenmgrsvr.Server
+		staticsServer  *staticssvr.Server
 	)
 	{
 		eh := errorHandler(logger)
@@ -88,6 +90,7 @@ func handleHTTPServer(ctx context.Context, u *url.URL, healthEndpoints *health.E
 		noticeServer = noticesvr.New(noticeEndpoints, mux, dec, enc, eh, nil)
 		rtspServer = rtspsvr.New(rtspEndpoints, mux, dec, enc, eh, nil)
 		tokenMgrServer = tokenmgrsvr.New(tokenMgrEndpoints, mux, dec, enc, eh, nil)
+		staticsServer = staticssvr.New(nil, mux, dec, enc, eh, nil)
 		if debug {
 			servers := goahttp.Servers{
 				healthServer,
@@ -98,6 +101,7 @@ func handleHTTPServer(ctx context.Context, u *url.URL, healthEndpoints *health.E
 				noticeServer,
 				rtspServer,
 				tokenMgrServer,
+				staticsServer,
 			}
 			servers.Use(httpmdlwr.Debug(mux, os.Stdout))
 		}
@@ -111,6 +115,7 @@ func handleHTTPServer(ctx context.Context, u *url.URL, healthEndpoints *health.E
 	noticesvr.Mount(mux, noticeServer)
 	rtspsvr.Mount(mux, rtspServer)
 	tokenmgrsvr.Mount(mux, tokenMgrServer)
+	staticssvr.Mount(mux, staticsServer)
 
 	// Wrap the multiplexer with additional middlewares. Middlewares mounted
 	// here apply to all the service endpoints.
@@ -145,6 +150,9 @@ func handleHTTPServer(ctx context.Context, u *url.URL, healthEndpoints *health.E
 		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 	for _, m := range tokenMgrServer.Mounts {
+		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
+	}
+	for _, m := range staticsServer.Mounts {
 		logger.Printf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern)
 	}
 
