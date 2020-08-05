@@ -104,7 +104,7 @@ var RtspResult = ResultType("application/vnd.rtsp_result+json", func() {
 //var BasicAuth = BasicAuthSecurity("BasicAuth")
 var res_rtsp = Service("rtsp", func() {
 	Security(JWTAuth, func() { // Use JWTAuth to auth requests to this endpoint
-		Scope("api:access") // Enforce presence of "api" scope in JWTAuth claims.
+		Scope("api:write") // Enforce presence of "api" scope in JWTAuth claims.
 	})
 	HTTP(func() {
 		Path("/themis/v1/rtsp")
@@ -126,6 +126,9 @@ var res_rtsp = Service("rtsp", func() {
 	})
 
 	Method("list", func() {
+		Security(JWTAuth, func() { // Use JWTAuth to auth requests to this endpoint
+			Scope("api:read") // Enforce presence of "api" scope in JWTAuth claims.
+		})
 		Description("流的数据列表；")
 		Payload(func() {
 			Field(1, "offset_head", UInt64, "从多少条开始", func() {
@@ -227,6 +230,9 @@ var res_rtsp = Service("rtsp", func() {
 	})
 
 	Method("show", func() {
+		Security(JWTAuth, func() { // Use JWTAuth to auth requests to this endpoint
+			Scope("api:read") // Enforce presence of "api" scope in JWTAuth claims.
+		})
 		Description("根据id获取信息")
 		Error("Unauthorized")
 		Payload(func() {
@@ -251,6 +257,9 @@ var res_rtsp = Service("rtsp", func() {
 	})
 
 	Method("receive", func() {
+		Security(JWTAuth, func() { // Use JWTAuth to auth requests to this endpoint
+			Scope("api:read") // Enforce presence of "api" scope in JWTAuth claims.
+		})
 		Description("获取接收数据流的数据")
 		Payload(func() {
 			TokenField(1, "token", String, "JWTAuth token used to perform authorization", func() {
@@ -276,6 +285,9 @@ var res_rtsp = Service("rtsp", func() {
 	})
 
 	Method("codec", func() {
+		Security(JWTAuth, func() { // Use JWTAuth to auth requests to this endpoint
+			Scope("api:read") // Enforce presence of "api" scope in JWTAuth claims.
+		})
 		Description("获取对应rtsp的解码基本信息")
 		Payload(func() {
 			TokenField(1, "token", String, "JWTAuth token used to perform authorization", func() {

@@ -99,7 +99,10 @@ func (s *keyboardsrvc) ListByHostID(ctx context.Context, p *keyboard.ListByHostI
 
 // 创建日志数据
 func (s *keyboardsrvc) Log(ctx context.Context, p *keyboard.Keyboard) (res *keyboard.KeyboardResult, err error) {
-
+	_, err = JWTCheckForHost(ctx, *p.Token)
+	if err != nil {
+		return nil, keyboard.MakeUnauthorized(err)
+	}
 	res = &keyboard.KeyboardResult{}
 	cp := models.Keyboard{}
 	v, err := json.Marshal(p.Keys)
@@ -251,4 +254,16 @@ func (s *keyboardsrvc) DelMapByKey(hostID uint64, sessionID string) {
 			}
 		}
 	}
+}
+
+// 根据主机ID获取统计数据
+func (s *keyboardsrvc) Statistics(ctx context.Context, p *keyboard.StatisticsPayload) (res map[string]int, err error) {
+
+	return
+}
+
+// 用于建立广播消息的服务
+func (s *keyboardsrvc) BrokerForHosts(ctx context.Context, p *keyboard.BrokerForHostsPayload, stream keyboard.BrokerForHostsServerStream) (err error) {
+	s.logger.Print("keyboard.broker_for_hosts")
+	return
 }

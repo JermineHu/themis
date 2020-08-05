@@ -53,7 +53,7 @@ var TokenResult = ResultType("application/vnd.token_result+json", func() {
 var res_token = Service("token_mgr", func() {
 	Description("Token模块")
 	Security(JWTAuth, func() { // Use JWTAuth to auth requests to this endpoint
-		Scope("api:access") // Enforce presence of "api" scope in JWTAuth claims.
+		Scope("api:write") // Enforce presence of "api" scope in JWTAuth claims.
 	})
 	HTTP(func() {
 		Path("/themis/v1/token")

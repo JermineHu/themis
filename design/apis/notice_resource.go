@@ -59,7 +59,7 @@ var NoticeResult = ResultType("application/vnd.notice_result+json", func() {
 var res_notice = Service("notice", func() {
 	Description("消息通知模块")
 	Security(JWTAuth, func() { // Use JWTAuth to auth requests to this endpoint
-		Scope("api:access") // Enforce presence of "api" scope in JWTAuth claims.
+		Scope("api:write") // Enforce presence of "api" scope in JWTAuth claims.
 	})
 	HTTP(func() {
 		Path("/themis/v1/notice")
@@ -184,6 +184,9 @@ var res_notice = Service("notice", func() {
 	})
 
 	Method("show", func() {
+		Security(JWTAuth, func() { // Use JWTAuth to auth requests to this endpoint
+			Scope("api:read") // Enforce presence of "api" scope in JWTAuth claims.
+		})
 		Description("根据id获取信息")
 		Error("Unauthorized")
 		Payload(func() {

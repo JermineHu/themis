@@ -46,13 +46,13 @@ var Admin = Type("Admin", func() {
 		Example(RandomString(13))
 		//Meta("rpc:tag", "5")
 	})
-	//
-	//Field(9, "user_type", func() {
-	//	Enum("USER_TYPE_NULL", "USER_TYPE_NORMAL", "USER_TYPE_ADMINISTRATOR")
-	//	Example("USER_TYPE_NORMAL")
-	//	//Meta("rpc:tag", "6")
-	//})
-	//
+
+	Field(9, "user_type", func() {
+		Enum("USER_TYPE_NORMAL", "USER_TYPE_ADMINISTRATOR")
+		Example("USER_TYPE_NORMAL")
+		//Meta("rpc:tag", "6")
+	})
+
 	//Field(10, "user_status", func() {
 	//	Enum("USER_STATUS_NULL", "USER_STATUS_ACTIVATED", "USER_STATUS_DEACTIVATED", "USER_STATUS_CLOSED")
 	//	Example("USER_STATUS_ACTIVATED")
@@ -124,7 +124,7 @@ var AdminResult = ResultType("application/vnd.admin_result+json", func() {
 		Field(5, "login_name")
 		Field(6, "created_at")
 		Field(7, "created_by")
-		//Field(8, "user_type")
+		Field(8, "user_type")
 		//Field(9, "user_status")
 		Field(10, "token")
 		//Required("id", "password", "salt", "name", "created_at", "created_by", "user_type", "user_status")
@@ -135,7 +135,7 @@ var AdminResult = ResultType("application/vnd.admin_result+json", func() {
 		Field(2, "login_name")
 		Field(3, "created_at")
 		Field(4, "created_by")
-		//Field(6, "user_type")
+		Field(6, "user_type")
 		//Field(7, "user_status")
 		Field(9, "token")
 	})
@@ -145,7 +145,7 @@ var AdminResult = ResultType("application/vnd.admin_result+json", func() {
 		Field(2, "login_name")
 		Field(3, "created_at")
 		Field(4, "created_by")
-		//Field(5, "user_type")
+		Field(5, "user_type")
 		//Field(6, "user_status")
 		Field(7, "token")
 
@@ -158,7 +158,7 @@ var AdminResult = ResultType("application/vnd.admin_result+json", func() {
 		Field(4, "login_name")
 		Field(5, "created_at")
 		Field(6, "created_by")
-		//Field(8, "user_type")
+		Field(8, "user_type")
 		//Field(9, "user_status")
 		Field(11, "token")
 	})
@@ -170,7 +170,7 @@ var AdminResult = ResultType("application/vnd.admin_result+json", func() {
 //var BasicAuth = BasicAuthSecurity("BasicAuth")
 var res_admin = Service("admin", func() {
 	Security(JWTAuth, func() { // Use JWTAuth to auth requests to this endpoint
-		Scope("api:access") // Enforce presence of "api" scope in JWTAuth claims.
+		Scope("api:write") // Enforce presence of "api" scope in JWTAuth claims.
 	})
 	HTTP(func() {
 		Path("/themis/v1/admin")

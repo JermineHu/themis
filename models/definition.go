@@ -48,6 +48,7 @@ type Admin struct {
 	Salt *string `json:"salt"`
 	// 创建该账户的账户
 	CreatedBy *uint64 `json:"created_by"`
+	UserType  *string `gorm:"default:'USER_TYPE_NORMAL'" json:"id"`
 }
 
 // 主机信息

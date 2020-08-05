@@ -44,7 +44,7 @@ var ConfigResult = ResultType("application/vnd.config_result", func() {
 
 var res_config = Service("config", func() {
 	Security(JWTAuth, func() { // Use JWTAuth to auth requests to this endpoint
-		Scope("api:access") // Enforce presence of "api" scope in JWTAuth claims.
+		Scope("api:write") // Enforce presence of "api" scope in JWTAuth claims.
 	})
 	HTTP(func() {
 		Path("/themis/v1/config")

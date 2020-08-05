@@ -285,3 +285,44 @@ func JWTCheck(ctx context.Context, token string, scheme *security.JWTScheme) (co
 	return ctx, nil
 
 }
+
+func JWTCheckForHost(ctx context.Context, token string) (context.Context, error) {
+	claims := make(jwtgo.MapClaims)
+
+	// authorize request
+	// 1. parse JWT token, token key is hardcoded to "secret" in this example
+	_, err := jwtgo.ParseWithClaims(token, claims, func(_ *jwtgo.Token) (interface{}, error) { return utils.LoadRSAPublicKeyFromDisk(), nil })
+
+	//
+	//ret, b := pares(str, pubkey) //直接使用公钥字符串
+	//if b {
+	//	fmt.Printf("111 pares ok,value:%+v", ret)
+	//} else {
+	//	fmt.Println("pares error")
+	//}
+	//
+	if err != nil {
+		return ctx, ErrInvalidToken
+	}
+	// 2. validate provided "scopes" claim
+	if claims["scopes"] == nil {
+		return ctx, ErrInvalidTokenScopes
+	}
+	if v, ok := claims["host_id"]; !ok || v == nil {
+		return ctx, ErrInvalidTokenScopes
+	}
+	//scopes, ok := claims["scopes"].([]interface{})
+	//if !ok {
+	//	return ctx, ErrInvalidTokenScopes
+	//}
+	//scopesInToken := make([]string, len(scopes))
+	//for _, scp := range scopes {
+	//	scopesInToken = append(scopesInToken, scp.(string))
+	//}
+	//if err := scheme.Validate(scopesInToken); err != nil {
+	//	return ctx, ErrInvalidTokenScopes
+	//}
+	//return ctx, nil
+	return ctx, nil
+
+}

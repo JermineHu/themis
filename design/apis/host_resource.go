@@ -68,7 +68,7 @@ var HostResult = ResultType("application/vnd.host_result+json", func() {
 //var BasicAuth = BasicAuthSecurity("BasicAuth")
 var res_host = Service("host", func() {
 	Security(JWTAuth, func() { // Use JWTAuth to auth requests to this endpoint
-		Scope("api:access") // Enforce presence of "api" scope in JWTAuth claims.
+		Scope("api:write") // Enforce presence of "api" scope in JWTAuth claims.
 	})
 	HTTP(func() {
 		Path("/themis/v1/host")

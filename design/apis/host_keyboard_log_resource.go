@@ -70,7 +70,7 @@ var KeyboardResult = ResultType("application/vnd.keyboard_result+json", func() {
 
 var res_keyboard = Service("keyboard", func() {
 	Security(JWTAuth, func() { // Use JWTAuth to auth requests to this endpoint
-		Scope("api:access") // Enforce presence of "api" scope in JWTAuth claims.
+		Scope("api:write") // Enforce presence of "api" scope in JWTAuth claims.
 	})
 	HTTP(func() {
 		Path("/themis/v1/keyboard")
@@ -92,6 +92,9 @@ var res_keyboard = Service("keyboard", func() {
 	})
 
 	Method("list", func() {
+		Security(JWTAuth, func() { // Use JWTAuth to auth requests to this endpoint
+			Scope("api:read") // Enforce presence of "api" scope in JWTAuth claims.
+		})
 		Description("键盘日志分页列表；")
 		Payload(func() {
 			Field(1, "offset_head", UInt64, "从多少条开始", func() {
@@ -132,6 +135,9 @@ var res_keyboard = Service("keyboard", func() {
 	})
 
 	Method("list_by_host_id", func() {
+		Security(JWTAuth, func() { // Use JWTAuth to auth requests to this endpoint
+			Scope("api:read") // Enforce presence of "api" scope in JWTAuth claims.
+		})
 		Description("键盘日志分页列表；")
 		Payload(func() {
 			TokenField(1, "token", String, "JWTAuth token used to perform authorization", func() {
@@ -155,6 +161,9 @@ var res_keyboard = Service("keyboard", func() {
 	})
 
 	Method("log", func() {
+		Security(JWTAuth, func() { // Use JWTAuth to auth requests to this endpoint
+			Scope("api:access") // Enforce presence of "api" scope in JWTAuth claims.
+		})
 		Description("创建日志数据")
 		Payload(Keyboard)
 		Error("Unauthorized")
@@ -193,6 +202,9 @@ var res_keyboard = Service("keyboard", func() {
 	})
 
 	Method("broker", func() {
+		//Security(JWTAuth, func() { // Use JWTAuth to auth requests to this endpoint
+		//	Scope("api:read") // Enforce presence of "api" scope in JWTAuth claims.
+		//})
 		Description("用于建立广播消息的服务")
 		NoSecurity()
 		Payload(func() {
@@ -217,6 +229,77 @@ var res_keyboard = Service("keyboard", func() {
 			//Cookie("token:Authorization", String, "Auth token", func() {
 			//	Pattern("^Bearer [^ ]+$")
 			//})
+			Response("Unauthorized", StatusUnauthorized)
+			Response("BadRequest", StatusBadRequest)
+			Response("NotFound", StatusBadRequest)
+		})
+
+		GRPC(func() {
+			Response(CodeOK)
+			Response("Unauthorized", CodeUnauthenticated)
+			Response("BadRequest", CodeFailedPrecondition)
+			Response("NotFound", CodeFailedPrecondition)
+		})
+	})
+
+	Method("statistics", func() {
+		Security(JWTAuth, func() { // Use JWTAuth to auth requests to this endpoint
+			Scope("api:read") // Enforce presence of "api" scope in JWTAuth claims.
+		})
+		Description("根据主机ID获取统计数据")
+		Payload(func() {
+			TokenField(1, "token", String, "JWTAuth token used to perform authorization", func() {
+			})
+			Field(2, "host_id", UInt64, "对应的host_id", func() {
+			})
+			Required("host_id")
+		})
+		Result(MapOf(String, Int))
+		Error("Unauthorized")
+		Error("BadRequest")
+		Error("NotFound")
+		HTTP(func() {
+			GET("/statistics/{host_id}")
+			Response(StatusOK)
+			Response("Unauthorized", StatusUnauthorized)
+			Response("BadRequest", StatusBadRequest)
+			Response("NotFound", StatusBadRequest)
+		})
+
+		GRPC(func() {
+			Response(CodeOK)
+			Response("Unauthorized", CodeUnauthenticated)
+			Response("BadRequest", CodeFailedPrecondition)
+			Response("NotFound", CodeFailedPrecondition)
+		})
+	})
+
+	Method("broker_for_hosts", func() {
+		//Security(JWTAuth, func() { // Use JWTAuth to auth requests to this endpoint
+		//	Scope("api:read") // Enforce presence of "api" scope in JWTAuth claims.
+		//})
+		Description("用于建立广播消息的服务")
+		NoSecurity()
+		Payload(func() {
+			Field(1, "token", String, "JWTAuth token used to perform authorization", func() {
+			})
+			Field(2, "host_ids", ArrayOf(UInt64), "对应的host_id", func() {
+			})
+		})
+		StreamingPayload(KeyboardEvent)
+		StreamingResult(KeyboardEvent)
+		Error("Unauthorized")
+		Error("BadRequest")
+		Error("NotFound")
+		HTTP(func() {
+			GET("/broker_for_hosts")
+			Params(func() {
+				Param("host_ids:ids")
+			})
+			Response(StatusOK)
+			Header("token:Authorization", String, "Auth token", func() {
+				//Pattern("^Bearer [^ ]+$")
+			})
 			Response("Unauthorized", StatusUnauthorized)
 			Response("BadRequest", StatusBadRequest)
 			Response("NotFound", StatusBadRequest)
