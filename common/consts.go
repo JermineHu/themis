@@ -2,7 +2,8 @@ package common
 
 // 公共配置
 const (
-	DOMAIN = "DOMAIN"
+	DOMAIN   = "DOMAIN"
+	APP_PORT = "APP_PORT"
 )
 
 // Redis ENV key

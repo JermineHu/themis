@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/JermineHu/themis/common"
 	"log"
 	"net/url"
 	"os"
@@ -29,8 +30,8 @@ func main() {
 	var (
 		hostF     = flag.String("host", "development", "Server host (valid values: development, production)")
 		domainF   = flag.String("domain", "", "Host domain name (overrides host domain specified in service design)")
-		httpPortF = flag.String("http-port", "", "HTTP port (overrides host HTTP port specified in service design)")
-		grpcPortF = flag.String("grpc-port", "", "gRPC port (overrides host gRPC port specified in service design)")
+		httpPortF = flag.String("http-port", os.Getenv(common.APP_PORT), "HTTP port (overrides host HTTP port specified in service design)")
+		grpcPortF = flag.String("grpc-port", "7080", "gRPC port (overrides host gRPC port specified in service design)")
 		versionF  = flag.String("version", "v1", "API version")
 		secureF   = flag.Bool("secure", false, "Use secure scheme (https or grpcs)")
 		dbgF      = flag.Bool("debug", false, "Log request and response bodies")

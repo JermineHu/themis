@@ -113,6 +113,7 @@ type Rtsp struct {
 	Creator   *Admin  `json:"creator"`
 	// rtsp的地址
 	RtspURL *string `json:"rtsp_url"`
+	Name    *string `json:"name"`
 	// 主机ID
 	HostID *string `json:"host_id"`
 	Host   Host    `json:"host"`

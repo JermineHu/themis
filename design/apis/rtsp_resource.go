@@ -21,6 +21,7 @@ var Rtsp = Type("Rtsp", func() {
 	Field(5, "created_at", String, "创建时间")
 	Field(6, "updated_at", String, "更新时间")
 	Field(7, "id", UInt64, "数据ID", func() {})
+	Field(8, "name", UInt64, "rtsp名称", func() {})
 	Required("host_id")
 })
 var RtspWhere = Type("RtspWhere", func() {
@@ -61,6 +62,7 @@ var RtspResult = ResultType("application/vnd.rtsp_result+json", func() {
 		Field(6, "updated_at", String, "更新时间")
 		Field(7, "host", HostInfo, "主机信息")
 		Field(8, "play_url", String, "播放的地址")
+		Field(9, "name", String, "名称")
 	})
 
 	View("default", func() {
@@ -71,14 +73,17 @@ var RtspResult = ResultType("application/vnd.rtsp_result+json", func() {
 		Field(5, "created_at")
 		Field(6, "updated_at")
 		Field(7, "host")
+		Field(8, "name")
 	})
 
 	View("tiny", func() {
 		Field(1, "id")
 		Field(2, "rtsp_url")
 		Field(3, "host_id")
+		Field(4, "name")
 		Field(5, "created_at")
 		Field(6, "updated_at")
+
 	})
 
 	View("full", func() {
@@ -89,6 +94,7 @@ var RtspResult = ResultType("application/vnd.rtsp_result+json", func() {
 		Field(5, "created_at")
 		Field(6, "updated_at")
 		Field(7, "host")
+		Field(8, "name")
 	})
 
 })
