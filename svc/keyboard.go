@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/JermineHu/themis/common"
 	"github.com/JermineHu/themis/models"
 	keyboard "github.com/JermineHu/themis/svc/gen/keyboard"
 	"github.com/google/uuid"
@@ -12,6 +13,7 @@ import (
 	"io"
 	"log"
 	"strings"
+	"time"
 )
 
 // keyboard service example implementation.
@@ -22,7 +24,8 @@ type keyboardsrvc struct {
 
 // 设置参数
 var (
-	hostMap = map[uint64]map[string]keyboard.BrokerServerStream{}
+	hostMap  = map[uint64]map[string]keyboard.BrokerServerStream{}
+	hostsMap = map[uint64]map[string]keyboard.BrokerForHostsServerStream{} // 列表
 )
 
 // NewKeyboard returns the keyboard service implementation.
@@ -112,7 +115,12 @@ func (s *keyboardsrvc) Log(ctx context.Context, p *keyboard.Keyboard) (res *keyb
 	}
 	cp.Keys = v
 	cp.HostID = p.HostID
-
+	ks := []string{}
+	for k := range p.Keys {
+		ks = append(ks, *p.Keys[k].KeyCode)
+	}
+	kstr := strings.Join(ks, "-")
+	cp.EventCode = &kstr
 	err = models.CreateKeyboard(&cp)
 	if err != nil {
 		err = keyboard.MakeBadRequest(err)
@@ -178,24 +186,25 @@ func (s *keyboardsrvc) Broker(ctx context.Context, p *keyboard.BrokerPayload, st
 	} else {
 		hostMap[hID][sessionID] = stream
 	}
-	//ticker  := time.NewTicker(time.Second * 5)
+	ticker := time.NewTicker(time.Second * 5)
 
 	// Listen for context cancellation and stream input simultaneously.
 	for done := false; !done; {
 		select {
-		//case <-ticker.C: // 每隔1秒发送一个心跳
-		//	hm := keyboard.KeyboardEvent{
-		//		Type: "heartbeat",
-		//	}
-		//	if err = stream.Send(&hm); err != nil { // 发送心跳数据
-		//		log.Println("write:", err)
-		//		return err
-		//	}
+		case <-ticker.C: // 每隔1秒发送一个心跳
+			hm := keyboard.KeyboardEvent{
+				Type: "heartbeat",
+			}
+			if err = stream.Send(&hm); err != nil { // 发送心跳数据
+				log.Println("write:", err)
+				return err
+			}
 		case keyb := <-keybCh:
 			if strings.EqualFold("keyboard", keyb.Type) && keyb.KeyboardInfo != nil {
 				h := keyboard.Keyboard{
 					HostID: &hID,
 					Keys:   keyb.KeyboardInfo.Keys,
+					Token:  p.Token,
 				}
 				ks := []string{}
 				for k := range keyb.KeyboardInfo.Keys {
@@ -204,13 +213,28 @@ func (s *keyboardsrvc) Broker(ctx context.Context, p *keyboard.BrokerPayload, st
 				kstr := strings.Join(ks, "-")
 				if _, ok := kbMap[kstr]; ok {
 					go func() {
-						_, err := s.Log(ctx, &h) // 存储消息操作
+						result, err := s.Log(ctx, &h) // 存储消息操作
 						if err != nil {
 							log.Fatal("键盘数据记录失败：", err)
 						}
+						if strings.EqualFold(kbMap[kstr].EventType, common.EVENT_TYPE_DELETE_PRVE_DATA) {
+							models.DeletePrevKeyboardByIDAndHostID(*result.ID, *result.HostID) // 删除当前主机的上一个
+						}
 					}()
+					cl := kbMap[kstr].Color
+					en := kbMap[kstr].Desc
+					et := kbMap[kstr].EventType
+					keyb.KeyboardInfo.Color = &cl
+					keyb.KeyboardInfo.EName = &en
+					keyb.KeyboardInfo.EType = &et
+					if strings.EqualFold(kbMap[kstr].EventType, common.EVENT_TYPE_CLEAN) {
+						models.DeleteKeyboardByHostID(p.HostID) // 删除该主机下的所有数据
+					}
 					if err = s.SenCast(hID, keyb); err != nil { // 将收到的消息再广播回去
 						log.Fatal("发送失败：", err)
+					}
+					if len(hostsMap) > 0 {
+						keybChList <- keyb // 向列表同步消息
 					}
 				}
 			}
@@ -245,6 +269,20 @@ func (s *keyboardsrvc) SenCast(hostID uint64, event *keyboard.KeyboardEvent) (er
 }
 
 // 发送广播，让对应会话中的人都收到消息
+func (s *keyboardsrvc) SenCastForListPage(hostID uint64, event *keyboard.KeyboardEvent) (err error) {
+	if v, ok := hostMap[hostID]; ok {
+		for k := range v {
+			if x, yes := v[k]; yes {
+				if err = x.Send(event); err != nil { // 将收到的消息再广播回去
+					return err
+				}
+			}
+		}
+	}
+	return nil
+}
+
+// 发送广播，让对应会话中的人都收到消息
 func (s *keyboardsrvc) DelMapByKey(hostID uint64, sessionID string) {
 	if v, ok := hostMap[hostID]; ok {
 		delete(hostMap[hostID], sessionID)
@@ -256,14 +294,115 @@ func (s *keyboardsrvc) DelMapByKey(hostID uint64, sessionID string) {
 	}
 }
 
-// 根据主机ID获取统计数据
-func (s *keyboardsrvc) Statistics(ctx context.Context, p *keyboard.StatisticsPayload) (res map[string]int, err error) {
+// 发送广播，让对应会话中的人都收到消息
+func (s *keyboardsrvc) DelMapByKeyForListPage(hostIDs []uint64, sessionID string) {
+	for i := range hostIDs {
+		if v, ok := hostsMap[hostIDs[i]]; ok {
+			delete(hostsMap[hostIDs[i]], sessionID)
+			if v, ok = hostsMap[hostIDs[i]]; ok {
+				if len(v) == 0 {
+					delete(hostsMap, hostIDs[i])
+				}
+			}
+		}
+	}
+}
 
+// 根据主机ID获取统计数据
+func (s *keyboardsrvc) Statistics(ctx context.Context, p *keyboard.StatisticsPayload) (res map[string]*keyboard.Keyboard, err error) {
+	res = make(map[string]*keyboard.Keyboard)
+	ks, err := models.StatisticsKeyboardEventByHostID(p.HostID)
+	if err != nil {
+		return nil, keyboard.MakeBadRequest(err)
+	}
+	for i := range ks {
+		k := &keyboard.Keyboard{}
+		k.HostID = ks[i].HostID
+		if ks[i].EventCode != nil {
+			if _, ok := kbMap[*ks[i].EventCode]; ok {
+				et := kbMap[*ks[i].EventCode].EventType
+				cl := kbMap[*ks[i].EventCode].Color
+				en := kbMap[*ks[i].EventCode].Desc
+				k.EType = &et
+				k.Color = &cl
+				k.EName = &en
+			}
+			k.Count = &ks[i].Count
+			res[*ks[i].EventCode] = k
+		}
+
+	}
 	return
 }
 
+var keybChList = make(chan *keyboard.KeyboardEvent, 100) // 定义接收数据的管道
 // 用于建立广播消息的服务
 func (s *keyboardsrvc) BrokerForHosts(ctx context.Context, p *keyboard.BrokerForHostsPayload, stream keyboard.BrokerForHostsServerStream) (err error) {
-	s.logger.Print("keyboard.broker_for_hosts")
-	return
+
+	sessionID := strings.ReplaceAll(uuid.New().String(), "-", "")
+
+	ids, err := models.GetAllHostID()
+	if err != nil {
+		return err
+	}
+
+	//批量设置所监听的主机
+	for i := range ids {
+		if _, ok := hostsMap[ids[i]]; !ok {
+			x := map[string]keyboard.BrokerForHostsServerStream{}
+			hostsMap[ids[i]] = x
+			x[sessionID] = stream
+		} else {
+			hostsMap[ids[i]][sessionID] = stream
+		}
+	}
+
+	////批量设置所监听的主机
+	//for i := range p.HostIds {
+	//	if _, ok := hostsMap[p.HostIds[i]]; !ok {
+	//		x := map[string]keyboard.BrokerForHostsServerStream{}
+	//		hostsMap[p.HostIds[i]] = x
+	//		x[sessionID] = stream
+	//	} else {
+	//		hostsMap[p.HostIds[i]][sessionID] = stream
+	//	}
+	//}
+
+	ticker := time.NewTicker(time.Second * 5)
+
+	// Listen for context cancellation and stream input simultaneously.
+	for done := false; !done; {
+		select {
+		case <-ticker.C: // 每隔1秒发送一个心跳
+			hm := keyboard.KeyboardEvent{
+				Type: "heartbeat",
+			}
+			if err = stream.Send(&hm); err != nil { // 发送心跳数据
+				log.Println("write:", err)
+				return err
+			}
+		case keyb := <-keybChList:
+			if strings.EqualFold("keyboard", keyb.Type) && keyb.KeyboardInfo != nil {
+				ks := []string{}
+				for k := range keyb.KeyboardInfo.Keys {
+					ks = append(ks, *keyb.KeyboardInfo.Keys[k].KeyCode)
+				}
+				kstr := strings.Join(ks, "-")
+				if _, ok := kbMap[kstr]; ok {
+					cl := kbMap[kstr].Color
+					en := kbMap[kstr].Desc
+					keyb.KeyboardInfo.Color = &cl
+					keyb.KeyboardInfo.EName = &en
+					if err = s.SenCastForListPage(*keyb.KeyboardInfo.HostID, keyb); err != nil { // 将收到的消息再广播回去
+						log.Fatal("发送失败：", err)
+					}
+				}
+			}
+		case <-ctx.Done():
+			done = true
+			s.DelMapByKeyForListPage(p.HostIds, sessionID)
+		}
+	}
+	s.DelMapByKeyForListPage(p.HostIds, sessionID)
+	return stream.Close()
 }

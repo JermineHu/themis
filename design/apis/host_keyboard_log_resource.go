@@ -12,8 +12,8 @@ import (
 )
 
 var Keycode = Type("keycode", func() {
-	Field(4, "text", String, "键盘的值")
-	Field(5, "key_code", String, "键盘的编号")
+	Field(1, "text", String, "键盘的值")
+	Field(2, "key_code", String, "键盘的编号")
 })
 
 var Keyboard = Type("keyboard", func() {
@@ -23,13 +23,17 @@ var Keyboard = Type("keyboard", func() {
 	Field(2, "id", UInt64, "数据ID", func() {})
 	Field(3, "host_id", UInt64, "主机ID")
 	Field(4, "keys", ArrayOf(Keycode), "回车后发送的事件")
+	Field(5, "color", String, "颜色")
+	Field(6, "e_name", String, "事件名称")
+	Field(7, "e_type", String, "事件类型")
+	Field(8, "count", UInt, "事件次数")
 })
 
 var KeyboardEvent = Type("KeyboardEvent", func() {
 	Field(1, "type", String, "键盘的值", func() {
 		Enum("heartbeat", "keyboard")
 	})
-	Field(2, "Keyboard_info", Keyboard, "键盘信息")
+	Field(2, "keyboard_info", Keyboard, "键盘信息")
 	Field(3, "ext", String, "其他信息")
 	Required("type")
 })
@@ -183,7 +187,7 @@ var res_keyboard = Service("keyboard", func() {
 		Payload(func() {
 			TokenField(1, "token", String, "JWTAuth token used to perform authorization", func() {
 			})
-			Field(2, "host_id", Int, "要删除的host_id", func() {
+			Field(2, "host_id", UInt64, "要删除的host_id", func() {
 			})
 			Required("host_id")
 		})
@@ -254,7 +258,7 @@ var res_keyboard = Service("keyboard", func() {
 			})
 			Required("host_id")
 		})
-		Result(MapOf(String, Int))
+		Result(MapOf(String, Keyboard))
 		Error("Unauthorized")
 		Error("BadRequest")
 		Error("NotFound")
@@ -286,7 +290,6 @@ var res_keyboard = Service("keyboard", func() {
 			Field(2, "host_ids", ArrayOf(UInt64), "对应的host_id", func() {
 			})
 		})
-		StreamingPayload(KeyboardEvent)
 		StreamingResult(KeyboardEvent)
 		Error("Unauthorized")
 		Error("BadRequest")

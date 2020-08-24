@@ -49,6 +49,17 @@ func GetHostList(payload *host.ListPayload) (result []Host, count int64, err err
 	return list, count, err
 }
 
+//获取所有主机ID
+func GetAllHostID() (result []uint64, err error) {
+	qs := NewHostQuerySet(rdb_themis)
+	if err != nil {
+		return
+	}
+	list := []uint64{}
+	err = qs.db.Pluck("id", &list).Error
+	return list, err
+}
+
 //创建数据
 func CreateHost(a *Host) error {
 	return a.Create(rdb_themis)

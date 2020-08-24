@@ -67,6 +67,7 @@ func (s *adminsrvc) Login(ctx context.Context, p *admin.LoginPayload) (res *admi
 		return res, err
 	}
 	res.Token = tk
+	res.UserType = adm.UserType
 	return
 }
 

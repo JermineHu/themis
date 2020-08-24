@@ -12,9 +12,10 @@ import (
 )
 
 type KeyboardSetting struct {
-	Color    string     `json:"color"`
-	Desc     string     `json:"desc"`
-	Keycodes []Keycodes `json:"keycodes"`
+	Color     string     `json:"color"`
+	Desc      string     `json:"desc"`
+	Keycodes  []Keycodes `json:"keycodes"`
+	EventType string     `json:"event_type"`
 }
 type Keycodes struct {
 	KeyCode int    `json:"keyCode"`

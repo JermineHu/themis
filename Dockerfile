@@ -18,7 +18,7 @@ COPY . $APP_HOME
 COPY .git $APP_HOME
 RUN  flags="-X '${APP_SVC}.GoVersion=$(go version)' -X '${APP_SVC}.BuildTime=$(date '+%Y-%m-%d %H:%M:%S')' -X '${APP_SVC}.GitHash=$(git describe --tags --dirty --abbrev=8 --long)' -X '${APP_SVC}.GitLog=$(git log --pretty=oneline -n 1)' -X '${APP_SVC}.GitStatus=$(git status -s)'" && \
      go env -w GOPROXY=https://goproxy.cn,direct && go version \
-     && go get -u goa.design/goa/v3/...@v3.2.0  && go get -u github.com/golang/protobuf/protoc-gen-go \
+     && go get -u goa.design/goa/v3/...@v3.2.3  && go get -u github.com/golang/protobuf/protoc-gen-go \
      && go get -u github.com/golang/protobuf/protoc-gen-go && \
      # make generate && \
      CGO_ENABLED=0 GOOS=linux go build -ldflags "$flags"  -a -installsuffix cgo -o $APP_NAME github.com/JermineHu/themis/svc/cmd/themissvr

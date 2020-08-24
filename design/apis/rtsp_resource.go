@@ -21,7 +21,7 @@ var Rtsp = Type("Rtsp", func() {
 	Field(5, "created_at", String, "创建时间")
 	Field(6, "updated_at", String, "更新时间")
 	Field(7, "id", UInt64, "数据ID", func() {})
-	Field(8, "name", UInt64, "rtsp名称", func() {})
+	Field(8, "name", String, "rtsp名称", func() {})
 	Required("host_id")
 })
 var RtspWhere = Type("RtspWhere", func() {

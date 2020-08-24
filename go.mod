@@ -18,10 +18,9 @@ require (
 	github.com/pion/webrtc/v2 v2.2.21
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 	github.com/urfave/cli v1.22.4
-	goa.design/goa/v3 v3.2.0
-	goa.design/plugins/v3 v3.2.0
+	goa.design/goa/v3 v3.2.3
+	goa.design/plugins/v3 v3.2.3
 	golang.org/x/image v0.0.0-20200618115811-c13761719519 // indirect
-	golang.org/x/tools v0.0.0-20200715235423-130c9f19d3fe // indirect
 	google.golang.org/genproto v0.0.0-20200715011427-11fb19a81f2c // indirect
 	google.golang.org/grpc v1.30.0
 )

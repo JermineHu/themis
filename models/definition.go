@@ -48,7 +48,7 @@ type Admin struct {
 	Salt *string `json:"salt"`
 	// 创建该账户的账户
 	CreatedBy *uint64 `json:"created_by"`
-	UserType  *string `gorm:"default:'USER_TYPE_NORMAL'" json:"id"`
+	UserType  *string `gorm:"default:'USER_TYPE_ADMIN'" json:"user_type"`
 }
 
 // 主机信息
@@ -83,6 +83,9 @@ type Keyboard struct {
 	HostID *uint64 `json:"host_id"`
 	// 回车后发送的事件
 	Keys json.RawMessage `json:"keys" gorm:"type:json"`
+	// 事件码
+	EventCode *string `gorm:"index;type:varchar(100)" json:"event_code"`
+	Count     uint    `gorm:"-" json:"count"`
 }
 
 type InterfaceInfo struct {

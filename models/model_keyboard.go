@@ -101,14 +101,22 @@ func UpdateKeyboardByID(id uint64, mi *Keyboard) error {
 // 根据ID删除
 func DeleteKeyboardByID(id int) (count int64, err error) {
 	qs := NewKeyboardQuerySet(rdb_themis)
-	db := qs.db.Unscoped().Delete(Keyboard{}, "id =?", id)
+	db := qs.db.Delete(Keyboard{}, "id =?", id)
+	return db.RowsAffected, db.Error
+}
+
+// 根据ID和HostID删除上一个键盘事件
+func DeletePrevKeyboardByIDAndHostID(id, hostId uint64) (count int64, err error) {
+	qs := NewKeyboardQuerySet(rdb_themis)
+	kb := Keyboard{}
+	db := qs.db.First(&kb, "host_id=? and id<?").Order("id desc").Limit(1).Delete(&kb)
 	return db.RowsAffected, db.Error
 }
 
 // 根据主机ID批量删除键盘数据
-func DeleteKeyboardByHostID(host_id int) (count int64, err error) {
+func DeleteKeyboardByHostID(host_id uint64) (count int64, err error) {
 	qs := NewKeyboardQuerySet(rdb_themis)
-	db := qs.db.Unscoped().Delete(Keyboard{}, "host_id =?", host_id)
+	db := qs.db.Delete(Keyboard{}, "host_id =?", host_id)
 	return db.RowsAffected, db.Error
 }
 
@@ -118,4 +126,11 @@ func GetKeyboardById(id *uint64) (result Keyboard, err error) {
 	pc := Keyboard{}
 	err = qs.w(qs.db.Where("id =?", id)).One(&pc)
 	return pc, err
+}
+
+// 根据主机ID统计键盘事件的数据
+func StatisticsKeyboardEventByHostID(host_id uint64) (ks []Keyboard, err error) {
+	qs := NewKeyboardQuerySet(rdb_themis)
+	db := qs.db.Select(" count(event_code) as count,event_code").Group("event_code").Where(Keyboard{}, "host_id =?", host_id).Find(&ks)
+	return ks, db.Error
 }
