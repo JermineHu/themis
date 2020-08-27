@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/JermineHu/themis/common"
 	"github.com/JermineHu/themis/models"
 	keyboard "github.com/JermineHu/themis/svc/gen/keyboard"
@@ -224,14 +225,17 @@ func (s *keyboardsrvc) Broker(ctx context.Context, p *keyboard.BrokerPayload, st
 					cl := kbMap[kstr].Color
 					en := kbMap[kstr].Desc
 					et := kbMap[kstr].EventType
+					keyb.KeyboardInfo.HostID = &hID
 					keyb.KeyboardInfo.Color = &cl
 					keyb.KeyboardInfo.EName = &en
 					keyb.KeyboardInfo.EType = &et
+					nt := time.Now().Format(time.RFC3339)
+					keyb.Time = &nt
 					if strings.EqualFold(kbMap[kstr].EventType, common.EVENT_TYPE_CLEAN) {
 						models.DeleteKeyboardByHostID(p.HostID) // 删除该主机下的所有数据
 					}
 					if err = s.SenCast(hID, keyb); err != nil { // 将收到的消息再广播回去
-						log.Fatal("发送失败：", err)
+						log.Fatal("发送失败--主机：", err)
 					}
 					if len(hostsMap) > 0 {
 						keybChList <- keyb // 向列表同步消息
@@ -270,12 +274,19 @@ func (s *keyboardsrvc) SenCast(hostID uint64, event *keyboard.KeyboardEvent) (er
 
 // 发送广播，让对应会话中的人都收到消息
 func (s *keyboardsrvc) SenCastForListPage(hostID uint64, event *keyboard.KeyboardEvent) (err error) {
-	if v, ok := hostMap[hostID]; ok {
+	if v, ok := hostsMap[hostID]; ok {
 		for k := range v {
 			if x, yes := v[k]; yes {
 				if err = x.Send(event); err != nil { // 将收到的消息再广播回去
-					return err
+					fmt.Println("列表发送消息失败：", err)
+					delete(hostsMap[hostID], k)
+					if v, ok = hostsMap[hostID]; ok {
+						if len(v) == 0 {
+							delete(hostsMap, hostID)
+						}
+					}
 				}
+
 			}
 		}
 	}
@@ -394,13 +405,13 @@ func (s *keyboardsrvc) BrokerForHosts(ctx context.Context, p *keyboard.BrokerFor
 					keyb.KeyboardInfo.Color = &cl
 					keyb.KeyboardInfo.EName = &en
 					if err = s.SenCastForListPage(*keyb.KeyboardInfo.HostID, keyb); err != nil { // 将收到的消息再广播回去
-						log.Fatal("发送失败：", err)
+						log.Fatal("发送失败--列表：", err)
 					}
 				}
 			}
-		case <-ctx.Done():
-			done = true
-			s.DelMapByKeyForListPage(p.HostIds, sessionID)
+			//case <-ctx.Done():
+			//	done = true
+			//	s.DelMapByKeyForListPage(p.HostIds, sessionID)
 		}
 	}
 	s.DelMapByKeyForListPage(p.HostIds, sessionID)

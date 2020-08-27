@@ -35,6 +35,7 @@ var KeyboardEvent = Type("KeyboardEvent", func() {
 	})
 	Field(2, "keyboard_info", Keyboard, "键盘信息")
 	Field(3, "ext", String, "其他信息")
+	Field(4, "time", String, "时间")
 	Required("type")
 })
 
