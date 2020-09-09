@@ -48,7 +48,7 @@ var Admin = Type("Admin", func() {
 	})
 
 	Field(9, "user_type", func() {
-		Enum("USER_TYPE_NORMAL", "USER_TYPE_ADMINISTRATOR")
+		Enum("USER_TYPE_NORMAL", "USER_TYPE_ADMIN")
 		Example("USER_TYPE_NORMAL")
 		//Meta("rpc:tag", "6")
 	})

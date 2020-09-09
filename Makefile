@@ -64,9 +64,9 @@ docker-push-release:docker-release push-release
 img-push-release:img-release push-img-release
 build:
 	@CGO_ENABLED=0 GOOS=linux go build -a -v -installsuffix cgo -o themis github.com/JermineHu/themis/svc/cmd/themissvr
-	@GITHUB_TOKEN=96ad1436db3c0302181aac88bf90eb0c178c938c golicense themis
+#	@GITHUB_TOKEN=96ad1436db3c0302181aac88bf90eb0c178c938c golicense themis
 	@strip --strip-unneeded themis
-	@upx -9 -o themis
+	@upx -9 themis
 
 ae-build:
 	@if [ ! -d $(HOME)/themis ]; then \

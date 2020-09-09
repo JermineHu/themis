@@ -68,11 +68,28 @@ func GetAdminCount() (count int, err error) {
 func UpdateAdminByID(id uint64, mi *Admin) error {
 	mi.ID = id
 	qs := NewAdminQuerySet(rdb_themis)
-	result := qs.db.Where("id=?", id).Save(&mi)
-	if result.Error != nil {
-		return admin.MakeBadRequest(result.Error)
+	up := qs.w(qs.db.Where("id=?", id)).GetUpdater()
+
+	if mi.Password != nil {
+		up = up.SetPassword(mi.Password)
 	}
-	if result.RowsAffected == 0 {
+	if mi.UserType != nil {
+		up = up.SetUserType(mi.UserType)
+	}
+	if mi.LoginName != nil {
+		up = up.SetLoginName(mi.LoginName)
+	}
+	if mi.Salt != nil {
+		up = up.SetSalt(mi.Salt)
+	}
+	if mi.CreatedBy != nil {
+		up = up.SetCreatedBy(mi.CreatedBy)
+	}
+	count, err := up.UpdateNum()
+	if err != nil {
+		return admin.MakeBadRequest(err)
+	}
+	if count == 0 {
 		return admin.MakeNotFound(new(admin.NotFound))
 	}
 	return nil

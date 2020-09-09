@@ -1630,7 +1630,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+        example: 57297b87-7c49-4ddc-8499-6ca1d384386c
         format: uuid
       id:
         type: integer
@@ -1650,11 +1650,11 @@ definitions:
         example: USER_TYPE_NORMAL
         enum:
         - USER_TYPE_NORMAL
-        - USER_TYPE_ADMINISTRATOR
+        - USER_TYPE_ADMIN
     description: CreateNot FoundResponseBody result type (default view)
     example:
       created_at: Sit iure.
-      created_by: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+      created_by: 57297b87-7c49-4ddc-8499-6ca1d384386c
       id: 15323071092171913365
       login_name: ZhangSan
       token: Blanditiis qui eius aut.
@@ -1670,7 +1670,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+        example: 57297b87-7c49-4ddc-8499-6ca1d384386c
         format: uuid
       id:
         type: integer
@@ -1690,11 +1690,11 @@ definitions:
         example: USER_TYPE_NORMAL
         enum:
         - USER_TYPE_NORMAL
-        - USER_TYPE_ADMINISTRATOR
+        - USER_TYPE_ADMIN
     description: CreateOKResponseBody result type (default view)
     example:
       created_at: Quos rerum.
-      created_by: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+      created_by: 57297b87-7c49-4ddc-8499-6ca1d384386c
       id: 12547701899445262735
       login_name: ZhangSan
       token: Deleniti perferendis quis ullam animi.
@@ -1710,7 +1710,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+        example: 57297b87-7c49-4ddc-8499-6ca1d384386c
         format: uuid
       id:
         type: integer
@@ -1728,7 +1728,7 @@ definitions:
       salt:
         type: string
         description: 生成密码是使用的盐
-        example: kiw405jryVVBO
+        example: T6RknKj3bNrKI
       updated_at:
         type: string
         description: 更新时间
@@ -1738,14 +1738,14 @@ definitions:
         example: USER_TYPE_NORMAL
         enum:
         - USER_TYPE_NORMAL
-        - USER_TYPE_ADMINISTRATOR
+        - USER_TYPE_ADMIN
     example:
       created_at: Mollitia hic sed ea.
-      created_by: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+      created_by: 57297b87-7c49-4ddc-8499-6ca1d384386c
       id: 6704210008092720694
       login_name: ZhangSan
       password: "123456"
-      salt: kiw405jryVVBO
+      salt: T6RknKj3bNrKI
       updated_at: Ut dolorem illo ipsa quo vel excepturi.
       user_type: USER_TYPE_NORMAL
   AdminCreateUnauthorizedResponseBody:
@@ -1910,11 +1910,11 @@ definitions:
       order_by: id
       where:
         created_at: Dicta fugit sequi iste excepturi laudantium.
-        created_by: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+        created_by: 57297b87-7c49-4ddc-8499-6ca1d384386c
         id: 13798767921428456704
         login_name: ZhangSan
         password: "123456"
-        salt: kiw405jryVVBO
+        salt: T6RknKj3bNrKI
         token: Illo fugit velit iusto.
         updated_at: Quae praesentium ex perspiciatis eos consectetur.
         user_type: USER_TYPE_NORMAL
@@ -1937,19 +1937,19 @@ definitions:
       count: 200
       page_data:
       - created_at: Voluptatem cum animi ab deleniti.
-        created_by: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+        created_by: 57297b87-7c49-4ddc-8499-6ca1d384386c
         id: 17894995036847528639
         login_name: ZhangSan
         token: Eos ipsam delectus voluptas pariatur incidunt dolores.
         user_type: USER_TYPE_NORMAL
       - created_at: Voluptatem cum animi ab deleniti.
-        created_by: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+        created_by: 57297b87-7c49-4ddc-8499-6ca1d384386c
         id: 17894995036847528639
         login_name: ZhangSan
         token: Eos ipsam delectus voluptas pariatur incidunt dolores.
         user_type: USER_TYPE_NORMAL
       - created_at: Voluptatem cum animi ab deleniti.
-        created_by: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+        created_by: 57297b87-7c49-4ddc-8499-6ca1d384386c
         id: 17894995036847528639
         login_name: ZhangSan
         token: Eos ipsam delectus voluptas pariatur incidunt dolores.
@@ -2099,7 +2099,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+        example: 57297b87-7c49-4ddc-8499-6ca1d384386c
         format: uuid
       id:
         type: integer
@@ -2119,11 +2119,11 @@ definitions:
         example: USER_TYPE_NORMAL
         enum:
         - USER_TYPE_NORMAL
-        - USER_TYPE_ADMINISTRATOR
+        - USER_TYPE_ADMIN
     description: LoginNot FoundResponseBody result type (tiny view) (default view)
     example:
       created_at: Ea ut et.
-      created_by: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+      created_by: 57297b87-7c49-4ddc-8499-6ca1d384386c
       id: 6580424324192434940
       login_name: ZhangSan
       token: Expedita iste eum magnam.
@@ -2139,7 +2139,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+        example: 57297b87-7c49-4ddc-8499-6ca1d384386c
         format: uuid
       id:
         type: integer
@@ -2155,11 +2155,11 @@ definitions:
         example: USER_TYPE_NORMAL
         enum:
         - USER_TYPE_NORMAL
-        - USER_TYPE_ADMINISTRATOR
+        - USER_TYPE_ADMIN
     description: LoginOKResponseBody result type (tiny view) (default view)
     example:
       created_at: Velit vitae voluptatem hic sed minima qui.
-      created_by: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+      created_by: 57297b87-7c49-4ddc-8499-6ca1d384386c
       id: 11916926282219614935
       login_name: ZhangSan
       user_type: USER_TYPE_NORMAL
@@ -2192,7 +2192,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+        example: 57297b87-7c49-4ddc-8499-6ca1d384386c
         format: uuid
       id:
         type: integer
@@ -2210,7 +2210,7 @@ definitions:
       salt:
         type: string
         description: 生成密码是使用的盐
-        example: kiw405jryVVBO
+        example: T6RknKj3bNrKI
       token:
         type: string
         description: JWTAuth token used to perform authorization
@@ -2224,14 +2224,14 @@ definitions:
         example: USER_TYPE_NORMAL
         enum:
         - USER_TYPE_NORMAL
-        - USER_TYPE_ADMINISTRATOR
+        - USER_TYPE_ADMIN
     example:
       created_at: Autem ab officia.
-      created_by: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+      created_by: 57297b87-7c49-4ddc-8499-6ca1d384386c
       id: 9248709653479267669
       login_name: ZhangSan
       password: "123456"
-      salt: kiw405jryVVBO
+      salt: T6RknKj3bNrKI
       token: Aspernatur saepe.
       updated_at: In corrupti non.
       user_type: USER_TYPE_NORMAL
@@ -2246,7 +2246,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+        example: 57297b87-7c49-4ddc-8499-6ca1d384386c
         format: uuid
       id:
         type: integer
@@ -2266,11 +2266,11 @@ definitions:
         example: USER_TYPE_NORMAL
         enum:
         - USER_TYPE_NORMAL
-        - USER_TYPE_ADMINISTRATOR
+        - USER_TYPE_ADMIN
     description: 管理员模型 (default view)
     example:
       created_at: Temporibus dolorem ut dolorem exercitationem dolorum aperiam.
-      created_by: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+      created_by: 57297b87-7c49-4ddc-8499-6ca1d384386c
       id: 16655771821774230730
       login_name: ZhangSan
       token: Eum rerum.
@@ -2283,13 +2283,13 @@ definitions:
     description: Admin_resultCollectionResponseBody is the result type for an array of Admin_resultResponseBody (default view)
     example:
     - created_at: Voluptatem cum animi ab deleniti.
-      created_by: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+      created_by: 57297b87-7c49-4ddc-8499-6ca1d384386c
       id: 17894995036847528639
       login_name: ZhangSan
       token: Eos ipsam delectus voluptas pariatur incidunt dolores.
       user_type: USER_TYPE_NORMAL
     - created_at: Voluptatem cum animi ab deleniti.
-      created_by: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+      created_by: 57297b87-7c49-4ddc-8499-6ca1d384386c
       id: 17894995036847528639
       login_name: ZhangSan
       token: Eos ipsam delectus voluptas pariatur incidunt dolores.
@@ -2305,7 +2305,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+        example: 57297b87-7c49-4ddc-8499-6ca1d384386c
         format: uuid
       id:
         type: integer
@@ -2325,11 +2325,11 @@ definitions:
         example: USER_TYPE_NORMAL
         enum:
         - USER_TYPE_NORMAL
-        - USER_TYPE_ADMINISTRATOR
+        - USER_TYPE_ADMIN
     description: ShowNot FoundResponseBody result type (default view)
     example:
       created_at: Voluptatem quidem.
-      created_by: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+      created_by: 57297b87-7c49-4ddc-8499-6ca1d384386c
       id: 11063473786571277997
       login_name: ZhangSan
       token: Itaque repudiandae dolorem.
@@ -2345,7 +2345,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+        example: 57297b87-7c49-4ddc-8499-6ca1d384386c
         format: uuid
       id:
         type: integer
@@ -2365,11 +2365,11 @@ definitions:
         example: USER_TYPE_NORMAL
         enum:
         - USER_TYPE_NORMAL
-        - USER_TYPE_ADMINISTRATOR
+        - USER_TYPE_ADMIN
     description: ShowOKResponseBody result type (default view)
     example:
       created_at: Quos est.
-      created_by: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+      created_by: 57297b87-7c49-4ddc-8499-6ca1d384386c
       id: 7027277504675766013
       login_name: ZhangSan
       token: Quasi a ut temporibus in.
@@ -2428,7 +2428,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+        example: 57297b87-7c49-4ddc-8499-6ca1d384386c
         format: uuid
       id:
         type: integer
@@ -2448,11 +2448,11 @@ definitions:
         example: USER_TYPE_NORMAL
         enum:
         - USER_TYPE_NORMAL
-        - USER_TYPE_ADMINISTRATOR
+        - USER_TYPE_ADMIN
     description: UpdateNot FoundResponseBody result type (default view)
     example:
       created_at: Minima autem repellendus optio iure.
-      created_by: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+      created_by: 57297b87-7c49-4ddc-8499-6ca1d384386c
       id: 17905143169476006349
       login_name: ZhangSan
       token: Culpa dolorem enim velit.
@@ -2468,7 +2468,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+        example: 57297b87-7c49-4ddc-8499-6ca1d384386c
         format: uuid
       id:
         type: integer
@@ -2488,11 +2488,11 @@ definitions:
         example: USER_TYPE_NORMAL
         enum:
         - USER_TYPE_NORMAL
-        - USER_TYPE_ADMINISTRATOR
+        - USER_TYPE_ADMIN
     description: UpdateOKResponseBody result type (default view)
     example:
       created_at: Voluptas nam voluptatum.
-      created_by: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+      created_by: 57297b87-7c49-4ddc-8499-6ca1d384386c
       id: 14846360272137785027
       login_name: ZhangSan
       token: Nesciunt exercitationem impedit ut.
@@ -2508,7 +2508,7 @@ definitions:
       created_by:
         type: string
         description: 创建该账户的账户
-        example: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+        example: 57297b87-7c49-4ddc-8499-6ca1d384386c
         format: uuid
       login_name:
         type: string
@@ -2521,7 +2521,7 @@ definitions:
       salt:
         type: string
         description: 生成密码是使用的盐
-        example: kiw405jryVVBO
+        example: T6RknKj3bNrKI
       updated_at:
         type: string
         description: 更新时间
@@ -2531,13 +2531,13 @@ definitions:
         example: USER_TYPE_NORMAL
         enum:
         - USER_TYPE_NORMAL
-        - USER_TYPE_ADMINISTRATOR
+        - USER_TYPE_ADMIN
     example:
       created_at: Voluptatibus molestias nostrum.
-      created_by: d6f6f1b8-d735-48a2-9820-086c9eb1b274
+      created_by: 57297b87-7c49-4ddc-8499-6ca1d384386c
       login_name: ZhangSan
       password: "123456"
-      salt: kiw405jryVVBO
+      salt: T6RknKj3bNrKI
       updated_at: Deserunt enim.
       user_type: USER_TYPE_NORMAL
   AdminUpdateUnauthorizedResponseBody:

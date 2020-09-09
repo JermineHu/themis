@@ -107,3 +107,13 @@ BASE_API是填写服务端访问地址，对外映射端口可以更换8090
 
 安装包安装后，填写后台server地址和使用后台生成的token，如：server：192.168.1.250：8081 (可以不加http) token：56d7340d-7bbc-4847-b5de-2ec7c9ea3b4e
 。如果有其他需要更改的配置，找到安装目录，编辑config.toml文件即可。
+
+### 单机运行命令
+
+```
+DB_TYPE=postgres \
+DB_CON_STR="sslmode=disable host=192.168.1.250 port=5432 user=Jermine dbname=%v password=123456" \
+DB_IS_UPGRADE=true \
+APP_PORT=8080 \
+TOKEN_TIMEOUT=5184000 ./themis
+```
